@@ -18,6 +18,7 @@ package org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.dataflow.admin.config.AdminProperties;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,9 +36,12 @@ public class CloudFoundryModuleDeployerConfiguration {
 	@Autowired
 	private CloudFoundryModuleDeployerProperties properties;
 
+	@Autowired
+	private AdminProperties adminProperties;
+
 	@Bean
 	public ModuleDeployer processModuleDeployer() {
-		return new ApplicationModuleDeployer(properties);
+		return new ApplicationModuleDeployer(adminProperties, properties);
 	}
 
 	@Bean
