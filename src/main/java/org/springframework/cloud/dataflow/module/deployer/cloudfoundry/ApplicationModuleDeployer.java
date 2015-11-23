@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import org.springframework.cloud.dataflow.admin.config.AdminProperties;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentId;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentRequest;
 import org.springframework.cloud.dataflow.module.ModuleStatus;
@@ -61,7 +62,9 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 
 	private final CloudFoundryModuleDeployerProperties properties;
 
-	public ApplicationModuleDeployer(CloudFoundryModuleDeployerProperties properties) {
+	private final AdminProperties adminProperties;
+
+	public ApplicationModuleDeployer(AdminProperties adminProperties, CloudFoundryModuleDeployerProperties properties) {
 		CloudCredentials credentials = new CloudCredentials(properties.getUsername(), properties.getPassword());
 		CloudFoundryClient cloudFoundryClient = new CloudFoundryClient(credentials,
 				properties.getApiEndpoint(),
@@ -70,6 +73,7 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 				properties.isSkipSslValidation());
 		cloudFoundryClient.login();
 
+		this.adminProperties = adminProperties;
 		this.properties = properties;
 		this.cloudFoundryClient = cloudFoundryClient;
 	}
@@ -243,6 +247,8 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 	private Map<String, String> createModuleLauncherEnvironment(ModuleDeploymentRequest request) {
 		HashMap<String, String> args = new HashMap<>();
 		args.put("modules", request.getCoordinates().toString());
+		// inject admin properties (especially module launcher/resolver properties)
+		args.putAll(adminProperties.asStringProperties());
 		args.putAll(ModuleArgumentQualifier.qualifyArgs(0, request.getDefinition().getParameters()));
 		args.putAll(ModuleArgumentQualifier.qualifyArgs(0, request.getDeploymentProperties()));
 		String jmxDomainName = String.format("%s.%s", request.getDefinition().getGroup(), request.getDefinition().getLabel());
