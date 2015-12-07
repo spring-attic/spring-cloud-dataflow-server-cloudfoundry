@@ -26,8 +26,8 @@ import org.cloudfoundry.client.lib.domain.InstanceInfo;
 import org.cloudfoundry.client.lib.domain.InstanceState;
 import org.cloudfoundry.client.lib.domain.InstanceStats;
 
+import org.springframework.cloud.dataflow.module.DeploymentState;
 import org.springframework.cloud.dataflow.module.ModuleInstanceStatus;
-import org.springframework.cloud.dataflow.module.ModuleStatus;
 import org.springframework.util.StringUtils;
 
 /**
@@ -73,24 +73,24 @@ public class CloudFoundryModuleInstanceStatus implements ModuleInstanceStatus {
 	}
 
 	@Override
-	public ModuleStatus.State getState() {
-		return instance != null ? map(instance.getState()) : ModuleStatus.State.failed;
+	public DeploymentState getState() {
+		return instance != null ? map(instance.getState()) : DeploymentState.failed;
 	}
 
-	private ModuleStatus.State map(InstanceState state) {
+	private DeploymentState map(InstanceState state) {
 		switch (state) {
 			case STARTING:
 			case DOWN:
-				return ModuleStatus.State.deploying;
+				return DeploymentState.deploying;
 			case CRASHED:
-				return ModuleStatus.State.failed;
+				return DeploymentState.failed;
 			// Seems the client incorrectly reports apps as FLAPPING when they are
 			// obviously fine. Mapping as RUNNING for now
 			case FLAPPING:
 			case RUNNING:
-				return ModuleStatus.State.deployed;
+				return DeploymentState.deployed;
 			case UNKNOWN:
-				return ModuleStatus.State.unknown;
+				return DeploymentState.unknown;
 			default:
 				throw new AssertionError("Unsupported CF state " + state);
 		}
