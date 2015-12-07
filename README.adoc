@@ -1,4 +1,4 @@
-= Spring Cloud Data Flow Admin for Cloud Foundry
+= Spring Cloud Data Flow Admin for Cloud Foundry image:https://badge.waffle.io/spring-cloud/spring-cloud-dataflow-admin-cloudfoundry.svg?label=ready&title=Ready[Stories in Ready, link=http://waffle.io/spring-cloud/spring-cloud-dataflow-admin-cloudfoundry] image:https://badge.waffle.io/spring-cloud/spring-cloud-dataflow-admin-cloudfoundry.svg?label=In%20Progress&title=In%20Progress[Stories in Progress, link=http://waffle.io/spring-cloud/spring-cloud-dataflow-admin-cloudfoundry]
 
 Spring Cloud Data Flow can be used to deploy modules in a Cloud Foundry environment. When doing so, the
 https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-admin-starter[Admin]
