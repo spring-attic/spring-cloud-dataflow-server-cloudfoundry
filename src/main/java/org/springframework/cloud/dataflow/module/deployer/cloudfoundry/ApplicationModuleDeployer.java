@@ -306,13 +306,17 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 		Map<String, String> env = new HashMap<>(args.size());
 		StringBuilder sb = new StringBuilder();
 		for (Map.Entry<String, String> entry : args.entrySet()) {
-			String oneArg = "--" + entry.getKey() + "=" + entry.getValue();
+			String oneArg = "--" + entry.getKey() + "=" + quoteValue(entry.getValue());
 			sb.append(bashEscape(oneArg)).append(' ');
 		}
 		String asYaml = new Yaml().dump(Collections.singletonMap("arguments", sb.toString()));
 
 		env.put("JBP_CONFIG_JAVA_MAIN", asYaml);
 		return env;
+	}
+
+	private static String quoteValue(String original) {
+		return original.contains(" ") ? "\"" + original + "\"" : original;
 	}
 
 	private static String bashEscape(String original) {
