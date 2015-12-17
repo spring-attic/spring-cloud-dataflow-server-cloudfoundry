@@ -46,6 +46,7 @@ import org.springframework.cloud.dataflow.module.ModuleStatus;
 import org.springframework.cloud.dataflow.module.deployer.ModuleArgumentQualifier;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 /**
  * A {@link ModuleDeployer} which deploys modules as applications running in a space in CloudFoundry.
@@ -92,10 +93,10 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 
 		{
 			final Staging staging = this.getStagingSettings();
-			final int disk = 1024;
-			final int memory = 1024;
+			final int disk = this.deduceDisk(request.getDeploymentProperties());
+			final int memory = this.deduceMemory(request.getDeploymentProperties());
 			final List<String> uris = this.deduceUris(appName);
-			final List<String> serviceNames = new ArrayList<>(this.properties.getServices());
+			final List<String> serviceNames = this.deduceServices(request.getDeploymentProperties());
 
 			undoer.attempt(new Runnable() {
 				@Override
@@ -161,6 +162,23 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 		}
 
 		return moduleDeploymentId;
+	}
+
+	private int deduceMemory(Map<String, String> deploymentProperties) {
+		String override = deploymentProperties.get("cloudfoundry.memory");
+		return override != null ? Integer.valueOf(override) : properties.getMemory();
+	}
+
+	private int deduceDisk(Map<String, String> deploymentProperties) {
+		String override = deploymentProperties.get("cloudfoundry.disk");
+		return override != null ? Integer.valueOf(override) : properties.getDisk();
+	}
+
+	private ArrayList<String> deduceServices(Map<String, String> deploymentProperties) {
+		String additional = deploymentProperties.get("cloudfoundry.services");
+		ArrayList<String> globalServices = new ArrayList<>(this.properties.getServices());
+		globalServices.addAll(StringUtils.commaDelimitedListToSet(additional));
+		return globalServices;
 	}
 
 	@Override

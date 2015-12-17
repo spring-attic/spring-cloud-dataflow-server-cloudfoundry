@@ -32,7 +32,7 @@ import org.springframework.core.io.Resource;
 class CloudFoundryModuleDeployerProperties {
 
 	/**
-	 * The names of services to bind to each application deployed as a module.
+	 * The names of services to bind to all applications deployed as a module.
 	 * This should typically contain a service capable of playing the role of a binding transport.
 	 */
 	private Set<String> services = new HashSet<>(Arrays.asList("redis"));
@@ -81,6 +81,16 @@ class CloudFoundryModuleDeployerProperties {
 	 * The buildpack to use for deploying the application.
 	 */
 	private String buildpack = "https://github.com/cloudfoundry/java-buildpack.git#master";
+
+	/**
+	 * The amount of memory (MB) to allocate, if not overridden per-module.
+	 */
+	private int memory = 1024;
+
+	/**
+	 * The amount of disk space (MB) to allocate, if not overridden per-module.
+	 */
+	private int disk;
 
 	public String getPassword() {
 		return password;
@@ -160,5 +170,21 @@ class CloudFoundryModuleDeployerProperties {
 
 	public void setBuildpack(String buildpack) {
 		this.buildpack = buildpack;
+	}
+
+	public int getMemory() {
+		return memory;
+	}
+
+	public void setMemory(int memory) {
+		this.memory = memory;
+	}
+
+	public int getDisk() {
+		return disk;
+	}
+
+	public void setDisk(int disk) {
+		this.disk = disk;
 	}
 }
