@@ -1,0 +1,81 @@
+== Deploying on YARN
+
+The Admin server application is run as a standalone application.  All modules used for streams and tasks will be deployed on the YARN cluster that is targeted by the Admin server. configured to be used.
+
+[start=1]
+1. download the Spring Cloud Data Flow YARN distribution ZIP file which includes the Admin and the Shell apps:
+
+```
+wget http://repo.spring.io/snapshot/org/springframework/cloud/dist/spring-cloud-dataflow-admin-yarn-dist/1.0.0.M2/spring-cloud-dataflow-admin-yarn-dist-1.0.0.M2.zip
+```
+
+Unzip the distribution ZIP file and change to the directory containing the deployment files.
+
+```
+cd spring-cloud-dataflow-admin-yarn-1.0.0.M2
+```
+
+[start=2]
+2. Make sure Hadoop and Redis are running. If either one is not running on `localhost` you need to configure them in `config/servers.yml`
+
+[start=3]
+3. If this is the first time deploying make sure the user that runs the Admin app has rights to create and write to /dataflow directory. If there is an existing deployment on `hdfs` remove it using:
+
+```
+$ hdfs dfs -rm -R /dataflow
+```
+
+[start=4]
+4. start the Spring Cloud Data Flow Admin app for YARN
+
+```
+$ ./bin/dataflow-admin-yarn
+```
+
+[start=5]
+5. start `spring-cloud-dataflow-shell`
+
+```
+$ ./bin/dataflow-shell
+```
+
+[start=6]
+6. Test the deployment
+
+Create a stream:
+
+```
+dataflow:>stream create --name "ticktock" --definition "time | hdfs --rollover=100" --deploy
+```
+
+List streams:
+
+```
+dataflow:>stream list
+  Stream Name  Stream Definition           Status
+  -----------  --------------------------  --------
+  ticktock     time | hdfs --rollover=100  deployed
+```
+
+After some time, destroy the stream:
+
+```
+dataflow:>stream destroy --name ticktock
+```
+
+YARN application is pushed and started automatically during a stream deployment process. However, at the moment, this YARN application instance is not automatically stopped. This has to be done using the provided YARN CLI for now. In future releases this should be done by the Admin app when the stream is un-deployed.
+
+From the Spring Cloud Data Flow Shell use:
+
+```
+dataflow:>! bin/dataflow-yarn-cli submitted
+APPLICATION ID                  USER          
+------------------------------  ------------  
+application_1447944262603_0003  spring        
+```
+Use the application id to kill the app using the CLI:
+
+```
+dataflow:>! bin/dataflow-yarn-cli kill -a application_1447944262603_0003
+Kill request for application_1447944262603_0003 sent
+```
