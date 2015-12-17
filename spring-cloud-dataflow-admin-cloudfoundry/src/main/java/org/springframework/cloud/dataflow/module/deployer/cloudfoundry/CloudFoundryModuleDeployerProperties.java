@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,26 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
+ * Configuration properties to determine how to connect to Cloud Foundry, and some
+ * defaults for module deployment.
+ *
  * @author Eric Bottard
  */
 @ConfigurationProperties("cloudfoundry")
 class CloudFoundryModuleDeployerProperties {
 
 	/**
-	 * The names of services to bind to each application deployed as a module.
+	 * The names of services to bind to all applications deployed as a module.
 	 * This should typically contain a service capable of playing the role of a binding transport.
 	 */
 	private Set<String> services = new HashSet<>(Arrays.asList("redis"));
@@ -82,6 +90,16 @@ class CloudFoundryModuleDeployerProperties {
 	 */
 	private String buildpack = "https://github.com/cloudfoundry/java-buildpack.git#master";
 
+	/**
+	 * The amount of memory (MB) to allocate, if not overridden per-module.
+	 */
+	private int memory = 1024;
+
+	/**
+	 * The amount of disk space (MB) to allocate, if not overridden per-module.
+	 */
+	private int disk = 1024;
+
 	public String getPassword() {
 		return password;
 	}
@@ -98,6 +116,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.username = username;
 	}
 
+	@NotNull
 	public URL getApiEndpoint() {
 		return apiEndpoint;
 	}
@@ -130,6 +149,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.organization = organization;
 	}
 
+	@NotBlank
 	public String getSpace() {
 		return space;
 	}
@@ -146,6 +166,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.skipSslValidation = skipSslValidation;
 	}
 
+	@NotNull
 	public Resource getModuleLauncherLocation() {
 		return moduleLauncherLocation;
 	}
@@ -160,5 +181,23 @@ class CloudFoundryModuleDeployerProperties {
 
 	public void setBuildpack(String buildpack) {
 		this.buildpack = buildpack;
+	}
+
+	@Min(0)
+	public int getMemory() {
+		return memory;
+	}
+
+	public void setMemory(int memory) {
+		this.memory = memory;
+	}
+
+	@Min(0)
+	public int getDisk() {
+		return disk;
+	}
+
+	public void setDisk(int disk) {
+		this.disk = disk;
 	}
 }
