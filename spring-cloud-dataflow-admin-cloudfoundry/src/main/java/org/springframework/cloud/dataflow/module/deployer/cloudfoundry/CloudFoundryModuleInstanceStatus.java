@@ -36,6 +36,7 @@ import org.springframework.util.StringUtils;
  * <p>May also represent a non-existing instance.</p>
  *
  * @author Eric Bottard
+ * @author Gunnar Hillert
  */
 public class CloudFoundryModuleInstanceStatus implements ModuleInstanceStatus {
 
@@ -104,7 +105,10 @@ public class CloudFoundryModuleInstanceStatus implements ModuleInstanceStatus {
 			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			InstanceStats.Usage usage = instanceStats.getUsage();
-			result.put("usage.time", formatter.format(usage.getTime()));
+			if (usage.getTime() != null) {
+				result.put("usage.time", formatter.format(usage.getTime()));
+			}
+
 			result.put("usage.cpu", Double.toString(usage.getCpu()));
 			result.put("usage.disk", Integer.toString(usage.getDisk()));
 			result.put("usage.memory", Integer.toString(usage.getMem()));
