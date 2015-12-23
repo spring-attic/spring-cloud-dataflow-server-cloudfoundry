@@ -22,7 +22,7 @@ cf create-service rediscloud 30mb redis
 2. build packages (you'll need redis running locally for the included tests to run)
 +
 ```
-$ mvn clean package
+$ ./mvnw clean package
 ```
 
 3. Either

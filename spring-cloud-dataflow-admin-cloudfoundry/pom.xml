@@ -13,12 +13,13 @@
 	</parent>
 	<properties>
 		<start-class>org.springframework.cloud.dataflow.admin.AdminApplication</start-class>
+		<spring-cloud-dataflow.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-dataflow.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dataflow-admin-starter</artifactId>
-			<version>1.0.0.BUILD-SNAPSHOT</version>
+			<version>${spring-cloud-dataflow.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cloudfoundry</groupId>
