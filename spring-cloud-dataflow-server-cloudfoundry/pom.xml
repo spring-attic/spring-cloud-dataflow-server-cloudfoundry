@@ -20,6 +20,17 @@
 			<artifactId>spring-cloud-starter-dataflow-server-cloudfoundry</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

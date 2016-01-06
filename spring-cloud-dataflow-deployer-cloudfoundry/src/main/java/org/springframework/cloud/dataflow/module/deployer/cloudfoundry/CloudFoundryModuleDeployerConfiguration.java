@@ -18,11 +18,12 @@ package org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
 
 import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.dataflow.admin.config.AdminProperties;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
+import org.springframework.cloud.dataflow.server.config.DataFlowServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,18 +34,18 @@ import org.springframework.context.annotation.Configuration;
  * @author Eric Bottard
  */
 @Configuration
-@EnableConfigurationProperties(CloudFoundryModuleDeployerProperties.class)
+@EnableConfigurationProperties({CloudFoundryModuleDeployerProperties.class, DataFlowServerProperties.class})
 public class CloudFoundryModuleDeployerConfiguration {
 
     @Autowired
     private CloudFoundryModuleDeployerProperties properties;
 
     @Autowired
-    private AdminProperties adminProperties;
+    private DataFlowServerProperties serverProperties;
 
     @Bean
     public ModuleDeployer processModuleDeployer(CloudFoundryClient cloudFoundryClient) {
-        return new ApplicationModuleDeployer(adminProperties, cloudFoundryClient, properties);
+        return new ApplicationModuleDeployer(serverProperties, cloudFoundryClient, properties);
     }
 
     @Bean
@@ -61,7 +62,7 @@ public class CloudFoundryModuleDeployerConfiguration {
 
     @Bean
     public ModuleDeployer taskModuleDeployer(CloudFoundryClient cloudFoundryClient) {
-        return new ApplicationModuleDeployer(adminProperties, cloudFoundryClient, properties);
+        return new ApplicationModuleDeployer(serverProperties, cloudFoundryClient, properties);
     }
 
 }

@@ -42,5 +42,6 @@
 			<artifactId>snakeyaml</artifactId>
 			<optional>true</optional>
 		</dependency>
+
 	</dependencies>
 </project>

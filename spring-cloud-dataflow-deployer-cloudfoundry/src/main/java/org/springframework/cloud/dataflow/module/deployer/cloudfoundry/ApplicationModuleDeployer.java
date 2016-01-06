@@ -38,12 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import org.springframework.cloud.dataflow.admin.config.AdminProperties;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentId;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentRequest;
 import org.springframework.cloud.dataflow.module.ModuleStatus;
 import org.springframework.cloud.dataflow.module.deployer.ModuleArgumentQualifier;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
+import org.springframework.cloud.dataflow.server.config.DataFlowServerProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
@@ -62,10 +62,10 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 
 	private final CloudFoundryModuleDeployerProperties properties;
 
-	private final AdminProperties adminProperties;
+	private final DataFlowServerProperties serverProperties;
 
-	public ApplicationModuleDeployer(AdminProperties adminProperties, CloudFoundryClient cloudFoundryClient, CloudFoundryModuleDeployerProperties properties) {
-		this.adminProperties = adminProperties;
+	public ApplicationModuleDeployer(DataFlowServerProperties serverProperties, CloudFoundryClient cloudFoundryClient, CloudFoundryModuleDeployerProperties properties) {
+		this.serverProperties = serverProperties;
 		this.properties = properties;
 		this.cloudFoundryClient = cloudFoundryClient;
 		cloudFoundryClient.login();
@@ -258,7 +258,7 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 		HashMap<String, String> args = new HashMap<>();
 		args.put("modules", request.getCoordinates().toString());
 		// inject admin properties (especially module launcher/resolver properties)
-		args.putAll(adminProperties.asStringProperties());
+		args.putAll(serverProperties.asStringProperties());
 		Map<String, String> parameters = new HashMap<>(request.getDefinition().getParameters());
 		// Remove server.port parameter, as the platform assigns a port (and the buildpack sets --server.port for us)
 		parameters.remove("server.port");

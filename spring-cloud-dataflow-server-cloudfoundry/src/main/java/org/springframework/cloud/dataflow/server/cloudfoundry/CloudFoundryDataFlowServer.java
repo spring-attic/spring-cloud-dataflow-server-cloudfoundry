@@ -17,7 +17,7 @@
 package org.springframework.cloud.dataflow.server.cloudfoundry;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.dataflow.admin.EnableDataFlowServer;
+import org.springframework.cloud.dataflow.server.EnableDataFlowServer;
 
 /**
  * Bootstrap class for the Cloud Foundry Spring Cloud Data Flow Server.
