@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Eric Bottard
  */
 @Configuration
-@EnableConfigurationProperties(CloudFoundryModuleDeployerProperties.class)
+@EnableConfigurationProperties({CloudFoundryModuleDeployerProperties.class, AdminProperties.class})
 public class CloudFoundryModuleDeployerConfiguration {
 
     @Autowired
