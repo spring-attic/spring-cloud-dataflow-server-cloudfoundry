@@ -10,12 +10,12 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-parent</artifactId>
-		<version>1.0.0.M2</version>
+		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 	<properties>
 		<start-class>org.springframework.cloud.dataflow.admin.AdminApplication</start-class>
-		<spring-cloud-dataflow.version>1.0.0.M2</spring-cloud-dataflow.version>
+		<spring-cloud-dataflow.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-dataflow.version>
 	</properties>
 	<dependencies>
 		<dependency>

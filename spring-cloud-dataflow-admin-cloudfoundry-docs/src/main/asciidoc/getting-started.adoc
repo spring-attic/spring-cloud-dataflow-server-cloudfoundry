@@ -19,8 +19,8 @@ cf create-service rediscloud 30mb redis
 2. download the Spring Cloud Data Flow Admin and Shell apps:
 
 ```
-wget http://repo.spring.io/milestone/org/springframework/cloud/spring-cloud-dataflow-admin/1.0.0.M2/spring-cloud-dataflow-admin-cloudfoundry-1.0.0.M2.jar
-wget http://repo.spring.io/milestone/org/springframework/cloud/spring-cloud-dataflow-shell/1.0.0.M2/spring-cloud-dataflow-shell-1.0.0.M2.jar
+wget http://repo.spring.io/snapshot/org/springframework/cloud/spring-cloud-dataflow-admin/1.0.0.BUILD-SNAPSHOT/spring-cloud-dataflow-admin-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar
+wget http://repo.spring.io/snapshot/org/springframework/cloud/spring-cloud-dataflow-shell/1.0.0.BUILD-SNAPSHOT/spring-cloud-dataflow-shell-1.0.0.BUILD-SNAPSHOT.jar
 ```
 
 [start=3a]
@@ -31,7 +31,7 @@ wget http://repo.spring.io/milestone/org/springframework/cloud/spring-cloud-data
 NOTE: You must use a unique name for your app; an app with the same name in the same organization will cause your deployment to fail
 
 ```
-cf push s-c-dataflow-admin --no-start -p spring-cloud-dataflow-admin-cloudfoundry-1.0.0.M2.jar
+cf push s-c-dataflow-admin --no-start -p spring-cloud-dataflow-admin-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar
 cf bind-service s-c-dataflow-admin redis
 ```
 
@@ -85,7 +85,7 @@ NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundr
 Now we are ready to start the admin application:
 
 ```
-java -jar spring-cloud-dataflow-admin-cloudfoundry-1.0.0.M2.jar [--option1=value1] [--option2=value2] [etc.]
+java -jar spring-cloud-dataflow-admin-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar [--option1=value1] [--option2=value2] [etc.]
 ```
 
 [start=4]
@@ -94,7 +94,7 @@ java -jar spring-cloud-dataflow-admin-cloudfoundry-1.0.0.M2.jar [--option1=value
 4. run the shell and optionally target the Admin application if not running on the same host (will typically be the case if deployed on Cloud Foundry as **3a.**)
 
 ```
-$ java -jar spring-cloud-dataflow-shell-1.0.0.M2.jar
+$ java -jar spring-cloud-dataflow-shell-1.0.0.BUILD-SNAPSHOT.jar
 ```
 
 ```
