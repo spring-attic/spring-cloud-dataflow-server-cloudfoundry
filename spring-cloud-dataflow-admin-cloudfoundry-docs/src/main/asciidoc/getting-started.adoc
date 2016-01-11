@@ -7,26 +7,25 @@ Spring Cloud Data Flow can be used to deploy modules in a Cloud Foundry environm
 
 The required configuration amounts to the same in either case, and is merely related to providing credentials to the Cloud Foundry instance so that the admin can spawn applications itself. Any Spring Boot compatible configuration mechanism can be used (passing program arguments, editing configuration files before building the application, using link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.), although some may prove more practicable than others when running _on_ Cloud Foundry.
 
-[start=1]
-1. provision a redis service instance on Cloud Foundry.
+== Provision a redis service instance on Cloud Foundry.
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup. For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
 ```
 cf create-service rediscloud 30mb redis
 ```
 
-[start=2]
-2. download the Spring Cloud Data Flow Admin and Shell apps:
+== Download the Spring Cloud Data Flow Admin and Shell apps:
 
 ```
 wget http://repo.spring.io/snapshot/org/springframework/cloud/spring-cloud-dataflow-admin/1.0.0.BUILD-SNAPSHOT/spring-cloud-dataflow-admin-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar
 wget http://repo.spring.io/snapshot/org/springframework/cloud/spring-cloud-dataflow-shell/1.0.0.BUILD-SNAPSHOT/spring-cloud-dataflow-shell-1.0.0.BUILD-SNAPSHOT.jar
 ```
 
-[start=3a]
+You can either deploy the admin application on Cloud Foundry itself or on your local machine.  The following two sections explain each way of running the admin.
+
 == Deploying Admin app on Cloud Foundry
 
-3a. push the admin application on Cloud Foundry, configure it (see below) and start it
+Push the admin application on Cloud Foundry, configure it (see below) and start it
 
 NOTE: You must use a unique name for your app; an app with the same name in the same organization will cause your deployment to fail
 
@@ -56,14 +55,11 @@ We are now ready to start the app.
 cf start s-c-dataflow-admin
 ```
 
-Alternatively,
+Alternatively, you can run the Admin application locally on your machine which is described in the next section.
 
-[start=3b]
 == Running Admin app locally
 
-3b. run the admin application locally, targeting your Cloud Foundry installation
-
-First you need to configure the application either by passing in command line arguments (see below) or setting a number of environment variables.
+To run the admin application locally, targeting your Cloud Foundry installation, you you need to configure the application either by passing in command line arguments (see below) or setting a number of environment variables.
 
 To use environment variables set the following:
 
