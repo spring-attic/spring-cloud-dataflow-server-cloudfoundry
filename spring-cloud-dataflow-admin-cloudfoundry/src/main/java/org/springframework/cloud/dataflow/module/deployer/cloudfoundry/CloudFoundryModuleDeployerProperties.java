@@ -21,11 +21,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
+ * Configuration properties to determine how to connect to Cloud Foundry, and some
+ * defaults for module deployment.
+ *
  * @author Eric Bottard
  */
 @ConfigurationProperties("cloudfoundry")
@@ -90,7 +98,7 @@ class CloudFoundryModuleDeployerProperties {
 	/**
 	 * The amount of disk space (MB) to allocate, if not overridden per-module.
 	 */
-	private int disk;
+	private int disk = 1024;
 
 	public String getPassword() {
 		return password;
@@ -108,6 +116,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.username = username;
 	}
 
+	@NotNull
 	public URL getApiEndpoint() {
 		return apiEndpoint;
 	}
@@ -140,6 +149,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.organization = organization;
 	}
 
+	@NotBlank
 	public String getSpace() {
 		return space;
 	}
@@ -156,6 +166,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.skipSslValidation = skipSslValidation;
 	}
 
+	@NotNull
 	public Resource getModuleLauncherLocation() {
 		return moduleLauncherLocation;
 	}
@@ -172,6 +183,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.buildpack = buildpack;
 	}
 
+	@Min(0)
 	public int getMemory() {
 		return memory;
 	}
@@ -180,6 +192,7 @@ class CloudFoundryModuleDeployerProperties {
 		this.memory = memory;
 	}
 
+	@Min(0)
 	public int getDisk() {
 		return disk;
 	}
