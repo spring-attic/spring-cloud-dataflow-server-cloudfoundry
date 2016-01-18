@@ -3,6 +3,12 @@ server:
 management:
   contextPath: /management
 
+info:
+  app:
+    name: "@project.artifactId@"
+    description: "@project.description@"
+    version: "@project.version@"
+
 cloudfoundry:
 #  apiEndpoint: https://api.run.pivotal.io  # Location of the CloudFoundry REST API endpoint to use.
 #  domain: cfapps.io                        # The domain to use when mapping routes for applications.
