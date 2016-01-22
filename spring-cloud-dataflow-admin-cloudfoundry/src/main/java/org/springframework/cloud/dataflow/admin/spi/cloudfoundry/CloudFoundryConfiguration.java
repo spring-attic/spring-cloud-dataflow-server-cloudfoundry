@@ -16,8 +16,11 @@
 
 package org.springframework.cloud.dataflow.admin.spi.cloudfoundry;
 
+import javax.sql.DataSource;
+
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.CloudFactory;
 import org.springframework.cloud.dataflow.module.deployer.cloudfoundry.CloudFoundryModuleDeployerConfiguration;
@@ -41,7 +44,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class CloudFoundryConfiguration {
 
 	@Profile("cloud")
-	@AutoConfigureBefore(RedisAutoConfiguration.class)
+	@AutoConfigureBefore({RedisAutoConfiguration.class, DataSourceAutoConfiguration.class})
 	protected static class RedisConfig {
 
 		@Bean
@@ -57,6 +60,11 @@ public class CloudFoundryConfiguration {
 		@Bean
 		RedisConnectionFactory redisConnectionFactory(Cloud cloud) {
 			return cloud.getSingletonServiceConnector(RedisConnectionFactory.class, null);
+		}
+
+		@Bean
+		DataSource dataSource(Cloud cloud) {
+			return cloud.getSingletonServiceConnector(DataSource.class, null);
 		}
 	}
 
