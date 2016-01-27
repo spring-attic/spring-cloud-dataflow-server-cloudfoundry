@@ -16,7 +16,10 @@
 
 package org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
 
+import org.cloudfoundry.client.lib.CloudCredentials;
+import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.dataflow.admin.config.AdminProperties;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
@@ -33,20 +36,32 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CloudFoundryModuleDeployerProperties.class)
 public class CloudFoundryModuleDeployerConfiguration {
 
-	@Autowired
-	private CloudFoundryModuleDeployerProperties properties;
+    @Autowired
+    private CloudFoundryModuleDeployerProperties properties;
 
-	@Autowired
-	private AdminProperties adminProperties;
+    @Autowired
+    private AdminProperties adminProperties;
 
-	@Bean
-	public ModuleDeployer processModuleDeployer() {
-		return new ApplicationModuleDeployer(adminProperties, properties);
-	}
+    @Bean
+    public ModuleDeployer processModuleDeployer(CloudFoundryClient cloudFoundryClient) {
+        return new ApplicationModuleDeployer(adminProperties, cloudFoundryClient, properties);
+    }
 
-	@Bean
-	public ModuleDeployer taskModuleDeployer() {
-		return processModuleDeployer();
-	}
+    @Bean
+    @ConditionalOnMissingBean(CloudFoundryClient.class)
+    public CloudFoundryClient cloudFoundryClient() {
+        CloudCredentials credentials = new CloudCredentials(properties.getUsername(), properties.getPassword());
+        CloudFoundryClient cloudFoundryClient = new CloudFoundryClient(credentials,
+                properties.getApiEndpoint(),
+                properties.getOrganization(),
+                properties.getSpace(),
+                properties.isSkipSslValidation());
+        return cloudFoundryClient;
+    }
+
+    @Bean
+    public ModuleDeployer taskModuleDeployer(CloudFoundryClient cloudFoundryClient) {
+        return new ApplicationModuleDeployer(adminProperties, cloudFoundryClient, properties);
+    }
 
 }

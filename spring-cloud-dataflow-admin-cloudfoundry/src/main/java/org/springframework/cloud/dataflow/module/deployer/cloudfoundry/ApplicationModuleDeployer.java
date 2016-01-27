@@ -65,18 +65,11 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 
 	private final AdminProperties adminProperties;
 
-	public ApplicationModuleDeployer(AdminProperties adminProperties, CloudFoundryModuleDeployerProperties properties) {
-		CloudCredentials credentials = new CloudCredentials(properties.getUsername(), properties.getPassword());
-		CloudFoundryClient cloudFoundryClient = new CloudFoundryClient(credentials,
-				properties.getApiEndpoint(),
-				properties.getOrganization(),
-				properties.getSpace(),
-				properties.isSkipSslValidation());
-		cloudFoundryClient.login();
-
+	public ApplicationModuleDeployer(AdminProperties adminProperties, CloudFoundryClient cloudFoundryClient, CloudFoundryModuleDeployerProperties properties) {
 		this.adminProperties = adminProperties;
 		this.properties = properties;
 		this.cloudFoundryClient = cloudFoundryClient;
+		cloudFoundryClient.login();
 	}
 
 	@Override

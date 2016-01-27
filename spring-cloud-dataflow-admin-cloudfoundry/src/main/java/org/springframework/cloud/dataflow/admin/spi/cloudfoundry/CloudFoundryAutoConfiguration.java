@@ -41,7 +41,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @Configuration
 @Import(CloudFoundryModuleDeployerConfiguration.class)
-public class CloudFoundryConfiguration {
+public class CloudFoundryAutoConfiguration {
 
 	@Profile("cloud")
 	@AutoConfigureBefore({RedisAutoConfiguration.class, DataSourceAutoConfiguration.class})
