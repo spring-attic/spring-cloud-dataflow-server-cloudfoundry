@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.CloudFoundryException;
 import org.cloudfoundry.client.lib.UploadStatusCallback;
@@ -260,7 +259,10 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 		args.put("modules", request.getCoordinates().toString());
 		// inject admin properties (especially module launcher/resolver properties)
 		args.putAll(adminProperties.asStringProperties());
-		args.putAll(ModuleArgumentQualifier.qualifyArgs(0, request.getDefinition().getParameters()));
+		Map<String, String> parameters = new HashMap<>(request.getDefinition().getParameters());
+		// Remove server.port parameter, as the platform assigns a port (and the buildpack sets --server.port for us)
+		parameters.remove("server.port");
+		args.putAll(ModuleArgumentQualifier.qualifyArgs(0, parameters));
 		args.putAll(ModuleArgumentQualifier.qualifyArgs(0, request.getDeploymentProperties()));
 		String jmxDomainName = String.format("%s.%s", request.getDefinition().getGroup(), request.getDefinition().getLabel());
 		args.putAll(ModuleArgumentQualifier.qualifyArgs(0, Collections.singletonMap(JMX_DEFAULT_DOMAIN_KEY, jmxDomainName)));
