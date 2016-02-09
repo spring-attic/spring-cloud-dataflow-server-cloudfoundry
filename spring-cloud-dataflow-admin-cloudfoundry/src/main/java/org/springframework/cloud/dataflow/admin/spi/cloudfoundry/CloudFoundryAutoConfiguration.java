@@ -43,29 +43,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 @Import(CloudFoundryModuleDeployerConfiguration.class)
 public class CloudFoundryAutoConfiguration {
 
-	@Profile("cloud")
-	@AutoConfigureBefore({RedisAutoConfiguration.class, DataSourceAutoConfiguration.class})
-	protected static class RedisConfig {
-
-		@Bean
-		public Cloud cloud(CloudFactory cloudFactory) {
-			return cloudFactory.getCloud();
-		}
-
-		@Bean
-		public CloudFactory cloudFactory() {
-			return new CloudFactory();
-		}
-
-		@Bean
-		RedisConnectionFactory redisConnectionFactory(Cloud cloud) {
-			return cloud.getSingletonServiceConnector(RedisConnectionFactory.class, null);
-		}
-
-		@Bean
-		DataSource dataSource(Cloud cloud) {
-			return cloud.getSingletonServiceConnector(DataSource.class, null);
-		}
-	}
+	//redis and datasource will come from auto-reconfiguration on CF
 
 }
