@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.dataflow.org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
+package org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
 
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.junit.Test;
