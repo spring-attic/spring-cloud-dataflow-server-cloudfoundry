@@ -5,7 +5,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-cloud-starter-dataflow-server-cloudfoundry</artifactId>
 	<url>http://projects.spring.io/spring-cloud/</url>
-	<packaging>pom</packaging>
 	<organization>
 		<name>Pivotal Software, Inc.</name>
 		<url>http://www.spring.io</url>
