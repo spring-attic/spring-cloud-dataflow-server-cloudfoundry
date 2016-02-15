@@ -10,7 +10,6 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath />  <!-- lookup parent from repository -->
 	</parent>
-	<name>spring-cloud-dataflow-admin-cloudfoundry-docs</name>
 	<description>Spring Cloud Data Flow Admin CloudFoundry</description>
 	<properties>
 		<main.basedir>${basedir}/..</main.basedir>
