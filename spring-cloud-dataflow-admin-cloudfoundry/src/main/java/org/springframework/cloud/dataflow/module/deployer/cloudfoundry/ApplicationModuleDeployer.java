@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.CloudFoundryException;
 import org.cloudfoundry.client.lib.UploadStatusCallback;
@@ -320,7 +319,9 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 			String oneArg = "--" + entry.getKey() + "=" + quoteValue(entry.getValue());
 			sb.append(bashEscape(oneArg)).append(' ');
 		}
-		String asYaml = new Yaml().dump(Collections.singletonMap("arguments", sb.toString()));
+		// The buildpack uses bash "eval", so need to protect everything with quotes.
+		String wrappedInQuotes = "'" + sb.toString() + "'";
+		String asYaml = new Yaml().dump(Collections.singletonMap("arguments", wrappedInQuotes));
 
 		env.put("JBP_CONFIG_JAVA_MAIN", asYaml);
 		return env;
