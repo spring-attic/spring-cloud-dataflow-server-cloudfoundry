@@ -19,19 +19,4 @@
 		<module>spring-cloud-dataflow-server-cloudfoundry</module>
 		<module>spring-cloud-starter-dataflow-server-cloudfoundry</module>
 	</modules>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-dataflow-server-cloudfoundry</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dataflow-deployer-cloudfoundry</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </project>
