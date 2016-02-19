@@ -4,10 +4,10 @@
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-dataflow-deployer-cloudfoundry</artifactId>
 	<packaging>jar</packaging>
-	<description>Data Flow Admin for Cloud Foundry</description>
+	<description>Data Flow Server for Cloud Foundry</description>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-dataflow-admin-cloudfoundry-parent</artifactId>
+		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>

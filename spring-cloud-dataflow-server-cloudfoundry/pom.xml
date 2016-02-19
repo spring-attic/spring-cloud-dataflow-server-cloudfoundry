@@ -8,7 +8,7 @@
 	<description>Clound Foundry Data Flow Server</description>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-dataflow-admin-cloudfoundry-parent</artifactId>
+		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 	</parent>
 	<properties>

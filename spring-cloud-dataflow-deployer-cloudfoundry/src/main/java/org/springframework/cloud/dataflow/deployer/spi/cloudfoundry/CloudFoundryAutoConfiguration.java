@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.dataflow.admin.spi.cloudfoundry;
+package org.springframework.cloud.dataflow.deployer.spi.cloudfoundry;
 
 import javax.sql.DataSource;
 
