@@ -25,7 +25,7 @@ security:
 
 spring:
   application:
-    name: spring-cloud-dataflow-admin
+    name: spring-cloud-dataflow-server-cloudfoundry
   cloud:
     config:
       uri: http://localhost:8888
