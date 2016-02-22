@@ -49,11 +49,5 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>
