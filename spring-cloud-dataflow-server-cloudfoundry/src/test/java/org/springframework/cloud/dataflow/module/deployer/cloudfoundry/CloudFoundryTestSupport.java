@@ -20,6 +20,7 @@ import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.test.junit.AbstractExternalResourceTestSupport;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,7 +36,7 @@ public class CloudFoundryTestSupport extends AbstractExternalResourceTestSupport
 
 	private ConfigurableApplicationContext context;
 
-	protected CloudFoundryTestSupport(String resourceDescription) {
+	protected CloudFoundryTestSupport() {
 		super("CLOUDFOUNDRY");
 	}
 
@@ -51,8 +52,9 @@ public class CloudFoundryTestSupport extends AbstractExternalResourceTestSupport
 	}
 
 	@Configuration
+	@EnableAutoConfiguration
 	@EnableConfigurationProperties(CloudFoundryModuleDeployerProperties.class)
-	private static class Config {
+	public static class Config {
 
 		@Bean
 		public CloudFoundryClient cloudFoundryClient(CloudFoundryModuleDeployerProperties properties) {

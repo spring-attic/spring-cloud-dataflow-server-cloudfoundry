@@ -16,13 +16,25 @@
 
 package org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
 
+import org.junit.ClassRule;
+
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.dataflow.module.deployer.test.AbstractModuleDeployerTests;
 
 /**
+ * Runs integration tests for {@link ApplicationModuleDeployer}, using the production configuration,
+ * that may be configured via {@link CloudFoundryModuleDeployerProperties}.
  *
+ * Tests are only run if a successful connection can be made at startup.
+ *
+ * @author Eric Bottard
  */
 @SpringApplicationConfiguration(classes = CloudFoundryModuleDeployerConfiguration.class)
+@IntegrationTest("localRepository=fff")
 public class ApplicationModuleDeployerTests extends AbstractModuleDeployerTests {
+
+	@ClassRule
+	public static CloudFoundryTestSupport cfAvailable = new CloudFoundryTestSupport();
 
 }
