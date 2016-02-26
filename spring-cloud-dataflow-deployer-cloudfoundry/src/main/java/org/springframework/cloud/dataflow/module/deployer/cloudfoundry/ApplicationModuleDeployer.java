@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.CloudFoundryException;
 import org.cloudfoundry.client.lib.UploadStatusCallback;
@@ -36,7 +38,6 @@ import org.cloudfoundry.client.lib.domain.InstancesInfo;
 import org.cloudfoundry.client.lib.domain.Staging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import org.springframework.cloud.dataflow.core.ModuleDeploymentId;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentRequest;
@@ -317,26 +318,14 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 	private Map<String, String> toEnvironmentVariables(HashMap<String, String> args) {
 
 		Map<String, String> env = new HashMap<>(args.size());
-		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<String, String> entry : args.entrySet()) {
-			String oneArg = "--" + entry.getKey() + "=" + quoteValue(entry.getValue());
-			sb.append(bashEscape(oneArg)).append(' ');
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			env.put("SPRING_APPLICATION_JSON", objectMapper.writeValueAsString(args));
 		}
-		// The buildpack uses bash "eval", so need to protect everything with quotes.
-		String wrappedInQuotes = "'" + sb.toString() + "'";
-		String asYaml = new Yaml().dump(Collections.singletonMap("arguments", wrappedInQuotes));
-
-		env.put("JBP_CONFIG_JAVA_MAIN", asYaml);
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 		return env;
-	}
-
-	private static String quoteValue(String original) {
-		return original.contains(" ") ? "\"" + original + "\"" : original;
-	}
-
-	private static String bashEscape(String original) {
-		// Adapted from http://ruby-doc.org/stdlib-1.9.3/libdoc/shellwords/rdoc/Shellwords.html#method-c-shellescape
-		return original.replaceAll("([^A-Za-z0-9_\\-.,:\\/@\\n])", "\\\\$1").replaceAll("\n", "'\\\\n'");
 	}
 
 	/**
