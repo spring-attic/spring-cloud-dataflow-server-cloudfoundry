@@ -63,7 +63,7 @@ class CloudFoundryModuleDeployerProperties {
 	/**
 	 * Location of the ModuleLauncher uber-jar to be uploaded.
 	 */
-	private Resource moduleLauncherLocation = new ClassPathResource("spring-cloud-stream-module-launcher.jar");
+	private Resource moduleLauncherLocation = new ClassPathResource("spring-cloud-dataflow-app-launcher.jar");
 
 	/**
 	 * Location of the CloudFoundry REST API endpoint to use.
