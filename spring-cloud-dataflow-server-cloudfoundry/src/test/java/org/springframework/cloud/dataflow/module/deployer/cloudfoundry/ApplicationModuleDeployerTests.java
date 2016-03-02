@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.dataflow.module.deployer.cloudfoundry;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 
 import org.springframework.boot.test.IntegrationTest;
@@ -31,8 +32,43 @@ import org.springframework.cloud.dataflow.module.deployer.test.AbstractModuleDep
  * @author Eric Bottard
  */
 @SpringApplicationConfiguration(classes = CloudFoundryModuleDeployerConfiguration.class)
-@IntegrationTest("localRepository=fff")
+@IntegrationTest
 public class ApplicationModuleDeployerTests extends AbstractModuleDeployerTests {
+
+
+	/**
+	 * Execution environments may override this default value to have tests wait longer for a deployment, for example if
+	 * running in an environment that is known to be slow.
+	 */
+	protected double timeoutMultiplier = 1.0D;
+
+	@Before
+	public void init() {
+		String multiplier = System.getenv("CF_DEPLOYER_TIMEOUT_MULTIPLIER");
+		if (multiplier != null) {
+			timeoutMultiplier = Double.parseDouble(multiplier);
+		}
+	}
+
+
+	/**
+	 * Return the timeout to use for repeatedly querying a module while it is being deployed.
+	 * Default value is one minute, being queried every 5 seconds.
+	 */
+	protected Attempts deploymentTimeout() {
+		return new Attempts(12, (int) (5000 * timeoutMultiplier));
+	}
+
+	/**
+	 * Return the timeout to use for repeatedly querying a module while it is being un-deployed.
+	 * Default value is one minute, being queried every 5 seconds.
+	 */
+	protected Attempts undeploymentTimeout() {
+		return new Attempts(20, (int) (5000 * timeoutMultiplier));
+	}
+
+
+
 
 	@ClassRule
 	public static CloudFoundryTestSupport cfAvailable = new CloudFoundryTestSupport();
