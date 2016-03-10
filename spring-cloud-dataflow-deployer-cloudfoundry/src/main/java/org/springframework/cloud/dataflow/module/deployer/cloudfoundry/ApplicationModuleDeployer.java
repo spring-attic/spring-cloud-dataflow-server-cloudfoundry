@@ -39,12 +39,12 @@ import org.cloudfoundry.client.lib.domain.Staging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.cloud.dataflow.app.resolver.MavenProperties;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentId;
 import org.springframework.cloud.dataflow.core.ModuleDeploymentRequest;
 import org.springframework.cloud.dataflow.module.ModuleStatus;
 import org.springframework.cloud.dataflow.module.deployer.ModuleArgumentQualifier;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
-import org.springframework.cloud.dataflow.server.config.DataFlowServerProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
@@ -63,10 +63,10 @@ class ApplicationModuleDeployer implements ModuleDeployer {
 
 	private final CloudFoundryModuleDeployerProperties properties;
 
-	private final DataFlowServerProperties serverProperties;
+	private final MavenProperties serverProperties;
 
-	public ApplicationModuleDeployer(DataFlowServerProperties serverProperties, CloudFoundryClient cloudFoundryClient, CloudFoundryModuleDeployerProperties properties) {
-		this.serverProperties = serverProperties;
+	public ApplicationModuleDeployer(MavenProperties mavenProperties, CloudFoundryClient cloudFoundryClient, CloudFoundryModuleDeployerProperties properties) {
+		this.serverProperties = mavenProperties;
 		this.properties = properties;
 		this.cloudFoundryClient = cloudFoundryClient;
 		cloudFoundryClient.login();

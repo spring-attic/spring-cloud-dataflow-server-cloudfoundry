@@ -19,15 +19,16 @@ import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.cloud.dataflow.server.config.DataFlowServerProperties;
+import org.springframework.cloud.dataflow.app.resolver.MavenProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {DataFlowServerProperties.class,
+@SpringApplicationConfiguration(classes = {MavenProperties.class,
         ContextLoadsTests.MockCloudFoundryClientConfig.class})
 @IntegrationTest({"cloudfoundry.space=test", "cloudfoundry.apiEndpoint=http://example.com"})
 public class ContextLoadsTests {

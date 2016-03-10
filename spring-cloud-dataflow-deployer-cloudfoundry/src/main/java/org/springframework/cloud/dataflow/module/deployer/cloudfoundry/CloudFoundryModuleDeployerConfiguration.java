@@ -22,8 +22,8 @@ import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.dataflow.app.resolver.MavenProperties;
 import org.springframework.cloud.dataflow.module.deployer.ModuleDeployer;
-import org.springframework.cloud.dataflow.server.config.DataFlowServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,14 +34,14 @@ import org.springframework.context.annotation.Configuration;
  * @author Eric Bottard
  */
 @Configuration
-@EnableConfigurationProperties({CloudFoundryModuleDeployerProperties.class, DataFlowServerProperties.class})
+@EnableConfigurationProperties({CloudFoundryModuleDeployerProperties.class, MavenProperties.class})
 public class CloudFoundryModuleDeployerConfiguration {
 
     @Autowired
     private CloudFoundryModuleDeployerProperties properties;
 
     @Autowired
-    private DataFlowServerProperties serverProperties;
+    private MavenProperties serverProperties;
 
     @Bean
     public ModuleDeployer processModuleDeployer(CloudFoundryClient cloudFoundryClient) {
