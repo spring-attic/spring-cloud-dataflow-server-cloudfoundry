@@ -13,6 +13,7 @@
 	</parent>
 	<properties>
 		<start-class>org.springframework.cloud.dataflow.server.cloudfoundry.CloudFoundryDataFlowServer</start-class>
+		<reactor.version>2.5.0.M2</reactor.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,6 +33,16 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<!-- (re)Force reactor version -->
+			<dependency>
+				<groupId>io.projectreactor</groupId>
+				<artifactId>reactor-core</artifactId>
+				<version>${reactor.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<resources>
 			<resource>
