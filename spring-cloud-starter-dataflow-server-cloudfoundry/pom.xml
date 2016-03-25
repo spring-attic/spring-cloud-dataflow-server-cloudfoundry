@@ -14,11 +14,30 @@
 		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 	</parent>
+	<dependencyManagement>
+		<dependencies>
+			<!-- (re)Force reactor version -->
+			<dependency>
+				<groupId>io.projectreactor</groupId>
+				<artifactId>reactor-core</artifactId>
+				<version>${reactor.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dataflow-deployer-cloudfoundry</artifactId>
-			<version>${project.version}</version>
+			<artifactId>spring-cloud-dataflow-server-core</artifactId>
+			<version>${spring-cloud-dataflow.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>spring-cloud-cloudfoundry-deployer</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<version>${spring-cloud-cloudfoundry-deployer.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 	</dependencies>
 </project>
