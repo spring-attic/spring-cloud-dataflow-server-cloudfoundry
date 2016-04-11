@@ -14,16 +14,6 @@
 		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 	</parent>
-	<dependencyManagement>
-		<dependencies>
-			<!-- (re)Force reactor version -->
-			<dependency>
-				<groupId>io.projectreactor</groupId>
-				<artifactId>reactor-core</artifactId>
-				<version>${reactor.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

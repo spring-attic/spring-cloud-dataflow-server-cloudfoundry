@@ -32,16 +32,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<!-- (re)Force reactor version -->
-			<dependency>
-				<groupId>io.projectreactor</groupId>
-				<artifactId>reactor-core</artifactId>
-				<version>${reactor.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<build>
 		<resources>
 			<resource>
