@@ -20,7 +20,6 @@
 	</properties>
 
 	<modules>
-		<module>spring-cloud-dataflow-deployer-cloudfoundry</module>
 		<module>spring-cloud-dataflow-server-cloudfoundry-docs</module>
 		<module>spring-cloud-dataflow-server-cloudfoundry</module>
 		<module>spring-cloud-starter-dataflow-server-cloudfoundry</module>
