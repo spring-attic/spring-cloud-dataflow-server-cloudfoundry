@@ -1,54 +1,66 @@
 [[getting-started]]
-= Deploying on Cloud Foundry
+== Deploying on Cloud Foundry
 
-NOTE: The Cloud Foundry SPI implementation is a separate link:https://github.com/spring-cloud/spring-cloud-dataflow-admin-cloudfoundry[project].
+Spring Cloud Data Flow can be used to deploy modules in a Cloud Foundry environment. When doing so, the
+server application can either run itself on Cloud Foundry, or on another installation (e.g. a simple laptop).
 
-Spring Cloud Data Flow can be used to deploy modules in a Cloud Foundry environment. When doing so, the link:https://github.com/spring-cloud/spring-cloud-dataflow-admin-cloudfoundry/tree/master/spring-cloud-dataflow-server-cloudfoundry[Server] application can either run itself on Cloud Foundry, or on another installation (e.g. a simple laptop).
+The required configuration amounts to the same in either case, and is merely related to providing credentials to the
+Cloud Foundry instance so that the server can spawn applications itself. Any Spring Boot compatible configuration
+mechanism can be used (passing program arguments, editing configuration files before building the application, using
+link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.),
+although some may prove more practicable than others when running _on_ Cloud Foundry.
 
-The required configuration amounts to the same in either case, and is merely related to providing credentials to the Cloud Foundry instance so that the server can spawn applications itself. Any Spring Boot compatible configuration mechanism can be used (passing program arguments, editing configuration files before building the application, using link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.), although some may prove more practicable than others when running _on_ Cloud Foundry.
-
-== Provision a redis service instance on Cloud Foundry.
-Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup. For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
+=== Provision a redis service instance on Cloud Foundry.
+Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
+For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
 ```
 cf create-service rediscloud 30mb redis
 ```
 
-== Download the Spring Cloud Data Flow Admin and Shell apps:
+=== Download the Spring Cloud Data Flow Server and Shell apps:
 
+[subs=attributes]
 ```
-wget http://repo.spring.io/snapshot/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/1.0.0.BUILD-SNAPSHOT/spring-cloud-dataflow-server-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar
-wget http://repo.spring.io/snapshot/org/springframework/cloud/spring-cloud-dataflow-shell/1.0.0.BUILD-SNAPSHOT/spring-cloud-dataflow-shell-1.0.0.BUILD-SNAPSHOT.jar
+wget http://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/{project-version}/spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
 
-You can either deploy the server application on Cloud Foundry itself or on your local machine.  The following two sections explain each way of running the server.
+You can either deploy the server application on Cloud Foundry itself or on your local machine.
+The following two sections explain each way of running the server.
 
-== Deploying Admin app on Cloud Foundry
+[[running-on-cloudfoundry]]
+=== Deploying the Server app on Cloud Foundry
 
-Push the server application on Cloud Foundry, configure it (see below) and start it
+Push the server application on Cloud Foundry, configure it (see below) and start it.
 
-NOTE: You must use a unique name for your app; an app with the same name in the same organization will cause your deployment to fail
+NOTE: You must use a unique name for your app; an app with the same name in the same organization will cause your
+deployment to fail
 
+[subs=attributes]
 ```
-cf push s-c-dataflow-server --no-start -p spring-cloud-dataflow-server-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar
+cf push s-c-dataflow-server --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 cf bind-service s-c-dataflow-server redis
 ```
 
-NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the app.
+NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
+applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the app.
 
-Now we can configure the app. This configuration is for Pivotal Web Services. You need to fill in {org}, \{space}, {email} and {password} before running these commands.
+Now we can configure the app. The following configuration is for Pivotal Web Services. You need to fill in \{org}, \{space},
+\{email} and \{password} before running these commands.
 
-NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed certs (e.g. in development). Do not use for production.
+NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
+certs (e.g. in development). Do not use for production.
 
 ```
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_API_ENDPOINT https://api.run.pivotal.io
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_ORGANIZATION {org}
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SPACE {space}
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_DOMAIN cfapps.io
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SERVICES redis
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_USERNAME {email}
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_PASSWORD {password}
-cf set-env s-c-dataflow-server SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SKIP_SSL_VALIDATION false
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT https://api.run.pivotal.io
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION {org}
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES redis
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
+cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
 We are now ready to start the app.
@@ -59,40 +71,44 @@ cf start s-c-dataflow-server
 
 Alternatively, you can run the Admin application locally on your machine which is described in the next section.
 
-== Running Admin app locally
+=== Running the Server app locally
 
-To run the server application locally, targeting your Cloud Foundry installation, you you need to configure the application either by passing in command line arguments (see below) or setting a number of environment variables.
+To run the server application locally, targeting your Cloud Foundry installation, you you need to configure the
+application either by passing in command line arguments (see below) or setting a number of environment variables.
 
 To use environment variables set the following:
 
 ```
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_API_ENDPOINT=https://api.run.pivotal.io
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_ORGANIZATION={org}
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SPACE={space}
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_DOMAIN=cfapps.io
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SERVICES=redis
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_USERNAME={email}
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_PASSWORD={password}
-export SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SKIP_SSL_VALIDATION=false
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT=https://api.run.pivotal.io
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION={org}
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE={space}
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN=cfapps.io
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES=redis
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME={email}
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
 ```
 
-You need to fill in {org}, \{space}, {email} and {password} before running these commands.
+You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands.
 
-NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed certs (e.g. in development). Do not use for production.
+NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
+certs (e.g. in development). Do not use for production.
 
 Now we are ready to start the server application:
 
+[subs=attributes]
 ```
-java -jar spring-cloud-dataflow-server-cloudfoundry-1.0.0.BUILD-SNAPSHOT.jar [--option1=value1] [--option2=value2] [etc.]
+java -jar spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar [--option1=value1] [--option2=value2] [etc.]
 ```
 
-[start=4]
-== Running Spring Cloud Data Flow Shell locally
+=== Running Spring Cloud Data Flow Shell locally
 
-4. run the shell and optionally target the Admin application if not running on the same host (will typically be the case if deployed on Cloud Foundry as **3a.**)
+Run the shell and optionally target the Admin application if not running on the same host (will typically be the case if
+deployed on Cloud Foundry as explained xref:running-on-cloudfoundry[here])
 
+[subs=attributes]
 ```
-$ java -jar spring-cloud-dataflow-shell-1.0.0.BUILD-SNAPSHOT.jar
+$ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
 
 ```
@@ -101,42 +117,43 @@ Successfully targeted http://s-c-dataflow-server.cfapps.io
 dataflow:>
 ```
 
-== Spring Cloud Data Flow Admin app configuration settings for Cloud Foundry
+== Configuration Reference
 
-The following pieces of configuration must be provided, e.g. by setting variables in the apps environment, or passing variables on the Java invocation:
+The following pieces of configuration must be provided, e.g. by setting variables in the apps environment, or passing
+variables on the Java invocation:
 
 ```
 # Default values cited after the equal sign.
 # Example values, typical for Pivotal Web Services, cited as a comment
 
 # url of the CF API (used when using cf login -a for example), e.g. https://api.run.pivotal.io
-# (for setting env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_API_ENDPOINT)
-spring.cloud.cloudfoundry.deployer.apiEndpoint=
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT)
+spring.cloud.deployer.cloudfoundry.apiEndpoint=
 
 # name of the organization that owns the space above, e.g. youruser-org
-# (For Setting Env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_ORGANIZATION)
-spring.cloud.cloudfoundry.deployer.organization=
+# (For Setting Env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION)
+spring.cloud.deployer.cloudfoundry.organization=
 
 # name of the space into which modules will be deployed
-# (for setting env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SPACE)
-spring.cloud.cloudfoundry.deployer.space=<same space as server when running on CF, or 'development'>
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE)
+spring.cloud.deployer.cloudfoundry.space=<same space as server when running on CF, or 'development'>
 
 # the root domain to use when mapping routes, e.g. cfapps.io
-# (for setting env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_DOMAIN)
-spring.cloud.cloudfoundry.deployer.domain=
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN)
+spring.cloud.deployer.cloudfoundry.domain=
 
 # Comma separated set of service instance names to bind to the module.
 # Amongst other things, this should include a service that will be used
 # for Spring Cloud Stream binding
-# (for setting env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SERVICES)
-spring.cloud.cloudfoundry.deployer.services=redis
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES)
+spring.cloud.deployer.cloudfoundry.services=redis
 
 # username and password of the user to use to create apps (modules)
-# (for setting env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_USERNAME and SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_PASSWORD)
-spring.cloud.cloudfoundry.deployer.username=
-spring.cloud.cloudfoundry.deployer.password=
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD)
+spring.cloud.deployer.cloudfoundry.username=
+spring.cloud.deployer.cloudfoundry.password=
 
 # Whether to allow self-signed certificates during SSL validation
-# (for setting env var use SPRING_CLOUD_CLOUDFOUNDRY_DEPLOYER_SKIP_SSL_VALIDATION)
-spring.cloud.cloudfoundry.deployer.skipSslValidation=false
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION)
+spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 ```
