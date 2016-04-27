@@ -2,4 +2,3 @@
 = Appendices
 
 include::building.adoc[]
-include::contributing.adoc[]
