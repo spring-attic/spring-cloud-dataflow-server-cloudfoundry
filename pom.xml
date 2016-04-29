@@ -9,14 +9,14 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-parent</artifactId>
-		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<version>1.0.0.M3</version>
 		<relativePath/>
 	</parent>
 
 	<properties>
-		<spring-cloud-dataflow.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-dataflow.version>
-		<spring-cloud-deployer-cloudfoundry.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-deployer-cloudfoundry.version>
-		<reactor.version>2.5.0.BUILD-SNAPSHOT</reactor.version>
+		<spring-cloud-dataflow.version>1.0.0.M3</spring-cloud-dataflow.version>
+		<spring-cloud-deployer-cloudfoundry.version>1.0.0.M1</spring-cloud-deployer-cloudfoundry.version>
+		<reactor.version>2.5.0.M3</reactor.version>
 	</properties>
 
 	<modules>
