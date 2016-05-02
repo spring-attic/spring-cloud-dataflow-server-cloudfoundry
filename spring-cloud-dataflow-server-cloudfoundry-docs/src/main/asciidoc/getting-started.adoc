@@ -18,6 +18,14 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service rediscloud 30mb redis
 ```
 
+=== Provision a rabbit service instance on Cloud Foundry.
+Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
+For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
+
+```
+cf create-service cloudamqp lemur rabbit
+```
+
 === Download the Spring Cloud Data Flow Server and Shell apps:
 
 [subs=attributes]
@@ -39,8 +47,9 @@ deployment to fail
 
 [subs=attributes]
 ```
-cf push s-c-dataflow-server --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
-cf bind-service s-c-dataflow-server redis
+cf push dataflow-server --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+cf bind-service dataflow-server redis
+cf bind-service dataflow-server rabbit
 ```
 
 NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
@@ -53,20 +62,20 @@ NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundr
 certs (e.g. in development). Do not use for production.
 
 ```
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT https://api.run.pivotal.io
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION {org}
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES redis
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
-cf set-env s-c-dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT https://api.run.pivotal.io
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION {org}
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES redis,rabbit
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
 We are now ready to start the app.
 
 ```
-cf start s-c-dataflow-server
+cf start dataflow-server
 ```
 
 Alternatively, you can run the Admin application locally on your machine which is described in the next section.
@@ -83,7 +92,7 @@ export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT=https://api.run.pivotal.i
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION={org}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE={space}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN=cfapps.io
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES=redis
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES=redis,rabbit
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME={email}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
@@ -112,8 +121,8 @@ $ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
 
 ```
-server-unknown:>dataflow config server http://s-c-dataflow-server.cfapps.io
-Successfully targeted http://s-c-dataflow-server.cfapps.io
+server-unknown:>dataflow config server http://dataflow-server.cfapps.io
+Successfully targeted http://dataflow-server.cfapps.io
 dataflow:>
 ```
 
@@ -146,7 +155,7 @@ spring.cloud.deployer.cloudfoundry.domain=
 # Amongst other things, this should include a service that will be used
 # for Spring Cloud Stream binding
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES)
-spring.cloud.deployer.cloudfoundry.services=redis
+spring.cloud.deployer.cloudfoundry.services=redis,rabbit
 
 # username and password of the user to use to create apps (modules)
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD)
