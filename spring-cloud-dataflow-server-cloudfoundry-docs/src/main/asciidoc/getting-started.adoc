@@ -10,7 +10,9 @@ mechanism can be used (passing program arguments, editing configuration files be
 link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.),
 although some may prove more practicable than others when running _on_ Cloud Foundry.
 
-=== Provision a redis service instance on Cloud Foundry.
+NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-registry[application registry] in Spring Cloud Data Flow's Cloud Foundry server is empty. It is intentionally designed to allow users to have the flexibility of http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/_dsl_syntax.html#_register_a_stream_app[choosing and registering] applications, as they find appropriate for the given use-case requirement. Depending on the message-binder of choice, users can register between http://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[RabbitMQ or Apache Kafka] based maven artifacts.
+
+=== Provision a Redis service instance on Cloud Foundry.
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
@@ -18,7 +20,7 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service rediscloud 30mb redis
 ```
 
-=== Provision a rabbit service instance on Cloud Foundry.
+=== Provision a Rabbit service instance on Cloud Foundry.
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
