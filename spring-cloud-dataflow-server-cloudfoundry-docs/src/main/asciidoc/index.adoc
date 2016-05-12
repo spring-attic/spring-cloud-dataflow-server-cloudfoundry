@@ -8,7 +8,7 @@ Eric Bottard
 :icons: font
 :hide-uri-scheme:
 
-# Since the core projects will be at different release cadences, the following tokens need changed at the time of every release
+// Since the core projects will be at different release cadences, the following tokens need changed at the time of every release
 :scdf-core-version: current-SNAPSHOT
 :scst-core-version: current-SNAPSHOT
 :sct-core-version: current-SNAPSHOT
