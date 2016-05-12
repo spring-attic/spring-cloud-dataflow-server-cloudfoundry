@@ -4,13 +4,13 @@ Spring Cloud Data Flow is a cloud-native programming and operating model for com
 
 The Spring Cloud Data Flow architecture is composed of several microservice projects, where the core specifications for streaming and batch data pipelines builds upon http://cloud.spring.io/spring-cloud-stream/[Spring Cloud Stream] and http://cloud.spring.io/spring-cloud-task/[Spring Cloud Task] projects, respectively.
 
-For more details about the core architecture components and the supported features, please review Spring Cloud Data Flow's http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/[core reference guide].
+For more details about the core architecture components and the supported features, please review Spring Cloud Data Flow's http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/[core reference guide].
 
 [[spring-cloud-stream-overview]]
 == Overview: Spring Cloud Stream
 Spring Cloud Stream is a framework for building message-driven microservice applications. Spring Cloud Stream builds upon Spring Boot to create standalone, production-grade Spring applications, and uses Spring Integration to provide connectivity to message brokers. It provides opinionated configuration of middleware from several vendors, introducing the concepts of persistent publish-subscribe semantics, consumer groups, and partitions.
 
-For more details about the core framework components and the supported features, please review Spring Cloud Stream's http://docs.spring.io/spring-cloud-stream/docs/current-SNAPSHOT/reference/htmlsingle/[reference guide].
+For more details about the core framework components and the supported features, please review Spring Cloud Stream's http://docs.spring.io/spring-cloud-stream/docs/{scst-core-version}/reference/htmlsingle/[reference guide].
 
 There's a rich ecosystem of Spring Cloud Stream Application-Starters that can be used either as standalone data microservice applications or in Spring Cloud Data Flow. For convenience, we have generated RabbitMQ and Apache Kafka variants of these application-starters that are available for use from http://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[Maven Repo] and https://hub.docker.com/r/springcloudstream/[Docker Hub] as maven artifacts and docker images, respectively.
 
@@ -21,6 +21,6 @@ NOTE: This feature is actively being developed and it is yet to be supported in 
 
 Spring Cloud Task makes it easy to create short-lived microservices. We provide capabilities that allow short-lived JVM processes to be executed on demand in a production environment.
 
-For more details about the core framework components and the supported features, please review Spring Cloud Task's http://docs.spring.io/spring-cloud-task/current-SNAPSHOT/reference/htmlsingle/[reference guide].
+For more details about the core framework components and the supported features, please review Spring Cloud Task's http://docs.spring.io/spring-cloud-task/{sct-core-version}/reference/htmlsingle/[reference guide].
 
 There's a rich ecosystem of Spring Cloud Task Application-Starters that can be used either as standalone data microservice applications or in Spring Cloud Data Flow. For convenience, the generated application-starters are available for use from http://repo.spring.io/libs-snapshot/org/springframework/cloud/task/app/[Maven Repo].
