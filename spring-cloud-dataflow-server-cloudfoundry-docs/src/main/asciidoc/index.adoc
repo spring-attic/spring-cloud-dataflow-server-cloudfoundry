@@ -14,7 +14,9 @@ Eric Bottard
 [[overview]]
 = Spring Cloud Data Flow for Cloud Foundry
 
-This project provides support for deploying Spring Cloud Stream and Spring Cloud Task apps to Cloud Foundry.
+This project provides support for deploying Spring Cloud Stream and Spring Cloud Task applications to Cloud Foundry.
+
+include::overview.adoc[]
 
 include::getting-started.adoc[]
 
