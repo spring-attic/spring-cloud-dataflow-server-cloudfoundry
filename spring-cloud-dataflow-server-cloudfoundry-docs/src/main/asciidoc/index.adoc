@@ -12,6 +12,8 @@ Eric Bottard
 :scdf-core-version: current-SNAPSHOT
 :scst-core-version: current-SNAPSHOT
 :sct-core-version: current-SNAPSHOT
+:scst-starters-core-version: current-SNAPSHOT
+:sct-starters-core-version: current-SNAPSHOT
 
 :dataflow-asciidoc: https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/master/spring-cloud-dataflow-docs/src/main/asciidoc
 // ======================================================================================
