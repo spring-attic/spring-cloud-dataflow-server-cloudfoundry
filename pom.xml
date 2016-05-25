@@ -14,7 +14,7 @@
 
 	<properties>
 		<spring-cloud-dataflow.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-dataflow.version>
-		<spring-cloud-deployer-cloudfoundry.version>1.0.0.M1</spring-cloud-deployer-cloudfoundry.version>
+		<spring-cloud-deployer-cloudfoundry.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-deployer-cloudfoundry.version>
 		<reactor.version>2.5.0.M3</reactor.version>
 	</properties>
 
