@@ -74,6 +74,12 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
+If you'd prefer using an offline buildpack, you can override the default buildpack version via the following configuration.
+
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_BUILDPACK java_buildpack_offline
+```
+
 We are now ready to start the app.
 
 ```
