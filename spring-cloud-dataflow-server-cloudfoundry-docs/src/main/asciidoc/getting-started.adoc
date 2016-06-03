@@ -74,6 +74,16 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
+You can also set other optional properties for deployment to Cloud Foundry.
+
+You can set the buildpack that will be used to deploy the application.  For example, to use the Java offline buildback, set the following environment variable
+
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_BUILDPACK java_buildpack_offline
+```
+
+The default memory and disk sizes for a deployed application can also be configured. By default they are 1024 MB memory and 1024 MB disk.  Thse are controlled by setting an integer value, representing the number of MB, to the following properties, SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_MEMORY and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DISK.  The default number of instances to deploy is set to 1, but can be overridden using with the SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_INSTANCES property.  All these properties are `@ConfigurationProperties` of the Cloud Foundry deployer.  See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/master/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeployerProperties.java[CloudFoundryDeployerProperties.java] for more information.
+
 We are now ready to start the app.
 
 ```
