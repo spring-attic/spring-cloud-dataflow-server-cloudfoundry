@@ -140,8 +140,9 @@ dataflow:>
 
 == Configuration Reference
 
-The following pieces of configuration must be provided, e.g. by setting variables in the apps environment, or passing
-variables on the Java invocation:
+The following pieces of configuration must be provided.  These are Spring Boot @ConfigurationProperties so you can set
+them as environment variables or by any other means that Spring Boot supports.  Here is a listing in environment
+variable format as that is an easy way to get started configuring Boot applications in Cloud Foundry.
 
 ```
 # Default values cited after the equal sign.
@@ -178,3 +179,7 @@ spring.cloud.deployer.cloudfoundry.password=
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION)
 spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 ```
+
+Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
+`spring.cloud.deployer.cloudfoundry.memory`, and `spring.cloud.deployer.cloudfoundry.disk` as part of an individual
+deployment request.
