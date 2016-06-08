@@ -22,6 +22,14 @@ cloudfoundry:
 security:
   basic:
     enabled: false
+#  oauth2:
+#    client:
+#      client-id: myclient
+#      client-secret: mysecret
+#      access-token-uri: http://127.0.0.1:9999/oauth/token
+#      user-authorization-uri: http://127.0.0.1:9999/oauth/authorize
+#    resource:
+#      user-info-uri: http://127.0.0.1:9999/me
 
 spring:
   application:
