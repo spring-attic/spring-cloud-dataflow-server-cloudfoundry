@@ -64,8 +64,8 @@ NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundr
 certs (e.g. in development). Do not use for production.
 
 ```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT https://api.run.pivotal.io
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION {org}
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL https://api.run.pivotal.io
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG {org}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES redis,rabbit
@@ -100,8 +100,8 @@ application either by passing in command line arguments (see below) or setting a
 To use environment variables set the following:
 
 ```
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT=https://api.run.pivotal.io
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION={org}
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL=https://api.run.pivotal.io
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG={org}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE={space}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN=cfapps.io
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES=redis,rabbit
@@ -149,12 +149,12 @@ variable format as that is an easy way to get started configuring Boot applicati
 # Example values, typical for Pivotal Web Services, cited as a comment
 
 # url of the CF API (used when using cf login -a for example), e.g. https://api.run.pivotal.io
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_API_ENDPOINT)
-spring.cloud.deployer.cloudfoundry.apiEndpoint=
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL)
+spring.cloud.deployer.cloudfoundry.url=
 
 # name of the organization that owns the space above, e.g. youruser-org
-# (For Setting Env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORGANIZATION)
-spring.cloud.deployer.cloudfoundry.organization=
+# (For Setting Env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG)
+spring.cloud.deployer.cloudfoundry.org=
 
 # name of the space into which modules will be deployed
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE)
