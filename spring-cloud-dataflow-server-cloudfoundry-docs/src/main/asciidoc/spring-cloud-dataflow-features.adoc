@@ -1,0 +1,65 @@
+[[spring-cloud-data-flow-features]]
+== Features
+
+* Orchestrate applications across a variety of distributed modern runtimes including: Cloud Foundry, Apache YARN, Apache Mesos, and Kubernetes
+* Separate runtime dependencies backed by ‘spring profiles’
+* Consume streaming and batch data microservices as maven or docker artifacts
+* Create, unit-test, troubleshoot and manage data microservices in isolation
+* Develop using: DSL, Shell, REST-APIs, Dashboard, and Flo
+* Take advantage of metrics, health checks, and remote management at each data microservice level
+* Scale stream and batch pipelines without interrupting data flows
+
+=== Streams
+
+==== Introduction
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-intro[]
+
+==== Register a Stream App
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-register-apps[]
+
+==== Creating a Simple Stream
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-create-stream[]
+
+==== Deleting a Stream
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-delete-stream[]
+
+==== Deploying and Undeploying Streams
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-deploy—undeploy-stream[]
+
+==== Other Source and Sink Applications
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-app-types[]
+
+==== Simple Stream Processing
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-simple-stream[]
+
+==== Stateful Stream Processing
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-partitions[]
+
+==== Using Labels in a Stream
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-app-labels[]
+
+==== Tap a Stream
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-tap-dsl[]
+
+==== Explicit Broker Destinations in a Stream
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-explicit-destination-names[]
+
+==== Directed Graphs in a Stream
+include::{dataflow-asciidoc}/streams.adoc#spring-cloud-dataflow-stream-advanced[]
+
+=== Tasks
+
+==== Introduction
+include::{dataflow-asciidoc}/tasks.adoc#spring-cloud-dataflow-task-intro[]
+
+==== Task Respository
+include::{dataflow-asciidoc}/tasks.adoc#spring-cloud-dataflow-task-repository[]
+
+==== Subscribing to Task/Batch events
+include::{dataflow-asciidoc}/tasks.adoc#spring-cloud-dataflow-task-events[]
+
+=== Dashboard
+include::{dataflow-asciidoc}/dashboard.adoc#dashboard[]
+
+
+
