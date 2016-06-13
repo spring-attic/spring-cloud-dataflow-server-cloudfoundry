@@ -33,7 +33,7 @@ security:
 
 spring:
   application:
-    name: spring-cloud-dataflow-server-cloudfoundry
+    name: dataflow
   cloud:
     config:
       uri: http://localhost:8888
