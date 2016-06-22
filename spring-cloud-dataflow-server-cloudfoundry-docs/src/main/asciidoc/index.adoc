@@ -21,7 +21,7 @@ Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hiller
 [[overview]]
 = Spring Cloud Data Flow for Cloud Foundry
 
-This project provides support for deploying Spring Cloud Stream and Spring Cloud Task applications to Cloud Foundry.
+This project provides support for orchestrating the deployment of Spring Cloud Stream applications to Cloud Foundry.
 
 include::overview.adoc[]
 
