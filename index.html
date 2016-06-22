@@ -1,11 +1,11 @@
 ---
 # The name of your project
-title: Spring Data JPA
+title: Spring Cloud Data Flow for Cloud Foundry
 
 badges:
 
   # Specify your project's twitter handle, if any. Delete if none.
-  twitter: SpringData
+  twitter: SpringCloudOSS
 
   # Customize your project's badges. Delete any entries that do not apply.
   custom:
@@ -64,7 +64,7 @@ deployments on data microservices
 
 Step 1 - [Download](http://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current-SNAPSHOT/reference/htmlsingle/#_download_the_spring_cloud_data_flow_server_and_shell_apps) Spring Cloud Data Flow's Cloud Foundry Server and Shell Applications
 
-Step 2 - Create RabbitMQ Service Instance in Cloud Foundry [_for: message bus_]  
+Step 2 - Create RabbitMQ Service Instance in Cloud Foundry, this will be used as the messaging middleware  
 
 Step 3 - [Deploy](http://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current-SNAPSHOT/reference/htmlsingle/#running-on-cloudfoundry) Spring Cloud Data Flow's Cloud Foundry Server Application to Cloud Foundry
 
@@ -75,7 +75,7 @@ Step 5 - Create **‘ticktock’** Stream
 dataflow:>stream create ticktock --definition "time | log" --deploy
 ```
 
-Step 6 - Launch Dashboard at: http://localhost:9393/dashboard
+Step 6 - Launch Dashboard at: http://&lt;your.dataflow.server.on.cloudfoundry&gt;/dashboard
 
 {% endcapture %}
 
