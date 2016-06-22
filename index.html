@@ -1,0 +1,104 @@
+---
+# The name of your project
+title: Spring Data JPA
+
+badges:
+
+  # Specify your project's twitter handle, if any. Delete if none.
+  twitter: SpringData
+
+  # Customize your project's badges. Delete any entries that do not apply.
+  custom:
+    - name: Source (GitHub)
+      url:  https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
+      icon: github
+
+    - name: Issues (Waffle)
+      url:  https://waffle.io/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
+      icon: tracking
+
+    - name: CI (Bamboo)
+      url:  https://build.spring.io/browse/SCD-CFBMASTER
+      icon: ci
+
+    - name: StackOverflow
+      url:  http://stackoverflow.com/questions/tagged/spring-cloud-dataflow
+      icon: stackoverflow
+
+---
+<!DOCTYPE HTML>
+<html lang="en-US">
+
+<!-- Specify the parent of this project (or delete if none) to influence the rendering of the breadcrumb -->
+{% capture parent_link %}
+[Spring Cloud]({{ site.projects_site_url }}/spring-cloud)
+{% endcapture %}
+
+
+{% capture billboard_description %}
+
+Spring Cloud Data Flow for Cloud Foundry is a cloud-native orchestration service for composable 
+data microservices on [Cloud Foundry](https://www.cloudfoundry.org/). With Spring Cloud Data Flow, 
+developers can create and orchestrate data pipelines for common use cases such as data ingest, real-time analytics, and data import/export.
+
+{% endcapture %}
+
+{% capture main_content %}
+
+Spring Cloud Data Flow for Cloud Foundry offers a collection of patterns and best practices for data 
+microservices running as streaming and batch data pipelines in Cloud Foundry.
+
+## Features
+
+* Consume streaming and batch data microservices as maven artifacts
+* Create, unit-test, troubleshoot and manage data microservices in isolation
+* Perform [blue-green](https://docs.pivotal.io/pivotalcf/1-7/devguide/deploy-apps/blue-green.html) 
+deployments on data microservices
+* Develop using: DSL, Shell, REST-APIs, Dashboard, and Flo
+* Take advantage of Cloud Foundry value-adds such as metrics, logging, health checks, and remote management at each data microservice level
+* Scale stream and batch pipelines from `cf cli` or `Apps Manager`
+
+<span id="quick-start"></span>
+
+## Quick Start
+
+Step 1 - [Download](http://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current-SNAPSHOT/reference/htmlsingle/#_download_the_spring_cloud_data_flow_server_and_shell_apps) Spring Cloud Data Flow's Cloud Foundry Server and Shell Applications
+
+Step 2 - Create RabbitMQ Service Instance in Cloud Foundry [_for: message bus_]  
+
+Step 3 - [Deploy](http://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current-SNAPSHOT/reference/htmlsingle/#running-on-cloudfoundry) Spring Cloud Data Flow's Cloud Foundry Server Application to Cloud Foundry
+
+Step 4 - [Run and Connect](http://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current-SNAPSHOT/reference/htmlsingle/#_running_spring_cloud_data_flow_shell_locally) the Shell Application with Server running on Cloud Foundry
+
+Step 5 - Create **‘ticktock’** Stream
+```
+dataflow:>stream create ticktock --definition "time | log" --deploy
+```
+
+Step 6 - Launch Dashboard at: http://localhost:9393/dashboard
+
+{% endcapture %}
+
+{% capture related_resources %}
+
+### Sample Projects
+
+* [HTTP -> Cassandra](https://github.com/spring-cloud/spring-cloud-dataflow-samples/tree/master/streaming/http-to-cassandra#2-using-cloud-foundry-server)
+* [HTTP -> MySQL](https://github.com/spring-cloud/spring-cloud-dataflow-samples/tree/master/streaming/http-to-mysql#2-using-cloud-foundry-server)
+
+
+### Related Projects
+
+* [Spring Cloud Data Flow](http://cloud.spring.io/spring-cloud-dataflow/)
+* [Spring Cloud Stream](http://cloud.spring.io/spring-cloud-stream/)
+* [Spring Cloud Stream Applications](https://github.com/spring-cloud/spring-cloud-stream-app-starters)
+* [Spring Cloud Task](https://github.com/spring-cloud/spring-cloud-task/)
+* [Spring Cloud Task Applications](https://github.com/spring-cloud/spring-cloud-task-app-starters)
+* [Spring Cloud Data Flow Samples](https://github.com/spring-cloud/spring-cloud-dataflow-samples)
+* [Spring Cloud Data Flow UI](https://github.com/spring-cloud/spring-cloud-dataflow-ui)
+
+{% endcapture %}
+
+
+{% include project_page.html %}
+</html>
