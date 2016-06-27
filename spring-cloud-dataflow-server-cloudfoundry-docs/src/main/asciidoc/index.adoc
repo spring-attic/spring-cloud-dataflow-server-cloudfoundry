@@ -31,6 +31,8 @@ include::{dataflow-asciidoc}/streams.adoc[]
 
 include::{dataflow-asciidoc}/dashboard.adoc[]
 
+include::{dataflow-asciidoc}/howto.adoc[]
+
 include::appendix.adoc[]
 
 
