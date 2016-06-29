@@ -65,6 +65,8 @@ Now we can configure the app. The following configuration is for Pivotal Web Ser
 NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
 certs (e.g. in development). Do not use for production.
 
+NOTE: If you are deploying in an enviornment that requires you to sign on using the Pivotal Single Sign-On Service, refer to the section <<getting-started-security-cloud-foundry>> for how to set additional configuration properties for this environment.
+
 ```
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL https://api.run.pivotal.io
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG {org}
@@ -142,17 +144,48 @@ dataflow:>
 
 By default, the application registry will be empty. If you would like to register all out-of-the-box stream applications built with the RabbitMQ binder in bulk, you can with the following command. For more details, review how to link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/spring-cloud-dataflow-register-apps.html[register applications].
 
+[source,bash,subs=attributes]
 ```
 dataflow:>app import --uri http://bit.ly/stream-applications-rabbit-maven
 
 ```
++
+. You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
++
+[source,bash]
+----
+dataflow:> stream create --name httptest --definition "http | log" --deploy
+----
++
+NOTE: You will need to wait a little while until the apps are actually deployed successfully
+before posting data.  Tail the log file for each application to verify
+the application has started.
++
+Now post some data. The URL will be unique to your deployment, the following is just an example
+[source,bash]
+----
+dataflow:> http post --target http://dataflow-nonconcentrative-knar-httptest-http.cfapps.io --data "hello world"
+----
+Look to see if `hello world` ended up in log files for the `log` application.
 
+[[getting-started-security]]
 == Security
 
 By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints, 
 as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate. More details about securing the 
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please 
 review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands. 
+
+[[getting-started-security-cloud-foundry]]
+== Authentication and Cloud Foundry
+
+When deploying Spring Cloud Data Flow to Cloud Foundry, we take advantage of the
+https://github.com/pivotal-cf/spring-cloud-sso-connector[_Spring Cloud Single Sign-On Connector_],
+which provides Cloud Foundry specific auto-configuration support for OAuth 2.0
+when used in conjunction with the _Pivotal Single Sign-On Service_.
+
+Simply set `security.basic.enabled` to `true` and in Cloud Foundry bind the SSO
+service to your Data Flow Server app and SSO will be enabled.
 
 == Configuration Reference
 
