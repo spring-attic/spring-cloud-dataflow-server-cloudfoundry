@@ -1,4 +1,6 @@
 [[getting-started]]
+= Getting started
+
 == Deploying on Cloud Foundry
 
 Spring Cloud Data Flow can be used to deploy modules in a Cloud Foundry environment. When doing so, the

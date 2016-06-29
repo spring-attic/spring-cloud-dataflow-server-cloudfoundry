@@ -25,6 +25,8 @@ This project provides support for orchestrating the deployment of Spring Cloud S
 
 include::overview.adoc[]
 
+include::{dataflow-asciidoc}/architecture.adoc[]
+
 include::getting-started.adoc[]
 
 include::{dataflow-asciidoc}/streams.adoc[]
