@@ -68,25 +68,37 @@ certs (e.g. in development). Do not use for production.
 NOTE: If you are deploying in an environment that requires you to sign on using the Pivotal Single Sign-On Service, refer to the section <<getting-started-security-cloud-foundry>> for information on how to configure the server.
 
 ```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL https://api.run.pivotal.io
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG {org}
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES redis,rabbit
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.url https://api.run.pivotal.io
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.org {org}
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.space {space}
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.domain cfapps.io
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.services redis,rabbit
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.username {email}
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.password {password}
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.skipSslValidation false
 ```
 
 You can also set other optional properties for deployment to Cloud Foundry.
 
-You can set the buildpack that will be used to deploy the application.  For example, to use the Java offline buildback, set the following environment variable
+* You can set the buildpack that will be used to deploy the application.  For example, to use the Java offline buildback, set the following environment variable
 
 ```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_BUILDPACK java_buildpack_offline
+cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.buildpack java_buildpack_offline
 ```
 
-The default memory and disk sizes for a deployed application can also be configured. By default they are 1024 MB memory and 1024 MB disk.  Thse are controlled by setting an integer value, representing the number of MB, to the following properties, SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_MEMORY and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DISK.  The default number of instances to deploy is set to 1, but can be overridden using with the SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_INSTANCES property.  All these properties are `@ConfigurationProperties` of the Cloud Foundry deployer.  See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/master/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeployerProperties.java[CloudFoundryDeployerProperties.java] for more information.
+* If you'd like to use `config-server` to manage centralized configurations for all the applications orchestrated by
+Spring Cloud Data Flow, you can set it up like the following.
+
+```
+cf set-env dataflow-server spring.cloud.dataflow.applicationProperties.stream.spring.cloud.config.uri: http://<CONFIG_SERVER_URI>
+```
+
+* The default memory and disk sizes for a deployed application can also be configured. By default they are 1024 MB memory
+and 1024 MB disk.  Thse are controlled by setting an integer value, representing the number of MB, to the following
+properties, `spring.cloud.deployer.cloudfoundry.memory` and `spring.cloud.deployer.cloudfoundry.disk`.
+The default number of instances to deploy is set to 1, but can be overridden using with the
+`spring.cloud.deployer.cloudfoundry.instances` property.  All these properties are `@ConfigurationProperties` of the
+Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/master/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeployerProperties.java[CloudFoundryDeployerProperties.java] for more information.
 
 We are now ready to start the app.
 
@@ -104,14 +116,14 @@ application either by passing in command line arguments (see below) or setting a
 To use environment variables set the following:
 
 ```
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL=https://api.run.pivotal.io
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG={org}
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE={space}
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN=cfapps.io
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES=redis,rabbit
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME={email}
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
+export spring.cloud.deployer.cloudfoundry.url=https://api.run.pivotal.io
+export spring.cloud.deployer.cloudfoundry.org={org}
+export spring.cloud.deployer.cloudfoundry.space={space}
+export spring.cloud.deployer.cloudfoundry.domain=cfapps.io
+export spring.cloud.deployer.cloudfoundry.services=redis,rabbit
+export spring.cloud.deployer.cloudfoundry.username={email}
+export spring.cloud.deployer.cloudfoundry.password={password}
+export spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 ```
 
 You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands.
@@ -149,18 +161,18 @@ By default, the application registry will be empty. If you would like to registe
 dataflow:>app import --uri http://bit.ly/stream-applications-rabbit-maven
 
 ```
-+
-. You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
-+
+
+You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
+
 [source,bash]
 ----
 dataflow:> stream create --name httptest --definition "http | log" --deploy
 ----
-+
+
 NOTE: You will need to wait a little while until the apps are actually deployed successfully
 before posting data.  Tail the log file for each application to verify
 the application has started.
-+
+
 Now post some data. The URL will be unique to your deployment, the following is just an example
 [source,bash]
 ----
@@ -198,34 +210,27 @@ variable format as that is an easy way to get started configuring Boot applicati
 # Example values, typical for Pivotal Web Services, cited as a comment
 
 # url of the CF API (used when using cf login -a for example), e.g. https://api.run.pivotal.io
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL)
 spring.cloud.deployer.cloudfoundry.url=
 
 # name of the organization that owns the space above, e.g. youruser-org
-# (For Setting Env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG)
 spring.cloud.deployer.cloudfoundry.org=
 
 # name of the space into which modules will be deployed
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE)
 spring.cloud.deployer.cloudfoundry.space=<same space as server when running on CF, or 'development'>
 
 # the root domain to use when mapping routes, e.g. cfapps.io
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN)
 spring.cloud.deployer.cloudfoundry.domain=
 
 # Comma separated set of service instance names to bind to the module.
 # Amongst other things, this should include a service that will be used
 # for Spring Cloud Stream binding
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES)
 spring.cloud.deployer.cloudfoundry.services=redis,rabbit
 
 # username and password of the user to use to create apps (modules)
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD)
 spring.cloud.deployer.cloudfoundry.username=
 spring.cloud.deployer.cloudfoundry.password=
 
 # Whether to allow self-signed certificates during SSL validation
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION)
 spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 ```
 
