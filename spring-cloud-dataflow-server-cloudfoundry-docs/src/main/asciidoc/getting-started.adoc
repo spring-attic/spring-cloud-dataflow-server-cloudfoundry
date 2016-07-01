@@ -188,6 +188,27 @@ as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to au
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
 review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
 
+
+== Security
+
+By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints, 
+as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate. More details about securing the 
+REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please 
+review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
+
+[[getting-started-app-names-cloud-foundry]]
+== Application Names and Prefixes
+
+To help avoid clashes with routes across spaces in Cloud Foundry, a naming strategy to provide a random prefix to a
+deployed application is available and is enabled by default. The https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry#application-name-settings-and-deployments[default configurations]
+are overridable and the respective properties can be set via `cf set-env` commands.
+
+For instance, if you'd like to disable the randmoization, you can override it through:
+
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ENABLE_RANDOM_APP_NAME_PREFIX false
+```
+
 [[getting-started-security-cloud-foundry]]
 == Authentication and Cloud Foundry
 
