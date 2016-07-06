@@ -16,6 +16,8 @@ Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hiller
 :sct-starters-core-version: current-SNAPSHOT
 
 :dataflow-asciidoc: https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/master/spring-cloud-dataflow-docs/src/main/asciidoc
+:github-code: http://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
+
 // ======================================================================================
 
 [[overview]]
