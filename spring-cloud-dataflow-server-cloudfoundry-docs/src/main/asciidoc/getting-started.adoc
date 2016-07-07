@@ -78,7 +78,7 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
-Spring Cloud Data Flow server implementations (local, cf, mesos, yarn, or kubernetes) do not have
+Spring Cloud Data Flow server implementations (cf, mesos, yarn, or kubernetes) do not have
 'any' default remote maven repository configured. This is intentionally designed to provide the flexibility for
 the users, so they can override and point to a remote repository of their choice. The out-of-the-box
 applications that are supported by Spring Cloud Data Flow are available in Spring's repository,
