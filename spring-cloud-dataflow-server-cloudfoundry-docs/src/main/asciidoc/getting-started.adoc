@@ -78,12 +78,23 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
+Spring Cloud Data Flow server implementations (cf, mesos, yarn, or kubernetes) do not have
+'any' default remote maven repository configured. This is intentionally designed to provide the flexibility for
+the users, so they can override and point to a remote repository of their choice. The out-of-the-box
+applications that are supported by Spring Cloud Data Flow are available in Spring's repository,
+so if you want to use them, you 'must' set it as the remote repository as listed below.
+
+```
+cf set-env dataflow-server MAVEN_REMOTE_REPOSITORIES_REPO1_URL https://repo.spring.io/libs-snapshot
+```
+where `repo1` is the alias name for the remote repository.
+
 You can also set other optional properties for deployment to Cloud Foundry.
 
 * You can set the buildpack that will be used to deploy the application.  For example, to use the Java offline buildback, set the following environment variable
 
 ```
-cf set-env dataflow-server spring.cloud.deployer.cloudfoundry.buildpack java_buildpack_offline
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_BUILDPACK java_buildpack_offline
 ```
 
 * If you'd like to use `config-server` to manage centralized configurations for all the applications orchestrated by
