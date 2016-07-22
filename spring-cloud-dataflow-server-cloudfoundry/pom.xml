@@ -18,23 +18,11 @@
 			<artifactId>spring-cloud-starter-dataflow-server-cloudfoundry</artifactId>
 			<version>1.0.0.BUILD-SNAPSHOT</version>
 		</dependency>
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-core</artifactId>
 			<version>${reactor.version}</version>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<resources>
