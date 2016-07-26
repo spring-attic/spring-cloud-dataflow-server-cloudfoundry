@@ -30,6 +30,14 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service cloudamqp lemur rabbit
 ```
 
+=== Provision a MySQL service instance on Cloud Foundry.
+Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
+For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
+
+```
+cf create-service p_mysql 100mb my_mysql
+```
+
 === Download the Spring Cloud Data Flow Server and Shell apps:
 
 [subs=attributes]

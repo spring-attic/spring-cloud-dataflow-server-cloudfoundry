@@ -39,7 +39,16 @@ spring:
       uri: http://localhost:8888
     dataflow:
       features:
-        tasksEnabled: false
+        tasksEnabled: true
+    deployer:
+      cloudfoundry:
+        taskTimeout: 360
+#  datasource:
+#    url: jdbc:mysql://p-mysql-proxy.run.pivotal.io:3306/cf_9c2e36a7_0c81_4887_930b_8c3444ae6834?user=JwEHRDLH32w0lMpj\u0026password=vl2ryUqH65j5wHBH
+#    username: JwEHRDLH32w0lMpj
+#    password: vl2ryUqH65j5wHBH
+#    driverClassName: com.mysql.jdbc.Driver
+
 #
 # If you prefer to use Eureka to locate the Config Server, you can do that by setting
 # spring.cloud.config.discovery.enabled=true (default "false"). The net result of that is 
