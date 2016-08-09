@@ -358,7 +358,7 @@ Let's deploy the locally built application to Cloud Foundry
 
 [source,bash]
 ----
-→ cf push logv2 -p demo-0.0.1-SNAPSHOT.jar -n logv2 --no-start
+→ cf push foo-log-v2 -p demo-0.0.1-SNAPSHOT.jar -n foo-log-v2 --no-start
 ----
 
 List Apps.
@@ -372,7 +372,7 @@ OK
 name       requested state   instances   memory   disk   urls
 foo-log    started           1/1         1G       1G     foo-log.cfapps.io
 foo-time   started           1/1         1G       1G     foo-time.cfapps.io
-logv2      started           1/1         1G       1G     logv2.cfapps.io
+foo-log-v2 stopped           1/1         1G       1G     foo-log-v2.cfapps.io
 ----
 
 The stream applications do not communicate via (Go)Router, so they aren't generating HTTP traffic. Instead, they
@@ -384,14 +384,14 @@ NOTE: You can find the `SPRING_APPLICATION_JSON` of the old application via: `"c
 
 [source,bash]
 ----
-cf set-env logv2 SPRING_APPLICATION_JSON '{"spring.cloud.stream.bindings.input.destination":"foo.time","spring.cloud.stream.bindings.input.group":"foo"}'
+cf set-env foo-log-v2 SPRING_APPLICATION_JSON '{"spring.cloud.stream.bindings.input.destination":"foo.time","spring.cloud.stream.bindings.input.group":"foo"}'
 ----
 
-Let's start `logv2` application.
+Let's start `foo-log-v2` application.
 
 [source,bash]
 ----
-cf start logv2
+cf start foo-log-v2
 ----
 
 As soon as the application bootstraps, you'd now notice the payload being load balanced between two log application
@@ -416,9 +416,22 @@ New App Logs:
 2016-08-08T17:11:11.94-0700 [APP/0]      OUT 2016-08-09 00:11:11.941  INFO 26 --- [ foo.time.foo-1] TEST [log.sink                       : 08/09/16 00:11:11]
 ----
 
-Deleting the old version `foo-log` from the CF CLI would make all the payload consumed by the `logv2` application. Now,
+Deleting the old version `foo-log` from the CF CLI would make all the payload consumed by the `foo-log-v2` application. Now,
 you've successfully rolling upgraded an application in the streaming pipeline without bringing it down in entirety to do
 an adjustment in it.
+
+List Apps.
+
+[source,bash]
+----
+→ cf apps
+Getting apps in org test-org / space development as test@pivotal.io...
+OK
+
+name       requested state   instances   memory   disk   urls
+foo-time   started           1/1         1G       1G     foo-time.cfapps.io
+foo-log-v2 started           1/1         1G       1G     foo-log-v2.cfapps.io
+----
 
 NOTE: A comprehensive canary analysis along with rolling upgrades will be supported via http://www.spinnaker.io/[Spinnaker]
 in the future releases.
