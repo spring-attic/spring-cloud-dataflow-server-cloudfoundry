@@ -206,14 +206,6 @@ as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to au
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
 review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
 
-
-== Security
-
-By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints, 
-as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate. More details about securing the 
-REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please 
-review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
-
 [[getting-started-app-names-cloud-foundry]]
 == Application Names and Prefixes
 
@@ -280,7 +272,7 @@ spring.cloud.deployer.cloudfoundry.password=
 spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 ```
 
-Note that you can set the following properties `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES`,
+Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
 `spring.cloud.deployer.cloudfoundry.memory`, and `spring.cloud.deployer.cloudfoundry.disk` as part of an individual deployment request prefixed by the `app.<name of application>`.  For example
 
 ```
@@ -289,3 +281,144 @@ Note that you can set the following properties `SPRING_CLOUD_DEPLOYER_CLOUDFOUND
 ```
 
 will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
+
+[[getting-started-service-binding-at-application-level]]
+== Application Level Service Bindings
+When deploying streams in Cloud Foundry, you can take advantage of application specific service bindings, so not all
+services are globally configured for all the apps orchestrated by Spring Cloud Data Flow.
+
+For instance, if you'd like to provide `mysql` service binding only for the `jdbc` application in the following stream definition, you can pass the service binding as a deployment property.
+
+[source,bash]
+----
+dataflow:>stream create --name httptojdbc --definition "http | jdbc"
+dataflow:> stream deploy --name httptojdbc --properties "app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService"
+----
+
+Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http` application wouldn't get the binding by this method. If you have more than one service to bind, they can be passed as comma separated items (_eg: app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService,someService_).
+
+[[getting-started-service-application-rolling-upgrades]]
+== Application Rolling Upgrades
+Similar to Cloud Foundry's https://docs.pivotal.io/pivotalcf/1-7/devguide/deploy-apps/blue-green.html[blue-green] deployments,
+you can perform rolling upgrades on the applications orchestrated by Spring Cloud Data Flow.
+
+Let's start with the following simple stream definition.
+
+[source,bash]
+----
+dataflow:>stream create --name foo --definition "time | log" --deploy
+----
+
+List Apps.
+
+[source,bash]
+----
+→ cf apps
+Getting apps in org test-org / space development as test@pivotal.io...
+OK
+
+name       requested state   instances   memory   disk   urls
+foo-log    started           1/1         1G       1G     foo-log.cfapps.io
+foo-time   started           1/1         1G       1G     foo-time.cfapps.io
+----
+
+Let's assume you've to make an enhancement to update the "logger" to append extra text in every log statement.
+
+* Download the `Log Sink` application starter with "Rabbit binder starter" from http://start-scs.cfapps.io/
+* Load the downloaded project in an IDE
+* Import the `LogSinkConfiguration.class`
+* Adapt the handler to add extra text: `loggingHandler.setLoggerName("TEST [" + this.properties.getName() + "]");`
+* Build the application locally
+
+[source,java]
+----
+@SpringBootApplication
+@Import(LogSinkConfiguration.class)
+public class DemoApplication {
+
+	@Autowired
+	private LogSinkProperties properties;
+
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
+
+	@Bean
+	@ServiceActivator(inputChannel = Sink.INPUT)
+	public LoggingHandler logSinkHandler() {
+		LoggingHandler loggingHandler = new LoggingHandler(this.properties.getLevel().name());
+		loggingHandler.setExpression(this.properties.getExpression());
+		loggingHandler.setLoggerName("TEST [" + this.properties.getName() + "]");
+		return loggingHandler;
+	}
+}
+----
+
+Let's deploy the locally built application to Cloud Foundry
+
+[source,bash]
+----
+→ cf push logv2 -p demo-0.0.1-SNAPSHOT.jar -n logv2 --no-start
+----
+
+List Apps.
+
+[source,bash]
+----
+→ cf apps
+Getting apps in org test-org / space development as test@pivotal.io...
+OK
+
+name       requested state   instances   memory   disk   urls
+foo-log    started           1/1         1G       1G     foo-log.cfapps.io
+foo-time   started           1/1         1G       1G     foo-time.cfapps.io
+logv2      started           1/1         1G       1G     logv2.cfapps.io
+----
+
+The stream applications do not communicate via (Go)Router, so they aren't generating HTTP traffic. Instead, they
+communicate via the underlying messaging middleware such as Kafka or RabbitMQ. In order to rolling upgrade to route the
+payload from old to the new version of the application, you'd have to replicate the `SPRING_APPLICATION_JSON` environment
+variable from the old application that includes `spring.cloud.stream.bindings.input.destination` and `spring.cloud.stream.bindings.input.group` credentials.
+
+NOTE: You can find the `SPRING_APPLICATION_JSON` of the old application via: `"cf env foo-log"`.
+
+[source,bash]
+----
+cf set-env logv2 SPRING_APPLICATION_JSON '{"spring.cloud.stream.bindings.input.destination":"foo.time","spring.cloud.stream.bindings.input.group":"foo"}'
+----
+
+Let's start `logv2` application.
+
+[source,bash]
+----
+cf start logv2
+----
+
+As soon as the application bootstraps, you'd now notice the payload being load balanced between two log application
+instances running on Cloud Foundry. Since they both share the same "destination" and "consumer group", they are now
+acting as competing consumers.
+
+Old App Logs:
+
+[source,bash]
+----
+2016-08-08T17:11:08.94-0700 [APP/0]      OUT 2016-08-09 00:11:08.942  INFO 19 --- [ foo.time.foo-1] log.sink                                 : 08/09/16 00:11:08
+2016-08-08T17:11:10.95-0700 [APP/0]      OUT 2016-08-09 00:11:10.954  INFO 19 --- [ foo.time.foo-1] log.sink                                 : 08/09/16 00:11:10
+2016-08-08T17:11:12.94-0700 [APP/0]      OUT 2016-08-09 00:11:12.944  INFO 19 --- [ foo.time.foo-1] log.sink                                 : 08/09/16 00:11:12
+----
+
+New App Logs:
+
+[source,bash]
+----
+2016-08-08T17:11:07.94-0700 [APP/0]      OUT 2016-08-09 00:11:07.945  INFO 26 --- [ foo.time.foo-1] TEST [log.sink                       : 08/09/16 00:11:07]
+2016-08-08T17:11:09.92-0700 [APP/0]      OUT 2016-08-09 00:11:09.925  INFO 26 --- [ foo.time.foo-1] TEST [log.sink                       : 08/09/16 00:11:09]
+2016-08-08T17:11:11.94-0700 [APP/0]      OUT 2016-08-09 00:11:11.941  INFO 26 --- [ foo.time.foo-1] TEST [log.sink                       : 08/09/16 00:11:11]
+----
+
+Deleting the old version `foo-log` from the CF CLI would make all the payload consumed by the `logv2` application. Now,
+you've successfully rolling upgraded an application in the streaming pipeline without bringing it down in entirety to do
+an adjustment in it.
+
+NOTE: A comprehensive canary analysis along with rolling upgrades will be supported via http://www.spinnaker.io/[Spinnaker]
+in the future releases.
