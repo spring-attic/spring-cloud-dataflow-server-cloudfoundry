@@ -417,7 +417,7 @@ New App Logs:
 ----
 
 Deleting the old version `foo-log` from the CF CLI would make all the payload consumed by the `foo-log-v2` application. Now,
-you've successfully rolling upgraded an application in the streaming pipeline without bringing it down in entirety to do
+you've successfully upgraded an application in the streaming pipeline without bringing it down in entirety to do
 an adjustment in it.
 
 List Apps.
@@ -434,4 +434,4 @@ foo-log-v2 started           1/1         1G       1G     foo-log-v2.cfapps.io
 ----
 
 NOTE: A comprehensive canary analysis along with rolling upgrades will be supported via http://www.spinnaker.io/[Spinnaker]
-in the future releases.
+in future releases.
