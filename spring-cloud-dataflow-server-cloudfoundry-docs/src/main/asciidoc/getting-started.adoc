@@ -156,7 +156,14 @@ Now we are ready to start the server application:
 ```
 java -jar spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar [--option1=value1] [--option2=value2] [etc.]
 ```
+=== Running Tasks
 
+Tasks are enabled as `experimental` feature in Spring Cloud Data Flow Cloud Foundry server. To enable running tasks, you
+can set the environment variable,
+
+```
+export TASKS_ENABLED_AS_EXPERIMENTAL_FEATURE=true
+```
 === Running Spring Cloud Data Flow Shell locally
 
 Run the shell and optionally target the Admin application if not running on the same host (will typically be the case if
