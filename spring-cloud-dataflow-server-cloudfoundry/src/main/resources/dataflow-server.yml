@@ -37,10 +37,10 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888
-#    dataflow:
-#      features:
-#        experimental:
-#          tasksEnabled: true
+    dataflow:
+      features:
+        experimental:
+          tasksEnabled: false
     deployer:
       cloudfoundry:
         taskTimeout: 360
