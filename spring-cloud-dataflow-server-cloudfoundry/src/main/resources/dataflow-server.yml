@@ -37,9 +37,10 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888
-    dataflow:
-      features:
-        tasksEnabled: ${TASKS_ENABLED_AS_EXPERIMENTAL_FEATURE:false}
+#    dataflow:
+#      features:
+#        experimental:
+#          tasksEnabled: true
     deployer:
       cloudfoundry:
         taskTimeout: 360
