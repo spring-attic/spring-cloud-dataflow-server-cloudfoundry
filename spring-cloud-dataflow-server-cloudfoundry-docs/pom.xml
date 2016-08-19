@@ -74,7 +74,7 @@
 									<doctype>book</doctype>
 									<attributes>
 										<docinfo>true</docinfo>
-										<omit-tasks-docs>true</omit-tasks-docs>
+										<omit-tasks-docs>false</omit-tasks-docs>
 										<dataflow-project-version>${spring-cloud-dataflow.version}</dataflow-project-version>
 										<project-version>${project.version}</project-version>
 										<project-artifactId>${project.artifactId}</project-artifactId>
