@@ -23,7 +23,7 @@ cf create-service rediscloud 30mb redis
 ```
 
 A redis instance is required for analytics apps, and would typically be bound to such apps when you create an analytics
-stream using the link:getting-started-service-binding-at-application-level[per-app-binding] feature.
+stream using the <<getting-started.adoc#getting-started-service-binding-at-application-level,per-app-binding>> feature.
 
 === Provision a Rabbit service instance on Cloud Foundry.
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
