@@ -22,6 +22,9 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service rediscloud 30mb redis
 ```
 
+A redis instance is required for analytics apps, and would typically be bound to such apps when you create an analytics
+stream using the link:getting-started-service-binding-at-application-level[per-app-binding] feature.
+
 === Provision a Rabbit service instance on Cloud Foundry.
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
@@ -30,6 +33,9 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service cloudamqp lemur rabbit
 ```
 
+Rabbit is typically used as a messaging middleware between streaming apps and would be bound to each deployed app
+thanks to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting (see below).
+
 === Provision a MySQL service instance on Cloud Foundry.
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
@@ -37,6 +43,9 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 ```
 cf create-service p_mysql 100mb my_mysql
 ```
+
+An RDBMS is used to persist Data Flow state, such as stream definitions and deployment ids.
+It can also be used for tasks to persist execution history.
 
 === Download the Spring Cloud Data Flow Server and Shell apps:
 
@@ -61,7 +70,7 @@ deployment to fail
 ```
 cf push dataflow-server --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 cf bind-service dataflow-server redis
-cf bind-service dataflow-server rabbit
+cf bind-service dataflow-server my_mysql
 ```
 
 NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
@@ -73,14 +82,15 @@ Now we can configure the app. The following configuration is for Pivotal Web Ser
 NOTE: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
 certs (e.g. in development). Do not use for production.
 
-NOTE: If you are deploying in an environment that requires you to sign on using the Pivotal Single Sign-On Service, refer to the section <<getting-started-security-cloud-foundry>> for information on how to configure the server.
+NOTE: If you are deploying in an environment that requires you to sign on using the Pivotal Single Sign-On Service,
+refer to the section <<getting-started-security-cloud-foundry>> for information on how to configure the server.
 
 ```
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL https://api.run.pivotal.io
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG {org}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES redis,rabbit
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES rabbit
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
@@ -90,7 +100,7 @@ Spring Cloud Data Flow server implementations (cf, mesos, yarn, or kubernetes) d
 'any' default remote maven repository configured. This is intentionally designed to provide the flexibility for
 the users, so they can override and point to a remote repository of their choice. The out-of-the-box
 applications that are supported by Spring Cloud Data Flow are available in Spring's repository,
-so if you want to use them, you 'must' set it as the remote repository as listed below.
+so if you want to use them, you *must* set it as the remote repository as listed below.
 
 ```
 cf set-env dataflow-server MAVEN_REMOTE_REPOSITORIES_REPO1_URL https://repo.spring.io/libs-snapshot
@@ -99,7 +109,8 @@ where `repo1` is the alias name for the remote repository.
 
 You can also set other optional properties for deployment to Cloud Foundry.
 
-* You can set the buildpack that will be used to deploy the application.  For example, to use the Java offline buildback, set the following environment variable
+* You can set the buildpack that will be used to deploy the application.  For example, to use the Java offline buildback,
+set the following environment variable
 
 ```
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_BUILDPACK java_buildpack_offline
@@ -139,7 +150,7 @@ export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL=https://api.run.pivotal.io
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG={org}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE={space}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN=cfapps.io
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES=redis,rabbit
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES=rabbit
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME={email}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
@@ -162,17 +173,17 @@ Tasks are enabled as `experimental` feature in Spring Cloud Data Flow Cloud Foun
 can set the environment variable,
 
 ```
-export SPRING_CLOUD_DATAFLOW_FEATURES_EXPERIMENTAL_TASKSENABLED=true
+export SPRING_CLOUD_DATAFLOW_FEATURES_EXPERIMENTAL_TASKS_ENABLED=true
 ```
 
-or, as a command line argument when starting the data flow server `--spring.cloud.dataflow.features.experimental.tasksEnabled=true`
+or, as a command line argument when starting the data flow server `--spring.cloud.dataflow.features.experimental.tasks-enabled=true`
 
 === Running Spring Cloud Data Flow Shell locally
 
 Run the shell and optionally target the Admin application if not running on the same host (will typically be the case if
 deployed on Cloud Foundry as explained xref:running-on-cloudfoundry[here])
 
-[subs=attributes]
+[source,bash,subs=attributes]
 ```
 $ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
@@ -192,7 +203,7 @@ dataflow:>app import --uri http://bit.ly/stream-applications-rabbit-maven
 
 You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
 
-[source,bash]
+[source]
 ----
 dataflow:> stream create --name httptest --definition "http | log" --deploy
 ----
@@ -202,7 +213,7 @@ before posting data.  Tail the log file for each application to verify
 the application has started.
 
 Now post some data. The URL will be unique to your deployment, the following is just an example
-[source,bash]
+[source]
 ----
 dataflow:> http post --target http://dataflow-nonconcentrative-knar-httptest-http.cfapps.io --data "hello world"
 ----
@@ -258,21 +269,15 @@ spring.cloud.deployer.cloudfoundry.url=
 # (For Setting Env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG)
 spring.cloud.deployer.cloudfoundry.org=
 
-# name of the space into which modules will be deployed
+# name of the space into which modules will be deployed, e.g. development
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE)
-spring.cloud.deployer.cloudfoundry.space=<same space as server when running on CF, or 'development'>
+spring.cloud.deployer.cloudfoundry.space=
 
 # the root domain to use when mapping routes, e.g. cfapps.io
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN)
 spring.cloud.deployer.cloudfoundry.domain=
 
-# Comma separated set of service instance names to bind to the module.
-# Amongst other things, this should include a service that will be used
-# for Spring Cloud Stream binding
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SERVICES)
-spring.cloud.deployer.cloudfoundry.services=redis,rabbit
-
-# username and password of the user to use to create apps (modules)
+# username and password of the user to use to create apps
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD)
 spring.cloud.deployer.cloudfoundry.username=
 spring.cloud.deployer.cloudfoundry.password=
@@ -280,10 +285,25 @@ spring.cloud.deployer.cloudfoundry.password=
 # Whether to allow self-signed certificates during SSL validation
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION)
 spring.cloud.deployer.cloudfoundry.skipSslValidation=false
+
+# Comma separated set of service instance names to bind to every stream app deployed.
+# Amongst other things, this should include a service that will be used
+# for Spring Cloud Stream binding, e.g. rabbit
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES)
+spring.cloud.deployer.cloudfoundry.stream.services=
+
+
+# Comma separated set of service instance names to bind to every task app deployed.
+# Amongst other things, this should include an RDBMS service that will be used
+# for Spring Cloud Task execution reporting, e.g. my_mysql
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES)
+spring.cloud.deployer.cloudfoundry.task.services=
+
 ```
 
 Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
-`spring.cloud.deployer.cloudfoundry.memory`, and `spring.cloud.deployer.cloudfoundry.disk` as part of an individual deployment request prefixed by the `app.<name of application>`.  For example
+`spring.cloud.deployer.cloudfoundry.memory`, and `spring.cloud.deployer.cloudfoundry.disk` as part of an individual
+deployment request prefixed by the `app.<name of application>`.  For example
 
 ```
 >stream create --name ticktock --definition "time | log"
@@ -297,7 +317,8 @@ will deploy the time source with 2048MB of memory, while the log sink will use t
 When deploying streams in Cloud Foundry, you can take advantage of application specific service bindings, so not all
 services are globally configured for all the apps orchestrated by Spring Cloud Data Flow.
 
-For instance, if you'd like to provide `mysql` service binding only for the `jdbc` application in the following stream definition, you can pass the service binding as a deployment property.
+For instance, if you'd like to provide `mysql` service binding only for the `jdbc` application in the following stream
+definition, you can pass the service binding as a deployment property.
 
 [source]
 ----
@@ -305,7 +326,8 @@ dataflow:>stream create --name httptojdbc --definition "http | jdbc"
 dataflow:>stream deploy --name httptojdbc --properties "app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService"
 ----
 
-Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http` application wouldn't get the binding by this method. If you have more than one service to bind, they can be passed as comma separated items (_eg: app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService,someService_).
+Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http`
+application wouldn't get the binding by this method. If you have more than one service to bind, they can be passed as comma separated items (_eg: app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService,someService_).
 
 [[getting-started-service-application-rolling-upgrades]]
 == Application Rolling Upgrades
@@ -410,7 +432,7 @@ acting as competing consumers.
 
 Old App Logs:
 
-[source,bash]
+[source]
 ----
 2016-08-08T17:11:08.94-0700 [APP/0]      OUT 2016-08-09 00:11:08.942  INFO 19 --- [ foo.time.foo-1] log.sink                                 : 08/09/16 00:11:08
 2016-08-08T17:11:10.95-0700 [APP/0]      OUT 2016-08-09 00:11:10.954  INFO 19 --- [ foo.time.foo-1] log.sink                                 : 08/09/16 00:11:10
@@ -419,7 +441,7 @@ Old App Logs:
 
 New App Logs:
 
-[source,bash]
+[source]
 ----
 2016-08-08T17:11:07.94-0700 [APP/0]      OUT 2016-08-09 00:11:07.945  INFO 26 --- [ foo.time.foo-1] TEST [log.sink                       : 08/09/16 00:11:07]
 2016-08-08T17:11:09.92-0700 [APP/0]      OUT 2016-08-09 00:11:09.925  INFO 26 --- [ foo.time.foo-1] TEST [log.sink                       : 08/09/16 00:11:09]
