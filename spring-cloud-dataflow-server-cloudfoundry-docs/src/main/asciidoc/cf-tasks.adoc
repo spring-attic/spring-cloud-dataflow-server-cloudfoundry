@@ -1,7 +1,7 @@
 [[tasks-on-cloudfoundry]]
 = Tasks on Cloud Foundry
 
-Spring Cloud Data Flow's task functionality exposes new, experimental, capabilities within
+Spring Cloud Data Flow's task functionality exposes new experimental capabilities within
 the Pivotal Cloud Foundry runtime. It's important to note that the current underlying PCF
 capabilities are considered experimental, and therefore this functionality within Spring
 Cloud Data Flow is also considered experimental.
@@ -18,7 +18,7 @@ around it within the CF ecosystem is not complete.  In order to interact with ta
 PCF command line interface (CLI), you need to install a plugin:
 link:https://github.com/cloudfoundry/v3-cli-plugin[v3-cli-plugin]. It's important to note
 that this plugin is only compatible with the PCF CLI version 6.17.0+5d0be0a-2016-04-15.
-You can read more about the functionality the plugin provides in it's README.
+You can read more about the functionality the plugin provides in its README.
 
 It's also important to note that there is no Apps Manager support for tasks as of this
 release. When running applications as tasks through Spring Cloud Data Flow, the only way
@@ -27,13 +27,13 @@ to view them within the context of CF is via the plugin mentioned above.
 == Running Task Applications
 
 Running a task application within Spring Cloud Data Flow goes through a slightly different
-lifecycle than running a stream application. Both applications need to be registered with
-the appropriate artifact coordinates. Both need a definition created via the SCDF DSL.
+lifecycle than running a stream application. Both types of applications need to be registered
+with the appropriate artifact coordinates. Both need a definition created via the SCDF DSL.
 However, that's where the similarities end.
 
 With stream based applications, you "deploy" them with the intent that they run until they
 are undeployed. A stream definition is only deployed once (it can be scaled, but only
-deployed as one instance of the stream as a whole). However, tasks are launched. A single
+deployed as one instance of the stream as a whole). However, tasks are _launched_. A single
 task definition can be launched many times. With each launch, they will start, execute,
 and shut down with PCF cleaning up the resources once the shutdown has occurred. The
 following sections outline the process of creating, launching, destroying, and viewing tasks.
@@ -41,9 +41,10 @@ following sections outline the process of creating, launching, destroying, and v
 === Create a Task
 
 Similar to streams, creating a task application is done via the SCDF DSL or through the
-dashboard. In order to create a task application, it is assumed that you've developed a
-task application and the maven coordinates are registered in SCDF. For more details on how to
-register task application, review link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/_the_lifecycle_of_a_task.html#_registering_a_task_application[register task applications]
+dashboard. To create a task definition in SCDF, you've to either develop a task
+application or use one of the out-of-the-box link:http://docs.spring.io/spring-cloud-task-app-starters/docs/{sct-starters-core-version}/reference/htmlsingle[task app-starters].
+The maven coordinates of the task application should be registered in SCDF. For more
+details on how to register task applications, review <<_registering_a_task_application,register task applications>>
 section from the core docs.
 
 Let's see an example that uses the out-of-the-box `timestamp` task application.
@@ -54,12 +55,13 @@ dataflow:>task create --name foo --definition "timestamp"
 Created new task 'foo'
 ----
 
-NOTE: Tasks in SCDF do not require explicit deployment. They require launched and there are options to launch it a few
-different ways - refer to link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/spring-cloud-dataflow-launch-tasks-from-stream.html[this section] for more details.
+NOTE: Tasks in SCDF do not require explicit deployment. They are required to be launched
+and with that there are different ways to launch them - refer to <<spring-cloud-dataflow-launch-tasks-from-stream,this section>>
+for more details.
 
 === Launch a Task
 
-Unlike streams, tasks in SCDF requires explicit launch trigger or it can be manually kicked-off.
+Unlike streams, tasks in SCDF requires an explicit launch trigger or it can be manually kicked-off.
 
 [source]
 ----
@@ -71,7 +73,7 @@ Launched task 'foo'
 
 As previously mentioned, the v3-cli-plugin is the way to interact with tasks on PCF,
 including viewing the logs.  In order to view the logs as a task is executing use the
-following command where `<TASK_NAME>` is the name of the task you are executing:
+following command where `foo` is the name of the task you are executing:
 
 [source,bash]
 ----
