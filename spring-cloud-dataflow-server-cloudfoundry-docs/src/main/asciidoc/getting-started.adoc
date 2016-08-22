@@ -113,7 +113,7 @@ You can also set other optional properties for deployment to Cloud Foundry.
 set the following environment variable
 
 ```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_BUILDPACK java_buildpack_offline
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_BUILDPACK java_buildpack_offline
 ```
 
 * If you'd like to use `config-server` to manage centralized configurations for all the applications orchestrated by
@@ -125,10 +125,10 @@ cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.appl
 
 * The default memory and disk sizes for a deployed application can also be configured. By default they are 1024 MB memory
 and 1024 MB disk.  Thse are controlled by setting an integer value, representing the number of MB, to the following
-properties, `spring.cloud.deployer.cloudfoundry.memory` and `spring.cloud.deployer.cloudfoundry.disk`.
+properties, `spring.cloud.deployer.cloudfoundry.stream.memory` and `spring.cloud.deployer.cloudfoundry.stream.disk`.
 The default number of instances to deploy is set to 1, but can be overridden using with the
-`spring.cloud.deployer.cloudfoundry.instances` property.  All these properties are `@ConfigurationProperties` of the
-Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/master/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeployerProperties.java[CloudFoundryDeployerProperties.java] for more information.
+`spring.cloud.deployer.cloudfoundry.stream.instances` property.  All these properties are `@ConfigurationProperties` of the
+Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/master/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
 
 We are now ready to start the app.
 
@@ -150,10 +150,11 @@ export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL=https://api.run.pivotal.io
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG={org}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE={space}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN=cfapps.io
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES=rabbit
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME={email}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
+
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES=rabbit
 ```
 
 You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands.
@@ -237,7 +238,7 @@ are overridable and the respective properties can be set via `cf set-env` comman
 For instance, if you'd like to disable the randmoization, you can override it through:
 
 ```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ENABLE_RANDOM_APP_NAME_PREFIX false
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX false
 ```
 
 [[getting-started-security-cloud-foundry]]
