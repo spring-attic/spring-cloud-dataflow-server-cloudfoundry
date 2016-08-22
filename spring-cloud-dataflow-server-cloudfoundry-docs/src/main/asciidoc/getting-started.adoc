@@ -173,7 +173,7 @@ Tasks are enabled as `experimental` feature in Spring Cloud Data Flow Cloud Foun
 can set the environment variable,
 
 ```
-export SPRING_CLOUD_DATAFLOW_FEATURES_EXPERIMENTAL_TASKS_ENABLED=true
+export SPRING_CLOUD_DATAFLOW_FEATURES_EXPERIMENTAL_TASKSENABLED=true
 ```
 
 or, as a command line argument when starting the data flow server `--spring.cloud.dataflow.features.experimental.tasks-enabled=true`
