@@ -44,7 +44,7 @@ public class CloudFoundryEnvironmentPostProcessor implements EnvironmentPostProc
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 		if (Boolean.valueOf(environment.getProperty(FEATURES_PREFIX + FeaturesProperties.TASKS_ENABLED))) {
 			logger.warn(FEATURES_PREFIX + FeaturesProperties.TASKS_ENABLED + " has been set to true directly. " +
-					"Be advised this is an EXPERIMENTAL feature, normally enabled via " + FEATURES_PREFIX + "experimental.tasks-enabled");
+					"Be advised this is an EXPERIMENTAL feature, normally enabled via " + FEATURES_PREFIX + "experimental.tasksEnabled");
 		}
 
 		Map<String, Object> propertiesToOverride = new HashMap<>();
