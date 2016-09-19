@@ -254,7 +254,7 @@ service to your Data Flow Server app and SSO will be enabled.
 
 == Configuration Reference
 
-The following pieces of configuration must be provided.  These are Spring Boot @ConfigurationProperties so you can set
+The following pieces of configuration must be provided. These are Spring Boot `@ConfigurationProperties` so you can set
 them as environment variables or by any other means that Spring Boot supports.  Here is a listing in environment
 variable format as that is an easy way to get started configuring Boot applications in Cloud Foundry.
 
