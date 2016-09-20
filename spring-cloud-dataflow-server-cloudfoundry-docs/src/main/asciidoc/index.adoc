@@ -8,16 +8,6 @@ Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hiller
 :icons: font
 :hide-uri-scheme:
 
-// Since the core projects will be at different release cadences, the following tokens need changed at the time of every release
-:scdf-core-version: current-SNAPSHOT
-:scst-core-version: current-SNAPSHOT
-:sct-core-version: current-SNAPSHOT
-:scst-starters-core-version: current-SNAPSHOT
-:sct-starters-core-version: current-SNAPSHOT
-
-:dataflow-asciidoc: https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/master/spring-cloud-dataflow-docs/src/main/asciidoc
-:github-code: http://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
-
 // ======================================================================================
 
 [[overview]]

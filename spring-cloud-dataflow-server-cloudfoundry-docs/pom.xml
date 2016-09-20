@@ -31,6 +31,20 @@
 			<build>
 				<plugins>
 					<plugin>
+						<!-- This automatically exposes a property for each dep in the form gId:aId:type.version, used below-->
+						<groupId>io.reformanda.semper</groupId>
+						<artifactId>dependencyversion-maven-plugin</artifactId>
+						<version>1.0.1</version>
+						<executions>
+							<execution>
+								<id>set-all</id>
+								<goals>
+									<goal>set-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>2.10.1</version>
@@ -81,6 +95,15 @@
 										<dataflow-version-type-lowercase>${dataflow-version-type-lowercase}</dataflow-version-type-lowercase>
 										<allow-uri-read>true</allow-uri-read>
 										<attribute-missing>warn</attribute-missing>
+										<dataflow-asciidoc>https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/${dataflow-branch-or-tag}/spring-cloud-dataflow-docs/src/main/asciidoc</dataflow-asciidoc>
+
+										<!-- The following two are deps of this project and set automatically.-->
+										<!-- Others are loose dependencies, and current-SNAPSHOT typically make sense-->
+										<scdf-core-version>${org.springframework.cloud:spring-cloud-dataflow-core:jar.version}</scdf-core-version>
+										<sct-core-version>${org.springframework.cloud:spring-cloud-task-core:jar.version}</sct-core-version>
+										<scdt-core-version>current-SNAPSHOT</scdt-core-version>
+										<scst-starters-core-version>current-SNAPSHOT</scst-starters-core-version>
+										<sct-starters-core-version>current-SNAPSHOT</sct-starters-core-version>
 									</attributes>
 								</configuration>
 							</execution>
@@ -297,6 +320,9 @@
 										<stringutil string="${dataflow-version-type}" property="dataflow-version-type-lowercase">
 											<lowercase />
 										</stringutil>
+
+										<!-- This will use the vX.Y.Z tag for releases, using master for anything else (which is deemed ok, even for maintenance SNAPSHOT) -->
+										<propertyregex property="dataflow-branch-or-tag" override="true" input="${spring-cloud-dataflow.version}" regexp=".*\.(?:M\d+|RC\d+|RELEASE)" select="v\0" defaultValue="master"/>
 									</target>
 								</configuration>
 							</execution>
