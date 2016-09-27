@@ -133,6 +133,13 @@ set the following environment variable
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_BUILDPACK java_buildpack_offline
 ```
 
+* The health check mechanism used by Cloud Foundry to assert if apps are running can be customized. Current supported options
+are `port` (the default) and `none`. Change the default like so:
++
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK none
+```
+
 [NOTE]
 ====
 These settings can be configured separately for stream and task apps. To alter settings for tasks, simply
@@ -144,7 +151,7 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_MEMORY 512
 ====
 
 TIP: All the properties mentioned above are `@ConfigurationProperties` of the
-Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/master/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
+Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/{dataflow-branch-or-tag}/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
 
 * If you'd like to use `config-server` to manage centralized configurations for all the applications orchestrated by
 Spring Cloud Data Flow, you can set it up like the following.
@@ -324,6 +331,9 @@ spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 # for Spring Cloud Stream binding, e.g. rabbit
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES)
 spring.cloud.deployer.cloudfoundry.stream.services=
+
+# Health check type to use for stream apps. Accepts 'none' and 'port'
+spring.cloud.deployer.cloudfoundry.stream.health-check=
 
 
 # Comma separated set of service instance names to bind to every task app deployed.
