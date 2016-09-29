@@ -69,10 +69,14 @@ deployment to fail
 
 [subs=attributes]
 ```
-cf push dataflow-server --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+cf push dataflow-server -m 1G --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 cf bind-service dataflow-server redis
 cf bind-service dataflow-server my_mysql
 ```
+
+IMPORTANT: The recommended minimal memory setting for the server is 1G. Also, to obtain extra runtime information about
+ which properties are available for apps, the server currently downloads those apps (typically Spring Boot uber-jars)
+ in a local Maven repository. As such, you may want to increase the allocated disk size as well.
 
 NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
 applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the app.
