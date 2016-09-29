@@ -399,6 +399,15 @@ dataflow:>stream deploy --name httptojdbc --properties "app.jdbc.spring.cloud.de
 Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http`
 application wouldn't get the binding by this method. If you have more than one service to bind, they can be passed as comma separated items (_eg: app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService,someService_).
 
+[[getting-started-ups]]
+== A Note About User Provided Services
+In addition to marketplace services, Cloud Foundry supports
+https://docs.cloudfoundry.org/devguide/services/user-provided.html[User Provided Services]. Throughout this reference manual,
+regular services have been mentioned, but there is nothing precluding the use of UPSs as well, whether for use as the
+messaging middleware (_e.g._ if you'd like to use an external Apache Kafka installation) or for _ad hoc_ usage by some
+ of the stream apps (_e.g._ an Oracle Database).
+
+
 [[getting-started-service-application-rolling-upgrades]]
 == Application Rolling Upgrades
 Similar to Cloud Foundry's https://docs.pivotal.io/pivotalcf/1-7/devguide/deploy-apps/blue-green.html[blue-green] deployments,
