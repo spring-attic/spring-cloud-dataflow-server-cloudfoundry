@@ -151,7 +151,7 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_MEMORY 512
 ====
 
 TIP: All the properties mentioned above are `@ConfigurationProperties` of the
-Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/{dataflow-branch-or-tag}/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
+Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/{deployer-branch-or-tag}/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
 
 * If you'd like to use `config-server` to manage centralized configurations for all the applications orchestrated by
 Spring Cloud Data Flow, you can set it up like the following.

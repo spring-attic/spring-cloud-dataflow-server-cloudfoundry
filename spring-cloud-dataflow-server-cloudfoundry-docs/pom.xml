@@ -87,6 +87,7 @@
 									<attributes>
 										<docinfo>true</docinfo>
 										<dataflow-project-version>${spring-cloud-dataflow.version}</dataflow-project-version>
+										<deployer-cloudfoundry-version>${spring-cloud-deployer-cloudfoundry.version}</deployer-cloudfoundry-version>
 										<project-version>${project.version}</project-version>
 										<project-artifactId>${project.artifactId}</project-artifactId>
 										<version-type-lowercase>${version-type-lowercase}</version-type-lowercase>
@@ -95,6 +96,7 @@
 										<attribute-missing>warn</attribute-missing>
 										<dataflow-branch-or-tag>${dataflow-branch-or-tag}</dataflow-branch-or-tag>
 										<dataflow-asciidoc>https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/${dataflow-branch-or-tag}/spring-cloud-dataflow-docs/src/main/asciidoc</dataflow-asciidoc>
+										<deployer-branch-or-tag>${deployer-branch-or-tag}</deployer-branch-or-tag>
 
 										<!-- The following two are deps of this project and set automatically.-->
 										<!-- Others are loose dependencies, and current-SNAPSHOT typically make sense-->
@@ -320,8 +322,17 @@
 											<lowercase />
 										</stringutil>
 
+										<var name="deployer-version-type" value="${spring-cloud-deployer-cloudfoundry.version}" />
+										<propertyregex property="deployer-version-type" override="true" input="${deployer-version-type}" regexp=".*\.(.*)" replace="\1" />
+										<propertyregex property="deployer-version-type" override="true" input="${deployer-version-type}" regexp="(M)\d+" replace="MILESTONE" />
+										<propertyregex property="deployer-version-type" override="true" input="${deployer-version-type}" regexp="(RC)\d+" replace="MILESTONE" />
+										<propertyregex property="deployer-version-type" override="true" input="${deployer-version-type}" regexp="BUILD-(.*)" replace="SNAPSHOT" />
+										<stringutil string="${deployer-version-type}" property="deployer-version-type-lowercase">
+											<lowercase />
+										</stringutil>
+
 										<!-- This will use the vX.Y.Z tag for releases, using master for anything else (which is deemed ok, even for maintenance SNAPSHOT) -->
-										<propertyregex property="dataflow-branch-or-tag" override="true" input="${spring-cloud-dataflow.version}" regexp=".*\.(?:M\d+|RC\d+|RELEASE)" select="v\0" defaultValue="master"/>
+										<propertyregex property="deployer-branch-or-tag" override="true" input="${spring-cloud-deployer-cloudfoundry.version}" regexp=".*\.(?:M\d+|RC\d+|RELEASE)" select="v\0" defaultValue="master"/>
 									</target>
 								</configuration>
 							</execution>
