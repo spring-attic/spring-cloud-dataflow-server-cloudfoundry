@@ -93,6 +93,7 @@
 										<dataflow-version-type-lowercase>${dataflow-version-type-lowercase}</dataflow-version-type-lowercase>
 										<allow-uri-read>true</allow-uri-read>
 										<attribute-missing>warn</attribute-missing>
+										<dataflow-branch-or-tag>${dataflow-branch-or-tag}</dataflow-branch-or-tag>
 										<dataflow-asciidoc>https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/${dataflow-branch-or-tag}/spring-cloud-dataflow-docs/src/main/asciidoc</dataflow-asciidoc>
 
 										<!-- The following two are deps of this project and set automatically.-->
