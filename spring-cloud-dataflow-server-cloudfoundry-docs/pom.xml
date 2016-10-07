@@ -332,6 +332,7 @@
 										</stringutil>
 
 										<!-- This will use the vX.Y.Z tag for releases, using master for anything else (which is deemed ok, even for maintenance SNAPSHOT) -->
+										<propertyregex property="dataflow-branch-or-tag" override="true" input="${spring-cloud-dataflow.version}" regexp=".*\.(?:M\d+|RC\d+|RELEASE)" select="v\0" defaultValue="master"/>
 										<propertyregex property="deployer-branch-or-tag" override="true" input="${spring-cloud-deployer-cloudfoundry.version}" regexp=".*\.(?:M\d+|RC\d+|RELEASE)" select="v\0" defaultValue="master" />
 									</target>
 								</configuration>
