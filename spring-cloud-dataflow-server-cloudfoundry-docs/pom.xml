@@ -360,6 +360,28 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>net.radai</groupId>
+						<artifactId>grep-maven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>grep</goal>
+								</goals>
+								<phase>test</phase>
+								<configuration>
+									<greps>
+										<grep>
+											<file>target/contents/reference/htmlsingle/index.html</file>
+											<grepPattern>Unresolved directive in .*\.adoc - include::</grepPattern>
+											<failIfFound>true</failIfFound>
+										</grep>
+									</greps>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
