@@ -86,6 +86,7 @@
 									<doctype>book</doctype>
 									<attributes>
 										<docinfo>true</docinfo>
+										<omit-tasks-docs>true</omit-tasks-docs>
 										<dataflow-project-version>${spring-cloud-dataflow.version}</dataflow-project-version>
 										<deployer-cloudfoundry-version>${spring-cloud-deployer-cloudfoundry.version}</deployer-cloudfoundry-version>
 										<project-version>${project.version}</project-version>
