@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-cloud-dataflow-server-cloudfoundry</artifactId>
 	<packaging>jar</packaging>
-	<description>Clound Foundry Data Flow Server</description>
+	<description>Cloud Foundry Data Flow Server</description>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
