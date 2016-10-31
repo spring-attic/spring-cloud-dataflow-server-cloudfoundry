@@ -76,7 +76,9 @@ cf bind-service dataflow-server my_mysql
 
 IMPORTANT: The recommended minimal memory setting for the server is 1G. Also, to obtain extra runtime information about
  which properties are available for apps, the server currently downloads those apps (typically Spring Boot uber-jars)
- in a local Maven repository. As such, you may want to increase the allocated disk size as well.
+ in a local Maven repository and the artifact is then cached on the local disk for reuse. The default disk quota (_1G_)
+ fills up as we deploy streams composed of several unique applications. In order to comfortably get started, you may
+ want to increase the xref:getting-started-maximum-disk-quota-configuration[maximum disk quota] for the server.
 
 NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
 applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the app.
@@ -549,3 +551,53 @@ foo-log-v2 started           1/1         1G       1G     foo-log-v2.cfapps.io
 
 NOTE: A comprehensive canary analysis along with rolling upgrades will be supported via http://www.spinnaker.io/[Spinnaker]
 in future releases.
+
+[[getting-started-maximum-disk-quota-configuration]]
+== Maximum Disk Quota Configuration
+By default, every application in Cloud Foundry starts with 1G disk quota and this can be adjusted to a default maximum of
+2G. The default maximum can also be overridden up to 10G via Pivotal Cloud Foundry's (PCF) Ops Manager GUI.
+
+This configuration is relevant for Spring Cloud Data Flow because every stream and task deployment is composed of applications
+(typically Spring Boot uber-jar's) and those applications are resolved from a remote maven repository. After resolution,
+the application artifacts are downloaded to the local Maven Repository for caching/reuse. With this happening in the background,
+there is a possibility the default disk quota (_1G_) fills up rapidly; especially, when we are experimenting with streams that
+are made up of unique applications.  In order to overcome this disk limitation and depending
+on your scaling requirements,you may want to change the default maximum from 2G to 10G. Let's review the
+steps to change the default maximum disk quota allocation.
+
+=== PCF's Operations Manager Configuration
+
+From PCF's Ops Manager, Select "*Pivotal Elastic Runtime*" tile and navigate to "*Application Developer Controls*" tab.
+Change the "*Maximum Disk Quota per App (MB)*" setting from 2048 to 10240 (_10G_). Save the disk quota update and hit
+"Apply Changes" to complete the configuration override.
+
+=== Scale Application
+
+Once the disk quota change is applied successfully and assuming you've a xref:running-on-cloudfoundry[running application],
+you may scale the application with a new `disk_limit` through CF CLI.
+
+[source,bash]
+----
+→ cf scale dataflow-server -k 10GB
+
+Scaling app dataflow-server in org ORG / space SPACE as user...
+OK
+
+....
+....
+....
+....
+
+     state     since                    cpu      memory           disk           details
+#0   running   2016-10-31 03:07:23 PM   1.8%     497.9M of 1.1G   193.9M of 10G
+----
+
+[source,bash]
+----
+→ cf apps
+Getting apps in org ORG / space SPACE as user...
+OK
+
+name              requested state   instances   memory   disk   urls
+dataflow-server   started           1/1         1.1G     10G    dataflow-server.apps.io
+----
