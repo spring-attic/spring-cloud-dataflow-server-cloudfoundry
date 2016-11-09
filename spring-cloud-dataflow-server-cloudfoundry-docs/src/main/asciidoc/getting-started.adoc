@@ -228,9 +228,9 @@ Run the shell and optionally target the Admin application if not running on the 
 deployed on Cloud Foundry as explained xref:running-on-cloudfoundry[here])
 
 [source,bash,subs=attributes]
-```
+----
 $ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar
-```
+----
 
 ```
 server-unknown:>dataflow config server http://dataflow-server.cfapps.io
@@ -371,14 +371,14 @@ As this support is specific to Pivotal Cloud Foundry, it is not included by defa
 that embeds it is as simple as adding a dependency similar to
 
 [source, xml]
-```
+----
 <dependency>
     <groupId>io.pivotal.spring.cloud</groupId>
     <artifactId>spring-cloud-services-starter-config-client</artifactId>
-    <version>1.1.0.RELEASE</version>
+    <version><!--Appropriate version at the time of reading--></version>
     <scope>runtime</scope>
 </dependency>
-```
+----
 
 to your own version of the
 https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/tree/master/spring-cloud-dataflow-server-cloudfoundry[Data Flow server],
