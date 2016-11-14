@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-cloud-starter-dataflow-server-cloudfoundry</artifactId>
 	<url>http://projects.spring.io/spring-cloud/</url>
+	<description>Spring Cloud Data Flow for Cloud Foundry</description>
 	<organization>
 		<name>Pivotal Software, Inc.</name>
 		<url>http://www.spring.io</url>
@@ -43,4 +44,24 @@
 			<version>${reactor.version}</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>dataflow-server.yml</exclude>
+					<exclude>banner.txt</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>dataflow-server.yml</include>
+					<include>banner.txt</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 </project>
