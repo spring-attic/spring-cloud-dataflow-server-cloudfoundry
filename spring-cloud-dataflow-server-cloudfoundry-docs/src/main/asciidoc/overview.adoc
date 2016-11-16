@@ -1,3 +1,8 @@
+[[overview]]
+= Spring Cloud Data Flow for Cloud Foundry
+
+This project provides support for orchestrating the deployment of Spring Cloud Stream applications to Cloud Foundry.
+
 [[spring-cloud-data-flow-overview]]
 == Spring Cloud Data Flow
 Spring Cloud Data Flow is a cloud-native programming and operating model for composable data microservices on a structured platform. With Spring Cloud Data Flow, developers can create and orchestrate data pipelines for common use cases such as data ingest, real-time analytics, and data import/export.
