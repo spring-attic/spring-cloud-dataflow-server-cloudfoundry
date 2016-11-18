@@ -348,9 +348,11 @@ spring.cloud.deployer.cloudfoundry.stream.health-check=
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES)
 spring.cloud.deployer.cloudfoundry.task.services=
 
-# Timeout to use, in seconds, when doing task related deployments.
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_TASK_TIMEOUT)
-spring.cloud.deployer.cloudfoundry.task.taskTimeout=360
+# Timeout to use, in seconds, when doing blocking API calls to Cloud Foundry.
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_API_TIMEOUT
+and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_API_TIMEOUT)
+spring.cloud.deployer.cloudfoundry.stream.apiTimeout=360
+spring.cloud.deployer.cloudfoundry.task.apiTimeout=360
 ```
 
 Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
