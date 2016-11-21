@@ -32,7 +32,6 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>dataflow-server.yml</include>
-					<include>banner.txt</include>
 				</includes>
 			</resource>
 		</resources>
