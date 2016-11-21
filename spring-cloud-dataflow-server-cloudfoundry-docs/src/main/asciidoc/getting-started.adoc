@@ -369,23 +369,10 @@ will deploy the time source with 2048MB of memory, while the log sink will use t
 
 === Using Spring Cloud Config Server
 If using Spring Cloud Config Server as a Cloud Foundry service, the easiest way to externalize the above configuration
-and consume it from the Data Flow server is to use the `spring-cloud-services-starter-config-client` dependency.
-As this support is specific to Pivotal Cloud Foundry, it is not included by default. But building a Data Flow server
-that embeds it is as simple as adding a dependency similar to
+and consume it from the Data Flow server is to use the `spring-cloud-services-starter-config-client` dependency, which
+is included in the standard distribution of the Spring Cloud Data Flow server for Cloud Foundry.
 
-[source, xml]
-----
-<dependency>
-    <groupId>io.pivotal.spring.cloud</groupId>
-    <artifactId>spring-cloud-services-starter-config-client</artifactId>
-    <version><!--Appropriate version at the time of reading--></version>
-    <scope>runtime</scope>
-</dependency>
-----
-
-to your own version of the
-https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/tree/master/spring-cloud-dataflow-server-cloudfoundry[Data Flow server],
-and building it yourself. Then follow the http://docs.pivotal.io/spring-cloud-services/config-server[documentation]
+Follow the http://docs.pivotal.io/spring-cloud-services/config-server[documentation]
 for Config Server for Pivotal Cloud Foundry.
 For more details, please refer to Spring Cloud Services
 http://docs.pivotal.io/spring-cloud-services/client-dependencies.html#config-server[client-dependencies documentation].
