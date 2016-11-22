@@ -356,12 +356,13 @@ spring.cloud.deployer.cloudfoundry.task.apiTimeout=360
 ```
 
 Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
-`spring.cloud.deployer.cloudfoundry.memory`, and `spring.cloud.deployer.cloudfoundry.disk` as part of an individual
-deployment request prefixed by the `app.<name of application>`.  For example
+`spring.cloud.deployer.cloudfoundry.buildpack` or the Spring Cloud Deployer standard
+`spring.cloud.deployer.memory` and `spring.cloud.deployer.disk`
+as part of an individual deployment request prefixed by the `app.<name of application>`. For example
 
 ```
 >stream create --name ticktock --definition "time | log"
->stream deploy --name ticktock --properties "app.time.spring.cloud.deployer.cloudfoundry.memory=2048"
+>stream deploy --name ticktock --properties "app.time.spring.cloud.deployer.memory=2g"
 ```
 
 will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
