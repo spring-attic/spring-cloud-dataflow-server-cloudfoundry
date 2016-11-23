@@ -6,7 +6,7 @@ management:
 info:
   app:
     name: "@project.artifactId@"
-    description: "@project.description@"
+    description: "@project.name@"
     version: "@project.version@"
 
 security:
@@ -33,7 +33,7 @@ spring:
     deployer:
       cloudfoundry:
         task:
-          taskTimeout: 360
+          apiTimeout: 360
 
 #
 # If you prefer to use Eureka to locate the Config Server, you can do that by setting
