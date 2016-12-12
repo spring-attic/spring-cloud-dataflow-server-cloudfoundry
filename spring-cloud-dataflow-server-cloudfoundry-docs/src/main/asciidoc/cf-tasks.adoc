@@ -1,21 +1,22 @@
 [[tasks-on-cloudfoundry]]
 = Tasks on Cloud Foundry
 
-Spring Cloud Data Flow's task functionality exposes new experimental capabilities within
-the Pivotal Cloud Foundry runtime. It's important to note that the current underlying PCF
-capabilities are considered experimental, and therefore this functionality within Spring
-Cloud Data Flow is also considered experimental.
+Spring Cloud Data Flow's task functionality exposes new task capabilities within
+the Pivotal Cloud Foundry runtime. It is important to note that the current underlying PCF
+task capabilities are considered experimental for PCF version versions less than 1.9.  See
+ <<enable-disable-specific-features>> for how to disable task support in Data Flow.
 
 == Version Compatibility
 
 The task functionality depends on the latest versions of PCF for runtime support. This
-release requires PCF version 1.7.12 or higher to run tasks.
+release requires PCF version 1.7.12 or higher to run tasks.  Tasks are an experimental
+feature in PCF 1.7 and 1.8 and a GA feature in PCF 1.9.
 
 == Tooling
 
-Because the task functionality is currently considered experimental within PCF, the tooling
+Because the task functionality is experimental in PCF for versions less than 1.9, the tooling
 around it within the CF ecosystem is not complete.  In order to interact with tasks via the
-PCF command line interface (CLI), you need to install a plugin:
+PCF command line interface (CLI) for versions less than 1.9, you need to install a plugin:
 link:https://github.com/cloudfoundry/v3-cli-plugin[v3-cli-plugin]. It's important to note
 that this plugin is only compatible with the PCF CLI version 6.17.0+5d0be0a-2016-04-15.
 You can read more about the functionality the plugin provides in its README.

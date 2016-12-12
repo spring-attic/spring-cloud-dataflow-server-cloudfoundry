@@ -209,18 +209,9 @@ TIP: Of course, all other parameterization options that were available when runn
 still available. This is particularly true for xref:configuring-defaults[configuring defaults] for applications. Just
 substitute `cf set-env` syntax with `export`.
 
-
-
-=== Running Tasks
-
-Tasks are enabled as an *experimental* feature in Spring Cloud Data Flow Cloud Foundry server. To enable running tasks,
-you can set the environment variable
-
-```
-export SPRING_CLOUD_DATAFLOW_FEATURES_EXPERIMENTAL_TASKSENABLED=true
-```
-
-or, as a command line argument when starting the data flow server `--spring.cloud.dataflow.features.experimental.tasksEnabled=true`
+NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
+versions less than 1.9.  See <<enable-disable-specific-features>> for how to disable task support
+in Data Flow.
 
 === Running Spring Cloud Data Flow Shell locally
 
