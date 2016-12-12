@@ -69,12 +69,12 @@ deployment to fail
 
 [subs=attributes]
 ```
-cf push dataflow-server -m 1G --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+cf push dataflow-server -m 2G --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 cf bind-service dataflow-server redis
 cf bind-service dataflow-server my_mysql
 ```
 
-IMPORTANT: The recommended minimal memory setting for the server is 1G. Also, to obtain extra runtime information about
+IMPORTANT: The recommended minimal memory setting for the server is 2G. Also, to obtain extra runtime information about
  which properties are available for apps, the server currently downloads those apps (typically Spring Boot uber-jars)
  in a local Maven repository and the artifact is then cached on the local disk for reuse. The default disk quota (_1G_)
  fills up as we deploy streams composed of several unique applications. In order to comfortably get started, you may
