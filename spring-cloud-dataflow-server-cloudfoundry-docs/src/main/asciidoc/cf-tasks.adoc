@@ -137,3 +137,16 @@ dataflow:>task list
 ║Task Name│Task Definition│Task Status║
 ╚═════════╧═══════════════╧═══════════╝
 ----
+
+=== Deleting Task From Cloud Foundry
+Currently Spring Cloud Data Flow does not delete tasks deployed on a Cloud
+Foundry instance once they have been pushed.  The only way to do this now is via
+CLI (version 2.65 or above) on a Cloud Foundry instance version 1.9 or above.
+This is done in 2 steps:
+
+. Obtain a list of the apps via the `cf apps` command.
+. Identify the task app to be deleted and execute the `cf delete <task-name>`
+command.
+
+NOTE: The `task destroy <task-name>` only deletes the definition and not the task
+deployed on Cloud Foundry.
