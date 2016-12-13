@@ -1,5 +1,6 @@
 = Spring Cloud Data Flow Server for Cloud Foundry
 Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hillert; Mark Pollack; Thomas Risberg; Marius Bogoevici; Josh Long ; Michael Minella
+v{project-version}
 :doctype: book
 :toc:
 :toclevels: 4
@@ -7,36 +8,57 @@ Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hiller
 :numbered:
 :icons: font
 :hide-uri-scheme:
+:title-logo-image: image:logo.png[top=10%, align=center, pdfwidth=6cm]
 
 :spring-cloud-stream-docs: http://docs.spring.io/spring-cloud-stream/docs/{scst-core-version}/reference/htmlsingle/index.html
 :github-code: https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
 // ======================================================================================
 
-[[overview]]
-= Spring Cloud Data Flow for Cloud Foundry
-
-This project provides support for orchestrating the deployment of Spring Cloud Stream applications to Cloud Foundry.
-
 include::overview.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::{dataflow-asciidoc}/architecture.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::getting-started.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::{dataflow-asciidoc}/configuration.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::{dataflow-asciidoc}/streams.adoc[]
 
-ifndef::omit-tasks-docs[]
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::{dataflow-asciidoc}/tasks.adoc[]
-endif::omit-tasks-docs[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::cf-tasks.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::{dataflow-asciidoc}/dashboard.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::{dataflow-asciidoc}/howto.adoc[]
 
+ifdef::backend-pdf[]
+<<<
+endif::backend-pdf[]
 include::appendix.adoc[]
 
 
