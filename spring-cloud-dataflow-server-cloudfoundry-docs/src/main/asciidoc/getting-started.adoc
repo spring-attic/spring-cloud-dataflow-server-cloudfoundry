@@ -93,6 +93,7 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG {org}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES rabbit
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES my_mysql
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
@@ -192,6 +193,7 @@ export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
 
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES=rabbit
+export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES=my_mysql
 ```
 
 You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands.
@@ -235,7 +237,7 @@ built with the RabbitMQ binder in bulk, you can with the following command. For 
 xref:spring-cloud-dataflow-register-apps[register applications].
 
 ```
-dataflow:>app import --uri http://bit.ly/1-0-4-GA-stream-applications-rabbit-maven
+dataflow:>app import --uri http://bit.ly/Avogadro-GA-stream-applications-rabbit-maven
 
 ```
 
@@ -253,9 +255,33 @@ the application has started.
 Now post some data. The URL will be unique to your deployment, the following is just an example
 [source]
 ----
-dataflow:> http post --target http://dataflow-nonconcentrative-knar-httptest-http.cfapps.io --data "hello world"
+dataflow:> http post --target http://dataflow-AxwwAhK-httptest-http.cfapps.io --data "hello world"
 ----
 Look to see if `hello world` ended up in log files for the `log` application.
+
+To run a simple task application, you can register all the out-of-the-box task applications with the following command.
+
+```
+dataflow:>app import --uri http://bit.ly/Addison-GA-task-applications-maven
+
+```
+
+Now create a simple link:http://docs.spring.io/spring-cloud-task-app-starters/docs/1.0.1.RELEASE/reference/html/_timestamp_task.html[timestamp] task.
+
+```
+dataflow:>task create mytask --definition "timestamp --format=\"yyyy\""
+```
+
+Tail the logs, e.g. `cf logs mytask` and then launch the task in the UI or in the Data Flow Shell
+
+```
+dataflow:>task launch mytask
+```
+
+You will see the year `2016` printed in the logs. The execution status of the task is stored
+in the databaseand you can retrieve information about the task execution using the shell commands
+`task execution list` and `task execution status --id <ID_OF_TASK>` or though the Data Flow UI.
+
 
 [[getting-started-security]]
 == Security
@@ -272,7 +298,7 @@ To help avoid clashes with routes across spaces in Cloud Foundry, a naming strat
 deployed application is available and is enabled by default. The https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry#application-name-settings-and-deployments[default configurations]
 are overridable and the respective properties can be set via `cf set-env` commands.
 
-For instance, if you'd like to disable the randmoization, you can override it through:
+For instance, if you'd like to disable the randomization, you can override it through:
 
 ```
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX false
