@@ -16,7 +16,10 @@
 
 package org.springframework.cloud.dataflow.server.cloudfoundry.config;
 
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.dataflow.server.cloudfoundry.resource.LRUCleaningResourceLoaderInstaller;
+import org.springframework.cloud.dataflow.server.config.DataFlowControllerAutoConfiguration;
 import org.springframework.cloud.deployer.spi.cloudfoundry.CloudFoundryConnectionProperties;
 import org.springframework.cloud.deployer.spi.cloudfoundry.CloudFoundryDeploymentProperties;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Eric Bottard
  */
 @Configuration
+@AutoConfigureBefore(DataFlowControllerAutoConfiguration.class)
 public class CloudFoundryDataFlowServerConfiguration {
 
 	@Bean
@@ -40,6 +44,11 @@ public class CloudFoundryDataFlowServerConfiguration {
 	@ConfigurationProperties(prefix = CloudFoundryConnectionProperties.CLOUDFOUNDRY_PROPERTIES + ".task")
 	public CloudFoundryDeploymentProperties taskDeploymentProperties() {
 		return new CloudFoundryDeploymentProperties();
+	}
+
+	@Bean
+	public LRUCleaningResourceLoaderInstaller lruCleaningResourceLoaderInstaller() {
+		return new LRUCleaningResourceLoaderInstaller(.25F); // Aim for 25% free disk space at all times
 	}
 
 }
