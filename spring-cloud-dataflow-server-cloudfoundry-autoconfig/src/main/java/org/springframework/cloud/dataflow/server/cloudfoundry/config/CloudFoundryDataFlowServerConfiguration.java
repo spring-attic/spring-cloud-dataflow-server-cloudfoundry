@@ -16,7 +16,11 @@
 
 package org.springframework.cloud.dataflow.server.cloudfoundry.config;
 
+import java.io.File;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.dataflow.server.cloudfoundry.resource.LRUCleaningResourceLoaderBeanPostProcessor;
+import org.springframework.cloud.deployer.resource.maven.MavenProperties;
 import org.springframework.cloud.deployer.spi.cloudfoundry.CloudFoundryConnectionProperties;
 import org.springframework.cloud.deployer.spi.cloudfoundry.CloudFoundryDeploymentProperties;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +44,21 @@ public class CloudFoundryDataFlowServerConfiguration {
 	@ConfigurationProperties(prefix = CloudFoundryConnectionProperties.CLOUDFOUNDRY_PROPERTIES + ".task")
 	public CloudFoundryDeploymentProperties taskDeploymentProperties() {
 		return new CloudFoundryDeploymentProperties();
+	}
+
+	@Bean
+	@ConfigurationProperties(prefix = CloudFoundryServerConfigurationProperties.PREFIX)
+	public CloudFoundryServerConfigurationProperties cloudFoundryServerConfigurationProperties() {
+		return new CloudFoundryServerConfigurationProperties();
+	}
+
+	@Bean
+	public LRUCleaningResourceLoaderBeanPostProcessor lruCleaningResourceLoaderInstaller(
+			CloudFoundryServerConfigurationProperties serverConfiguration,
+			MavenProperties mavenProperties) {
+		File repositoryCache = new File(mavenProperties.getLocalRepository());
+		float fRatio = serverConfiguration.getFreeDiskSpacePercentage() / 100F;
+		return new LRUCleaningResourceLoaderBeanPostProcessor(fRatio, repositoryCache);
 	}
 
 }

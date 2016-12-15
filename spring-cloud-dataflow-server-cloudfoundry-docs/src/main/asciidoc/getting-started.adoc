@@ -612,3 +612,17 @@ OK
 name              requested state   instances   memory   disk   urls
 dataflow-server   started           1/1         1.1G     10G    dataflow-server.apps.io
 ----
+
+=== Configuring target free disk percentage
+
+Even when configuring the Data Flow server to use 10G of space, there is the possibility of exhausting
+the available space on the local disk.  The server implements a least recently used (LRU) algorithm that
+will remove maven artifacts from the local maven repository.  This is configured using the following
+configuration property, the default value is 25.
+
+---
+# The low water mark percentage, expressed as in integer between 0 and 100, that triggers cleanup of
+# the local maven repository
+# (for setting env var use SPRING_CLOUD_DATAFLOW_SERVER_CLOUDFOUNDRY_FREE_DISK_SPACE_PERCENTAGE)
+spring.cloud.dataflow.server.cloudfoundry.freeDiskSpacePercentage=25
+---
