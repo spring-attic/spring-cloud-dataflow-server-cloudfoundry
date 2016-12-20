@@ -25,6 +25,17 @@ It's also important to note that there is no Apps Manager support for tasks as o
 release. When running applications as tasks through Spring Cloud Data Flow, the only way
 to view them within the context of CF is via the plugin mentioned above.
 
+== Task Database Schema
+
+The database schema for Task applications was changed slighlty from the 1.0.x to 1.1.x version of
+Spring Cloud Task.  Since Spring Cloud Data Flow automatically creates the database schema if it is
+not present upon server startup, you may need to update the schema if you ran a 1.0.x version of the
+Data Flow server and now are upgrading to the 1.1.x version.  You can find the migration scripts
+link:https://github.com/spring-cloud/spring-cloud-task/commits/master/spring-cloud-task-core/src/main/resources/org/springframework/cloud/task/migration[here]
+in the Spring Cloud Task repository.  The documentation for link:https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html[Accessing Services with Diego SSH]
+and this link:http://pivotaljourney.blogspot.com/2016/05/connecting-gui-tool-to-mysql-service-in.html[blog entry]
+for connecting a GUI tools to the MySQL Service in PCF should help you to update the schema.
+
 == Running Task Applications
 
 Running a task application within Spring Cloud Data Flow goes through a slightly different
