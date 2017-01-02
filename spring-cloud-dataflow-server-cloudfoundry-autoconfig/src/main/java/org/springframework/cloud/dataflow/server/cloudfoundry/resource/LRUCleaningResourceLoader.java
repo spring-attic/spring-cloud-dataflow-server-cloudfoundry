@@ -52,7 +52,7 @@ import org.springframework.util.FileSystemUtils;
 
 	private final ResourceLoader delegate;
 
-	private Map<File, Void> lruCache = this.new LRUCache();
+	private final Map<File, Void> lruCache = this.new LRUCache();
 
 	private final float targetFreeSpaceRatio;
 
@@ -95,7 +95,7 @@ import org.springframework.util.FileSystemUtils;
 		protected boolean removeEldestEntry(Map.Entry<File, Void> eldest) {
 			for (Iterator<File> it = keySet().iterator(); it.hasNext(); ) {
 				File file = it.next();
-				logger.debug("Looking at {}, {} / {} = {}% free space", file, file.getFreeSpace(), file.getTotalSpace(), 100f * file.getFreeSpace() / file.getTotalSpace());
+				logger.info("Looking at {}, {} / {} = {}% free space", file, file.getFreeSpace(), file.getTotalSpace(), 100f * file.getFreeSpace() / file.getTotalSpace());
 				if (shouldDelete(file) && it.hasNext()) { // never delete the most recent entry
 					cleanup(file);
 					it.remove();

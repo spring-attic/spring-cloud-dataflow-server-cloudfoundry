@@ -19,9 +19,7 @@ package org.springframework.cloud.dataflow.server.cloudfoundry.resource;
 import java.io.File;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.cloud.deployer.resource.maven.MavenProperties;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
@@ -31,15 +29,15 @@ import org.springframework.core.io.ResourceLoader;
  *
  * @author Eric Bottard
  */
-public class LRUCleaningResourceLoaderInstaller implements BeanPostProcessor {
-
-	@Autowired
-	private MavenProperties mavenProperties;
+public class LRUCleaningResourceLoaderBeanPostProcessor implements BeanPostProcessor {
 
 	private final float targetFreeSpaceRatio;
 
-	public LRUCleaningResourceLoaderInstaller(float targetFreeSpaceRatio) {
+	private final File repositoryCache;
+
+	public LRUCleaningResourceLoaderBeanPostProcessor(float targetFreeSpaceRatio, File repositoryCache) {
 		this.targetFreeSpaceRatio = targetFreeSpaceRatio;
+		this.repositoryCache = repositoryCache;
 	}
 
 	@Override
@@ -50,7 +48,7 @@ public class LRUCleaningResourceLoaderInstaller implements BeanPostProcessor {
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof DelegatingResourceLoader) {
-			return new LRUCleaningResourceLoader((ResourceLoader) bean, targetFreeSpaceRatio, new File(mavenProperties.getLocalRepository()));
+			return new LRUCleaningResourceLoader((ResourceLoader) bean, targetFreeSpaceRatio, repositoryCache);
 		}
 		return bean;
 	}
