@@ -64,7 +64,7 @@ import org.springframework.util.FileSystemUtils;
 	 */
 	public LRUCleaningResourceLoader(ResourceLoader delegate, float targetFreeSpaceRatio, File repositoryCache) {
 		Assert.notNull(delegate, "delegate cannot be null");
-		Assert.isTrue(0 < targetFreeSpaceRatio && targetFreeSpaceRatio < 1, "targetFreeSpaceRatio should be between 0 and 1");
+		Assert.isTrue(0 <= targetFreeSpaceRatio && targetFreeSpaceRatio <= 1, "targetFreeSpaceRatio should between [0,1] inclusive.");
 		this.delegate = delegate;
 		this.targetFreeSpaceRatio = targetFreeSpaceRatio;
 		this.repositoryCache = repositoryCache;
