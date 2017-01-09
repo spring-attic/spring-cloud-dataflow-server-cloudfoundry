@@ -216,8 +216,8 @@ still available. This is particularly true for xref:configuring-defaults[configu
 substitute `cf set-env` syntax with `export`.
 
 NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
-versions less than 1.9.  See <<enable-disable-specific-features>> for how to disable task support
-in Data Flow.
+versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/enable-disable-specific-features.html[Feature Togglers]
+for how to disable task support in Data Flow.
 
 === Running Spring Cloud Data Flow Shell locally
 
