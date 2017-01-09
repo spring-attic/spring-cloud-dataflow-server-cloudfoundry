@@ -307,6 +307,23 @@ For instance, if you'd like to disable the randomization, you can override it th
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX false
 ```
 
+=== Using Custom Routes
+
+As an alternative to random name, or to get even more control over the hostname used by the deployed apps, one can use
+custom deployment properties, as such:
+
+[[source]
+----
+dataflow:>stream create foo --definition "http | log"
+
+dataflow:>stream deploy foo --properties "app.http.spring.cloud.deployer.cloudfoundry.domain=mydomain.com,
+                                          app.http.spring.cloud.deployer.cloudfoundry.host=myhost,
+                                          app.http.spring.cloud.deployer.cloudfoundry.route-path=my-path"
+----
+
+This would result in the `http` app being bound to the URL `http://myhost.mydomain.com/my-path`. Note that this is an
+example showing *all* customization options available. One can of course only leverage one or two out of the three.
+
 [[getting-started-security-cloud-foundry]]
 == Authentication and Cloud Foundry
 
