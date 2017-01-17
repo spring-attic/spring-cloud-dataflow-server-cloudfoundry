@@ -41,7 +41,7 @@ Use `cf marketplace` to discover which plans are available to you, depending on 
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
 ```
-cf create-service p_mysql 100mb my_mysql
+cf create-service cleardb spark my_mysql
 ```
 
 An RDBMS is used to persist Data Flow state, such as stream definitions and deployment ids.
