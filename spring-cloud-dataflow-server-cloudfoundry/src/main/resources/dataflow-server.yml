@@ -33,6 +33,9 @@ spring:
           apiTimeout: 360
         stream:
           apiTimeout: 360
+logging:
+  level:
+    cloudfoundry-client: DEBUG
 
 #
 # If you prefer to use Eureka to locate the Config Server, you can do that by setting
