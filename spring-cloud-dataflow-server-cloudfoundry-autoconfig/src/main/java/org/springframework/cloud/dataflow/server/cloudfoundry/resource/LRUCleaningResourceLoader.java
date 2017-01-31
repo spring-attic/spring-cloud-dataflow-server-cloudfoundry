@@ -94,17 +94,21 @@ import org.springframework.util.FileSystemUtils;
 	private class LRUCache extends LinkedHashMap<File, Void> {
 
 		LRUCache() {
-			super(5, .75f, true);
+			super(5, .75f, true); // true here makes it LRU cache
 		}
 
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<File, Void> eldest) {
 			for (Iterator<File> it = keySet().iterator(); it.hasNext(); ) {
 				File file = it.next();
-				logger.info("Looking at {}, {} / {} = {}% free space", file, file.getFreeSpace(), file.getTotalSpace(), 100f * file.getFreeSpace() / file.getTotalSpace());
+				String percentFreeSpace = String.format(java.util.Locale.US,"%.2f", 100f * file.getFreeSpace() / file.getTotalSpace());
+				logger.info("Free Disk Space = {}%, Target Free Space >{}%", percentFreeSpace, String.format(java.util.Locale.US,"%.2f", 100f * targetFreeSpaceRatio));
+				logger.debug("Looking at LRU entry {}, Free Space = {} bytes, Total Space = {} bytes", file, file.getFreeSpace(), file.getTotalSpace());
 				if (shouldDelete(file) && it.hasNext()) { // never delete the most recent entry
 					cleanup(file);
 					it.remove();
+				} else {
+					logger.debug("No action taken for LRU entry {}", file);
 				}
 			}
 			return false; // We already did some cleanup, don't let superclass do its logic
@@ -113,16 +117,18 @@ import org.springframework.util.FileSystemUtils;
 		private void cleanup(File file) {
 			if (repositoryCache != null && file.getPath().startsWith(repositoryCache.getPath())) {
 				boolean success = FileSystemUtils.deleteRecursively(file.getParentFile());
-				logger.debug("[{}] Deleting {} parent directory to regain free space {}", success ? "SUCCESS" : "FAILED", file);
+				logger.info("[{}] Deleting {} parent directory to regain free disk space.", success ? "SUCCESS" : "FAILED", file);
 			}
 			else {
 				boolean success = file.delete();
-				logger.debug("[{}] Deleting {} to regain free space", success ? "SUCCESS" : "FAILED", file);
+				logger.info("[{}] Deleting {} to regain free disk space", success ? "SUCCESS" : "FAILED", file);
 			}
 		}
 	}
 
 	private boolean shouldDelete(File file) {
-		return ((float) file.getFreeSpace()) / file.getTotalSpace() < targetFreeSpaceRatio;
+		boolean shouldDelete = ((float) file.getFreeSpace()) / file.getTotalSpace() < targetFreeSpaceRatio;
+		logger.trace("Should Delete {} ? [{}]", file, shouldDelete);
+		return shouldDelete;
 	}
 }
