@@ -244,6 +244,18 @@ dataflow:>app import --uri http://bit.ly/Avogadro-GA-stream-applications-rabbit-
 
 ```
 
+[NOTE]
+.A Note about application URIs
+====
+While Spring Cloud Data Flow for Cloud Foundry leverages the core Data Flow project, and as such theoretically supports
+registering apps using any scheme, the use of `file://` URIs does not really make sense on Cloud Foundry. Indeed, the
+local filesystem of the Data Flow server is ephemeral and chances are that you don't want to manually upload your apps there.
+
+When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
+
+Note that at the time of writing, Docker resources are not supported.
+====
+
 You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
 
 [source]
@@ -281,7 +293,7 @@ Tail the logs, e.g. `cf logs mytask` and then launch the task in the UI or in th
 dataflow:>task launch mytask
 ```
 
-You will see the year `2016` printed in the logs. The execution status of the task is stored
+You will see the year `2017` printed in the logs. The execution status of the task is stored
 in the database and you can retrieve information about the task execution using the shell commands
 `task execution list` and `task execution status --id <ID_OF_TASK>` or though the Data Flow UI.
 
@@ -293,6 +305,17 @@ By default, the Data Flow server is unsecured and runs on an unencrypted HTTP co
 as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate. More details about securing the
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
 review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
+
+[[getting-started-security-cloud-foundry]]
+=== Authentication and Cloud Foundry
+
+When deploying Spring Cloud Data Flow to Cloud Foundry, you can take advantage of the
+ https://github.com/pivotal-cf/spring-cloud-sso-connector[_Spring Cloud Single Sign-On Connector_],
+ which provides Cloud Foundry specific auto-configuration support for OAuth 2.0,
+ when used in conjunction with the _Pivotal Single Sign-On Service_.
+
+Simply set `security.basic.enabled` to `true` and in Cloud Foundry bind the SSO
+service to your Data Flow Server app and SSO will be enabled.
 
 [[getting-started-app-names-cloud-foundry]]
 == Application Names and Prefixes
@@ -323,17 +346,6 @@ dataflow:>stream deploy foo --properties "app.http.spring.cloud.deployer.cloudfo
 
 This would result in the `http` app being bound to the URL `http://myhost.mydomain.com/my-path`. Note that this is an
 example showing *all* customization options available. One can of course only leverage one or two out of the three.
-
-[[getting-started-security-cloud-foundry]]
-== Authentication and Cloud Foundry
-
-When deploying Spring Cloud Data Flow to Cloud Foundry, you can take advantage of the
- https://github.com/pivotal-cf/spring-cloud-sso-connector[_Spring Cloud Single Sign-On Connector_],
- which provides Cloud Foundry specific auto-configuration support for OAuth 2.0,
- when used in conjunction with the _Pivotal Single Sign-On Service_.
-
-Simply set `security.basic.enabled` to `true` and in Cloud Foundry bind the SSO
-service to your Data Flow Server app and SSO will be enabled.
 
 == Configuration Reference
 
