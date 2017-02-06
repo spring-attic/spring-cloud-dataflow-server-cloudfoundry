@@ -413,7 +413,7 @@ will deploy the time source with 2048MB of memory, while the log sink will use t
 === Using Spring Cloud Config Server
 Spring Cloud Config Server can be used to centralize configuration properties for Spring Boot applications. Likewise,
 both Spring Cloud Data Flow and the applications orchestrated using Spring Cloud Data Flow can be integrated with
-config-server. Let's review the integration steps for both the variants.
+config-server to leverage the same capabilities. Let's review the integration steps for both the variants.
 
 ==== Spring Cloud Data Flow and Spring Cloud Config Server
 
@@ -438,16 +438,20 @@ public class DataFlowServer {
 [source,xml]
 ----
 <dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-dataflow-server-cloudfoundry-autoconfig</artifactId>
-	<version>VERSION</version>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-dataflow-server-cloudfoundry-autoconfig</artifactId>
+  <version>CF_SERVER_VERSION</version>
 </dependency>
 <dependency>
-    <groupId>io.pivotal.spring.cloud</groupId>
-    <artifactId>spring-cloud-services-starter-config-client</artifactId>
-    <version>1.4.0.RELEASE</version>
+  <groupId>io.pivotal.spring.cloud</groupId>
+  <artifactId>spring-cloud-services-starter-config-client</artifactId>
+  <version>CONFIG_CLIENT_VERSION</version>
 </dependency>
 ----
+
+Where, `CF_SERVER_VERSION` and `CONFIG_CLIENT_VERSION` versions can be the latest releases of SCDF's link:https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/releases[CF-server]
+and link:https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server] client for
+Pivotal Cloud Foundry respectively.
 
 * Build the application locally
 
@@ -492,13 +496,20 @@ library included as the dependency. A maven example follows.
 <dependency>
   <groupId>io.pivotal.spring.cloud</groupId>
   <artifactId>spring-cloud-services-starter-config-client</artifactId>
-  <version>1.4.0.RELEASE</version>
+  <version>CONFIG_CLIENT_VERSION</version>
 </dependency>
 ----
 
-The final `time-source` über-jar is now ready to be registered in Spring Cloud Data Flow. With this setup and having the
+Where, `CONFIG_CLIENT_VERSION` can be the latest release of link:https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
+client for Pivotal Cloud Foundry.
+
+The final `time-source` über-jar is now ready to be registered in Spring Cloud Data Flow.  For more details, review how
+to xref:spring-cloud-dataflow-register-apps[register applications]. With this setup and having the
 deployed application bound to config-server service on Cloud Foundry, we can successfully negotiate, read, and resolve
 centralized properties at the runtime.
+
+[NOTE]
+When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
 
 ==== Sample Manifest Template
 Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server to successfully
