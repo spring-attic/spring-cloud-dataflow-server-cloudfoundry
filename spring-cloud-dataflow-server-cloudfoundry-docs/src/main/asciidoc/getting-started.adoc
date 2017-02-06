@@ -161,13 +161,6 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_MEMORY 512
 TIP: All the properties mentioned above are `@ConfigurationProperties` of the
 Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/{deployer-branch-or-tag}/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
 
-* If you'd like to use `config-server` to manage centralized configurations for all the applications orchestrated by
-Spring Cloud Data Flow, you can set it up like the following.
-+
-```
-cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.applicationProperties.stream.spring.cloud.config.uri": "http://<CONFIG_SERVER_URI>"}'
-```
-
 We are now ready to start the app.
 
 ```
@@ -418,14 +411,189 @@ as part of an individual deployment request prefixed by the `app.<name of applic
 will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
 
 === Using Spring Cloud Config Server
-If using Spring Cloud Config Server as a Cloud Foundry service, the easiest way to externalize the above configuration
-and consume it from the Data Flow server is to use the `spring-cloud-services-starter-config-client` dependency, which
-is included in the standard distribution of the Spring Cloud Data Flow server for Cloud Foundry.
+Spring Cloud Config Server can be used to centralize configuration properties for Spring Boot applications. Likewise,
+both Spring Cloud Data Flow and the applications orchestrated using Spring Cloud Data Flow can be integrated with
+config-server to leverage the same capabilities. Let's review the integration steps for both the variants.
+
+==== Spring Cloud Data Flow and Spring Cloud Config Server
+
+* Download 1.4.x release of Spring Boot from http://start.spring.io
+* Add `spring-cloud-dataflow-server-cloudfoundry-autoconfig` dependency pointing to Spring Cloud Data Flow's Cloud Foundry link:https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/releases[release]
+* Add `@EnableDataFlowServer` to the downloaded application
+
+[source,java]
+----
+@SpringBootApplication
+@EnableDataFlowServer
+public class DataFlowServer {
+
+	public static void main(String[] args) {
+		new SpringApplication(DataFlowServer.class).run(args);
+	}
+}
+----
+
+* Add  `spring-cloud-services-starter-config-client` dependency in `pom.xml`. A maven example follows.
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-dataflow-server-cloudfoundry-autoconfig</artifactId>
+  <version>CF_SERVER_VERSION</version>
+</dependency>
+<dependency>
+  <groupId>io.pivotal.spring.cloud</groupId>
+  <artifactId>spring-cloud-services-starter-config-client</artifactId>
+  <version>CONFIG_CLIENT_VERSION</version>
+</dependency>
+----
+
+Where, `CF_SERVER_VERSION` and `CONFIG_CLIENT_VERSION` tokens can be the latest release versions of SCDF's link:https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/releases[CF-server]
+and link:https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server] client for
+Pivotal Cloud Foundry respectively.
+
+* Build the application locally
+
+This completes the custom build of Spring Cloud Data Flow with `spring-cloud-services-starter-config-client`
+library included in it as a dependency.
+
+The final über-jar is now ready to be deployed to Cloud Foundry. With this setup and having the deployed application
+bound to config-server service on Cloud Foundry, we can successfully negotiate, read, and resolve centralized properties
+at the runtime.
 
 Follow the http://docs.pivotal.io/spring-cloud-services/config-server[documentation]
-for Config Server for Pivotal Cloud Foundry.
-For more details, please refer to Spring Cloud Services
+for Config Server for Pivotal Cloud Foundry. For more details, please refer to Spring Cloud Services
 http://docs.pivotal.io/spring-cloud-services/client-dependencies.html#config-server[client-dependencies documentation].
+
+==== Stream, Task, and Spring Cloud Config Server
+Similar to Spring Cloud Data Flow server, it is also possible to configure both the stream and task applications to
+resolve the centralized properties from config-server.
+
+Let's assume you'd like to read properties for `time-source` application from config-server.
+
+* Download the `time-source` application starter with "Rabbit binder starter" from http://start-scs.cfapps.io/
+* Load the downloaded project in an IDE
+* Add `@Import(org.springframework.cloud.stream.app.time.source.TimeSourceConfiguration.class)` to import time-source's
+configuration properties
+* Add  `spring-cloud-services-starter-config-client` dependency
+
+* Build the application locally
+
+This completes the custom build of `time-source` application with `spring-cloud-services-starter-config-client`
+library included in it as a dependency. A maven example follows.
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.springframework.cloud.stream.app</groupId>
+  <artifactId>spring-cloud-starter-stream-source-time</artifactId>
+</dependency>
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+</dependency>
+<dependency>
+  <groupId>io.pivotal.spring.cloud</groupId>
+  <artifactId>spring-cloud-services-starter-config-client</artifactId>
+  <version>CONFIG_CLIENT_VERSION</version>
+</dependency>
+----
+
+Where, `CONFIG_CLIENT_VERSION` can be the latest release of link:https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
+client for Pivotal Cloud Foundry.
+
+The final `time-source` über-jar is now ready to be registered in Spring Cloud Data Flow.  For more details, review how
+to xref:spring-cloud-dataflow-register-apps[register applications]. With this setup and having the
+deployed application bound to config-server service on Cloud Foundry, we can successfully negotiate, read, and resolve
+centralized properties at the runtime.
+
+[NOTE]
+When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
+
+==== Sample Manifest Template
+Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server to successfully
+run on Cloud Foundry and automatically resolve centralized properties from config-server at the runtime.
+
+[source,yml]
+----
+---
+applications:
+- name: test-server
+  host: test-server
+  memory: 1G
+  disk_quota: 1G
+  instances: 1
+  path: spring-cloud-dataflow-server-cloudfoundry-VERSION.jar
+  env:
+    SPRING_APPLICATION_NAME: test-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: <URL>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: <ORG>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: <SPACE>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: <DOMAIN>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: <USER>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
+    MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: config-server #this is for all the stream applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server #this is for all the task applications
+services:
+- mysql
+- config-server #this is for the server
+----
+
+Where, `config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry. By binding the
+service to both Spring Cloud Data Flow server and as well as all the Spring Cloud Stream and Spring Cloud Task applications
+through `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: config-server` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server`
+respectively, we can now resolve centralized properties backed by this service.
+
+==== Self-signed SSL Certificate and Spring Cloud Config Server
+Often, in a development environment, we may not have a valid certificate to enable SSL communication between clients and
+the backend services. However, the config-server for Pivotal Cloud Foundry uses HTTPS for all client-to-service communication,
+so it is necessary to add a self-signed SSL certificate in environments with no valid certificates.
+
+Using the same `manifest.yml` template listed in the previous section, for the server, we can provide the self-signed
+SSL certificate via: `TRUST_CERTS: <API_ENDPOINT>`.
+
+For Spring Cloud Stream and Spring Cloud Task applications, it is necessary to wrap the `TRUST_CERTS` in `SPRING_APPLICATION_JSON`
+token - this instructs the server to propagate `SPRING_APPLICATION_JSON` content to all the deployed applications.
+
+However, the deployed applications require `TRUST_CERTS` as a _flat env-var_ as opposed to being wrapped inside
+`SPRING_APPLICATION_JSON`, so we will have to instruct the server with yet another set of tokens `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
+and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false` for stream and task applications
+respectively. With this setup, the applications will be deployed with the content in `SPRING_APPLICATION_JSON` as
+flat env-var's.
+
+Let's review the updated `manifest.yml` with the required changes.
+
+[source,yml]
+----
+---
+applications:
+- name: test-server
+  host: test-server
+  memory: 1G
+  disk_quota: 1G
+  instances: 1
+  path: spring-cloud-dataflow-server-cloudfoundry-VERSION.jar
+  env:
+    SPRING_APPLICATION_NAME: test-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: <URL>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: <ORG>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: <SPACE>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: <DOMAIN>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: <USER>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
+    MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: config-server #this is for all the stream applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server #this is for all the task applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false #this is for all the stream applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false #this is for all the task applications
+    TRUST_CERTS: <API_ENDPOINT> #this is for the server
+    SPRING_APPLICATION_JSON: '{"spring.cloud.dataflow.applicationProperties.stream.TRUST_CERTS" : <API_ENDPOINT>,"spring.cloud.dataflow.applicationProperties.task.TRUST_CERTS" : <API_ENDPOINT>}'
+services:
+- mysql
+- config-server #this is for the server
+----
 
 [[getting-started-service-binding-at-application-level]]
 == Application Level Service Bindings
