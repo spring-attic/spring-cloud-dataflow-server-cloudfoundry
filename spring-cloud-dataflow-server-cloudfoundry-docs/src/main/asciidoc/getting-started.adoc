@@ -449,14 +449,14 @@ public class DataFlowServer {
 </dependency>
 ----
 
-Where, `CF_SERVER_VERSION` and `CONFIG_CLIENT_VERSION` versions can be the latest releases of SCDF's link:https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/releases[CF-server]
+Where, `CF_SERVER_VERSION` and `CONFIG_CLIENT_VERSION` tokens can be the latest release versions of SCDF's link:https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry/releases[CF-server]
 and link:https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server] client for
 Pivotal Cloud Foundry respectively.
 
 * Build the application locally
 
 This completes the custom build of Spring Cloud Data Flow with `spring-cloud-services-starter-config-client`
-library included as the dependency.
+library included in it as a dependency.
 
 The final über-jar is now ready to be deployed to Cloud Foundry. With this setup and having the deployed application
 bound to config-server service on Cloud Foundry, we can successfully negotiate, read, and resolve centralized properties
@@ -474,14 +474,14 @@ Let's assume you'd like to read properties for `time-source` application from co
 
 * Download the `time-source` application starter with "Rabbit binder starter" from http://start-scs.cfapps.io/
 * Load the downloaded project in an IDE
-* Add `@Import(org.springframework.cloud.stream.app.time.source.TimeSourceConfiguration.class)` to import the time-source's
+* Add `@Import(org.springframework.cloud.stream.app.time.source.TimeSourceConfiguration.class)` to import time-source's
 configuration properties
 * Add  `spring-cloud-services-starter-config-client` dependency
 
 * Build the application locally
 
 This completes the custom build of `time-source` application with `spring-cloud-services-starter-config-client`
-library included as the dependency. A maven example follows.
+library included in it as a dependency. A maven example follows.
 
 [source,xml]
 ----
@@ -554,13 +554,14 @@ so it is necessary to add a self-signed SSL certificate in environments with no 
 Using the same `manifest.yml` template listed in the previous section, for the server, we can provide the self-signed
 SSL certificate via: `TRUST_CERTS: <API_ENDPOINT>`.
 
-For the Spring Cloud Stream and Spring Cloud Task applications, it is necessary to wrap the `TRUST_CERTS` in `SPRING_APPLICATION_JSON`
-token - this tells the server to propagate `SPRING_APPLICATION_JSON` content to all the deployed applications.
+For Spring Cloud Stream and Spring Cloud Task applications, it is necessary to wrap the `TRUST_CERTS` in `SPRING_APPLICATION_JSON`
+token - this instructs the server to propagate `SPRING_APPLICATION_JSON` content to all the deployed applications.
 
 However, the deployed applications require `TRUST_CERTS` as a _flat env-var_ as opposed to being wrapped inside
 `SPRING_APPLICATION_JSON`, so we will have to instruct the server with yet another set of tokens `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
-and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false` for stream and task applications respectively
-to deploy them with the content in `SPRING_APPLICATION_JSON` as flat env-var's.
+and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false` for stream and task applications
+respectively. With this setup, the applications will be deployed with the content in `SPRING_APPLICATION_JSON` as
+flat env-var's.
 
 Let's review the updated `manifest.yml` with the required changes.
 
