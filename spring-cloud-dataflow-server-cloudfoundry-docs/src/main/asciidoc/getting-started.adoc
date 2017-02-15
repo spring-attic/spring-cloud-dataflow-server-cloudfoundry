@@ -372,9 +372,9 @@ custom deployment properties, as such:
 ----
 dataflow:>stream create foo --definition "http | log"
 
-dataflow:>stream deploy foo --properties "app.http.spring.cloud.deployer.cloudfoundry.domain=mydomain.com,
-                                          app.http.spring.cloud.deployer.cloudfoundry.host=myhost,
-                                          app.http.spring.cloud.deployer.cloudfoundry.route-path=my-path"
+dataflow:>stream deploy foo --properties "deployer.http.cloudfoundry.domain=mydomain.com,
+                                          deployer.http.cloudfoundry.host=myhost,
+                                          deployer.http.cloudfoundry.route-path=my-path"
 ----
 
 This would result in the `http` app being bound to the URL `http://myhost.mydomain.com/my-path`. Note that this is an
@@ -441,11 +441,11 @@ spring.cloud.deployer.cloudfoundry.task.apiTimeout=360
 Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
 `spring.cloud.deployer.cloudfoundry.buildpack` or the Spring Cloud Deployer standard
 `spring.cloud.deployer.memory` and `spring.cloud.deployer.disk`
-as part of an individual deployment request prefixed by the `app.<name of application>`. For example
+as part of an individual deployment request by using the `deployer.<app-name>` shortcut. For example
 
 ```
 >stream create --name ticktock --definition "time | log"
->stream deploy --name ticktock --properties "app.time.spring.cloud.deployer.memory=2g"
+>stream deploy --name ticktock --properties "deployer.time.memory=2g"
 ```
 
 will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
@@ -665,11 +665,13 @@ definition, you can pass the service binding as a deployment property.
 [source]
 ----
 dataflow:>stream create --name httptojdbc --definition "http | jdbc"
-dataflow:>stream deploy --name httptojdbc --properties "app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService"
+dataflow:>stream deploy --name httptojdbc --properties "deployer.jdbc.cloudfoundry.services=mysqlService"
 ----
 
 Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http`
-application wouldn't get the binding by this method. If you have more than one service to bind, they can be passed as comma separated items (_eg: app.jdbc.spring.cloud.deployer.cloudfoundry.services=mysqlService,someService_).
+application wouldn't get the binding by this method.
+If you have more than one service to bind, they can be passed as comma separated items
+(_eg_: `deployer.jdbc.cloudfoundry.services=mysqlService,someService`).
 
 [[getting-started-ups]]
 == A Note About User Provided Services
