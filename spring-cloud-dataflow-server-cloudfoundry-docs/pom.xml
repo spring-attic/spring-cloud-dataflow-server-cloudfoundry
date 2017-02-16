@@ -379,7 +379,7 @@
 								<configuration>
 									<greps>
 										<grep>
-											<file>target/contents/reference/htmlsingle/index.html</file>
+											<file>target/generated-docs/index.html</file>
 											<grepPattern>Unresolved directive in .*\.adoc - include::</grepPattern>
 											<failIfFound>true</failIfFound>
 										</grep>
