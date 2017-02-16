@@ -45,4 +45,17 @@ public class CloudFoundryServerConfigurationProperties {
 	public void setFreeDiskSpacePercentage(int freeDiskSpacePercentage) {
 		this.freeDiskSpacePercentage = freeDiskSpacePercentage;
 	}
+
+	/**
+	 * Whether to turn on reactor style stacktraces.
+	 */
+	public boolean debugReactor = false;
+
+	public boolean isDebugReactor() {
+		return debugReactor;
+	}
+
+	public void setDebugReactor(boolean debugReactor) {
+		this.debugReactor = debugReactor;
+	}
 }

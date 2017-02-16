@@ -410,6 +410,25 @@ as part of an individual deployment request prefixed by the `app.<name of applic
 
 will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
 
+=== Understanding what's going on
+If you want to get better insights into what is happening when your streams and tasks are being deployed, you may want
+to turn on the following features:
+
+* Reactor "stacktraces", showing which operators were involved before an error occurred. This is helpful as the deployer
+relies on project reactor and regular stacktraces may not always allow understanding the flow before an error happened.
+Note that this comes with a performance penalty, so is disabled by default.
++
+```
+spring.cloud.dataflow.server.cloudfoundry.debugReactor = true
+```
+* Deployer and Cloud Foundry client library request/response logs. This allows seeing detailed conversation between
+the Data Flow server and the Cloud Foundry Cloud Controller.
++
+```
+logging.level.cloudfoundry-client = DEBUG
+
+```
+
 === Using Spring Cloud Config Server
 Spring Cloud Config Server can be used to centralize configuration properties for Spring Boot applications. Likewise,
 both Spring Cloud Data Flow and the applications orchestrated using Spring Cloud Data Flow can be integrated with
