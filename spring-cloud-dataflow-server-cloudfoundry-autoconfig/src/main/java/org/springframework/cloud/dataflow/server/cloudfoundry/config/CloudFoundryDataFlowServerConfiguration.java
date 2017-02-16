@@ -17,6 +17,12 @@
 package org.springframework.cloud.dataflow.server.cloudfoundry.config;
 
 import java.io.File;
+import java.util.function.Function;
+
+import javax.annotation.PostConstruct;
+
+import reactor.core.publisher.Hooks;
+import reactor.core.publisher.Mono;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.dataflow.server.cloudfoundry.resource.LRUCleaningResourceLoaderBeanPostProcessor;
@@ -59,6 +65,13 @@ public class CloudFoundryDataFlowServerConfiguration {
 		File repositoryCache = new File(mavenProperties.getLocalRepository());
 		float fRatio = serverConfiguration.getFreeDiskSpacePercentage() / 100F;
 		return new LRUCleaningResourceLoaderBeanPostProcessor(fRatio, repositoryCache);
+	}
+
+	@PostConstruct
+	public void afterPropertiesSet() {
+		if (cloudFoundryServerConfigurationProperties().isDebugReactor()) {
+			Hooks.onOperator(op -> op.operatorStacktrace());
+		}
 	}
 
 }
