@@ -634,11 +634,28 @@ application wouldn't get the binding by this method. If you have more than one s
 [[getting-started-ups]]
 == A Note About User Provided Services
 In addition to marketplace services, Cloud Foundry supports
-https://docs.cloudfoundry.org/devguide/services/user-provided.html[User Provided Services]. Throughout this reference manual,
+https://docs.cloudfoundry.org/devguide/services/user-provided.html[User Provided Services] (UPS). Throughout this reference manual,
 regular services have been mentioned, but there is nothing precluding the use of UPSs as well, whether for use as the
 messaging middleware (_e.g._ if you'd like to use an external Apache Kafka installation) or for _ad hoc_ usage by some
  of the stream apps (_e.g._ an Oracle Database).
 
+Let's review an example of extracting and supplying the connection credentials from an UPS.
+
+* A sample UPS setup for Apache Kafka.
+
+[source,bash]
+----
+cf create-user-provided-service kafkacups -p '{”brokers":"HOST:PORT","zkNodes":"HOST:PORT"}'
+----
+
+* The UPS credentials will be wrapped within `VCAP_SERVICES` and it can be supplied directly in the stream definition like
+the following.
+
+[source]
+----
+stream create fooz --definition "time | log"
+stream deploy fooz --properties "app.time.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.time.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes},app.log.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.log.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes}"
+----
 
 [[getting-started-service-application-rolling-upgrades]]
 == Application Rolling Upgrades
