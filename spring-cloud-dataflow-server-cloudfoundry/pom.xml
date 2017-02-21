@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
-		<version>1.1.1.BUILD-SNAPSHOT</version>
+		<version>1.1.1.RELEASE</version>
 	</parent>
 	<properties>
 		<start-class>org.springframework.cloud.dataflow.server.cloudfoundry.CloudFoundryDataFlowServer</start-class>
@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dataflow-server-cloudfoundry-autoconfig</artifactId>
-			<version>1.1.1.BUILD-SNAPSHOT</version>
+			<version>1.1.1.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
