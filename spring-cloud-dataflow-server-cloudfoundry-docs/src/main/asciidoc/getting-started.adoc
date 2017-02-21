@@ -177,30 +177,30 @@ in `manifest.yml` file and use `cf push` command to provision the server.
 
 Following is a sample template to provision the server on PCFDev.
 
-[source,bash,subs=attributes]
+[source,yml]
 ----
 ---
 applications:
-- name: <PREFERRED NAME OF THE SERVER APP>
-  host: <PREFERRED HOST>
-  memory: <PREFERRED MEMORY>
-  disk_quota: <PREFERRED DISKQUOTA>
-  timeout: <PREFERRED API TIMEOUT>
-  instances: <NO OF INSTANCES>
-  path: <ABSOLUTE PATH TO SERVER UBER-JAR> # (eg., /demo/spring-cloud-dataflow-server-cloudfoundry-1.1.0.RELEASE.jar)
+- name: {PREFERRED NAME OF THE SERVER APP}
+  host: {PREFERRED HOST}
+  memory: {PREFERRED MEMORY}
+  disk_quota: {PREFERRED DISKQUOTA}
+  timeout: {PREFERRED API TIMEOUT}
+  instances: {NO OF INSTANCES}
+  path: {ABSOLUTE PATH TO SERVER UBER-JAR}
   env:
-    SPRING_APPLICATION_NAME: <PREFERRED NAME OF THE SERVER APP>
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io # (eg., URL for PCFDev)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org # (eg., ORG for PCFDev)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space # (eg., SPACE for PCFDev)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io # (eg., DOMAIN for PCFDev)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin # (eg., USER for PCFDev)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin # (eg., PASSWORD for PCFDev)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis # (eg., Services for Streams)
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql # (eg., Services for Tasks)
+    SPRING_APPLICATION_NAME: {PREFERRED NAME OF THE SERVER APP}
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-snapshot
-    JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG' # (eg., DEBUG logs for cf-java-client Calls)
+    JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG'
 services:
 - mysql
 - config-server
