@@ -169,6 +169,46 @@ cf start dataflow-server
 
 Alternatively, you can run the Admin application locally on your machine which is described in the next section.
 
+[[sample-manifest-teample]]
+==== Sample Manifest Template
+
+As an alternative to setting environment variables via `cf set-env` command, you can curate all the relevant env-var's
+in `manifest.yml` file and use `cf push` command to provision the server.
+
+Following is a sample template to provision the server on PCFDev.
+
+[source,bash,subs=attributes]
+----
+---
+applications:
+- name: <PREFERRED NAME OF THE SERVER APP>
+  host: <PREFERRED HOST>
+  memory: <PREFERRED MEMORY>
+  disk_quota: <PREFERRED DISKQUOTA>
+  timeout: <PREFERRED API TIMEOUT>
+  instances: <NO OF INSTANCES>
+  path: <ABSOLUTE PATH TO SERVER UBER-JAR> # (eg., /demo/spring-cloud-dataflow-server-cloudfoundry-1.1.0.RELEASE.jar)
+  env:
+    SPRING_APPLICATION_NAME: <PREFERRED NAME OF THE SERVER APP>
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io # (eg., URL for PCFDev)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org # (eg., ORG for PCFDev)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space # (eg., SPACE for PCFDev)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io # (eg., DOMAIN for PCFDev)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin # (eg., USER for PCFDev)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin # (eg., PASSWORD for PCFDev)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis # (eg., Services for Streams)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql # (eg., Services for Tasks)
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
+    MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-snapshot
+    JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG' # (eg., DEBUG logs for cf-java-client Calls)
+services:
+- mysql
+- config-server
+----
+
+Once you're ready with the relevant properties in this file, you can issue `cf push` command from the directory where
+this file is stored.
+
 ==== Running the Server app locally
 
 To run the server application locally, targeting your Cloud Foundry installation, you you need to configure the

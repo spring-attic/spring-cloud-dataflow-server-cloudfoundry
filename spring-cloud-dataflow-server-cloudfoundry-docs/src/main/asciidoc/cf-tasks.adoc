@@ -14,16 +14,9 @@ feature in PCF 1.7 and 1.8 and a GA feature in PCF 1.9.
 
 == Tooling
 
-Because the task functionality is experimental in PCF for versions less than 1.9, the tooling
-around it within the CF ecosystem is not complete.  In order to interact with tasks via the
-PCF command line interface (CLI) for versions less than 1.9, you need to install a plugin:
-link:https://github.com/cloudfoundry/v3-cli-plugin[v3-cli-plugin]. It's important to note
-that this plugin is only compatible with the PCF CLI version 6.17.0+5d0be0a-2016-04-15.
-You can read more about the functionality the plugin provides in its README.
-
-It's also important to note that there is no Apps Manager support for tasks as of this
-release. When running applications as tasks through Spring Cloud Data Flow, the only way
-to view them within the context of CF is via the plugin mentioned above.
+It is important to note that there is no Apps Manager support for tasks as of this release.
+When running applications as tasks through Spring Cloud Data Flow, the only way is to view them
+within the context of CF CLI.
 
 == Task Database Schema
 
@@ -84,8 +77,8 @@ Launched task 'foo'
 
 === View Task Logs
 
-As previously mentioned, the v3-cli-plugin is the way to interact with tasks on PCF,
-including viewing the logs.  In order to view the logs as a task is executing use the
+As previously mentioned, the CL CLI is the way to interact with tasks on PCF,
+including viewing the logs. In order to view the logs as a task is executing use the
 following command where `foo` is the name of the task you are executing:
 
 [source,bash]
@@ -104,7 +97,7 @@ Tailing logs for app foo...
 2016-08-19T09:44:50.41-0700 [APP/TASK/bar1/0]OUT Successfully destroyed container
 ----
 
-NOTE: Logs are only viewable through the v3-cli-plugin as the app is running.  Historic
+NOTE: Logs are only viewable through the CF CLI as the app is running. Historic
 logs are not available.
 
 === List Tasks
