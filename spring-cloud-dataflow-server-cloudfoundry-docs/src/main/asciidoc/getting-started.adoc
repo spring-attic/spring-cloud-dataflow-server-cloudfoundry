@@ -212,6 +212,46 @@ NOTE: The current underlying PCF task capabilities are considered experimental f
 versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/enable-disable-specific-features.html[Feature Togglers]
 for how to disable task support in Data Flow.
 
+[[sample-manifest-teample]]
+==== Sample Manifest Template
+
+As an alternative to setting environment variables via `cf set-env` command, you can curate all the relevant env-var's
+in `manifest.yml` file and use `cf push` command to provision the server.
+
+Following is a sample template to provision the server on PCFDev.
+
+[source,yml]
+----
+---
+applications:
+- name: {PREFERRED NAME OF THE SERVER APP}
+  host: {PREFERRED HOST}
+  memory: {PREFERRED MEMORY}
+  disk_quota: {PREFERRED DISKQUOTA}
+  timeout: {PREFERRED API TIMEOUT}
+  instances: {NO OF INSTANCES}
+  path: {ABSOLUTE PATH TO SERVER UBER-JAR}
+  env:
+    SPRING_APPLICATION_NAME: {PREFERRED NAME OF THE SERVER APP}
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
+    MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-snapshot
+    JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG'
+services:
+- mysql
+- config-server
+----
+
+Once you're ready with the relevant properties in this file, you can issue `cf push` command from the directory where
+this file is stored.
+
 === Running Spring Cloud Data Flow Shell locally
 
 Run the shell and optionally target the Admin application if not running on the same host (will typically be the case if
