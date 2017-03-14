@@ -520,8 +520,9 @@ centralized properties at the runtime.
 When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
 
 ==== Sample Manifest Template
-Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server to successfully
-run on Cloud Foundry and automatically resolve centralized properties from config-server at the runtime.
+Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server and deployed
+apps/tasks to successfully run on Cloud Foundry and automatically resolve centralized properties from `my-config-server`
+at the runtime.
 
 [source,yml]
 ----
@@ -542,11 +543,11 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: <USER>
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
     MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: config-server #this is for all the stream applications
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server #this is for all the task applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: my-config-server #this is for all the stream applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: my-config-server #this is for all the task applications
 services:
 - mysql
-- config-server #this is for the server
+- my-config-server #this is for the server
 ----
 
 Where, `config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry. By binding the
@@ -562,16 +563,13 @@ so it is necessary to add a self-signed SSL certificate in environments with no 
 Using the same `manifest.yml` template listed in the previous section, for the server, we can provide the self-signed
 SSL certificate via: `TRUST_CERTS: <API_ENDPOINT>`.
 
-For Spring Cloud Stream and Spring Cloud Task applications, it is necessary to wrap the `TRUST_CERTS` in `SPRING_APPLICATION_JSON`
-token - this instructs the server to propagate `SPRING_APPLICATION_JSON` content to all the deployed applications.
-
-However, the deployed applications require `TRUST_CERTS` as a _flat env-var_ as opposed to being wrapped inside
-`SPRING_APPLICATION_JSON`, so we will have to instruct the server with yet another set of tokens `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
+However, the deployed applications __also__ require `TRUST_CERTS` as a _flat env-var_ (as opposed to being wrapped inside
+`SPRING_APPLICATION_JSON`), so we will have to instruct the server with yet another set of tokens `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
 and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false` for stream and task applications
-respectively. With this setup, the applications will be deployed with the content in `SPRING_APPLICATION_JSON` as
-flat env-var's.
+respectively. With this setup, the applications will receive their application properties as regular environment variables
 
-Let's review the updated `manifest.yml` with the required changes.
+Let's review the updated `manifest.yml` with the required changes. Both the Data Flow server and deployed applications
+would get their config from the `my-config-server` Cloud Config server (deployed as a Cloud Foundry service)
 
 [source,yml]
 ----
@@ -592,15 +590,16 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: <USER>
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
     MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: config-server #this is for all the stream applications
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server #this is for all the task applications
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: my-config-server #this is so all stream applications bind to my-config-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server      #this for so all task applications bind to my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false #this is for all the stream applications
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false #this is for all the task applications
     TRUST_CERTS: <API_ENDPOINT> #this is for the server
-    SPRING_APPLICATION_JSON: '{"spring.cloud.dataflow.applicationProperties.stream.TRUST_CERTS" : <API_ENDPOINT>,"spring.cloud.dataflow.applicationProperties.task.TRUST_CERTS" : <API_ENDPOINT>}'
+    spring.cloud.dataflow.applicationProperties.stream.TRUST_CERTS: <API_ENDPOINT> #this propagates to all streams
+    spring.cloud.dataflow.applicationProperties.task.TRUST_CERTS: <API_ENDPOINT>   #this propagates to all tasks
 services:
 - mysql
-- config-server #this is for the server
+- my-config-server #this is for the server
 ----
 
 [[getting-started-service-binding-at-application-level]]

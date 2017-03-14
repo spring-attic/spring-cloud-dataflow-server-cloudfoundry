@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
 			<artifactId>spring-cloud-services-starter-config-client</artifactId>
-			<version>1.1.0.RELEASE</version>
+			<version>1.4.1.RELEASE</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
