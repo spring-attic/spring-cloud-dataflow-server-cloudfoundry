@@ -81,8 +81,8 @@ import org.springframework.util.FileSystemUtils;
 			return resource;
 		}
 		catch (IOException e) {
-			throw new RuntimeException(getClass().getSimpleName()
-				+ " is meant to work with File resolvable Resources. Exception trying to resolve " + location, e);
+			logger.debug("{} is not stored on the local filesystem, skipping", resource);
+			return resource;
 		}
 	}
 

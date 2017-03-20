@@ -368,7 +368,7 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_ENABLE_RAND
 As an alternative to random name, or to get even more control over the hostname used by the deployed apps, one can use
 custom deployment properties, as such:
 
-[[source]
+[source]
 ----
 dataflow:>stream create foo --definition "http | log"
 
@@ -379,6 +379,29 @@ dataflow:>stream deploy foo --properties "deployer.http.cloudfoundry.domain=mydo
 
 This would result in the `http` app being bound to the URL `http://myhost.mydomain.com/my-path`. Note that this is an
 example showing *all* customization options available. One can of course only leverage one or two out of the three.
+
+== Deploying Docker Applications
+
+Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks using
+Data Flow for Cloud Foundry. This is mainly targeted at non-java apps, as when using Docker the auto-reconfiguration
+magic offered by the java buildpack will not kick in (your Docker app would then not automatically bind to services
+unless it was custom built to include auto-reconfiguration connectors). You can of course still bind services to the
+deployed apps, but those will have to parse `VCAP` variables and Spring Cloud Stream / Spring Cloud Task variables
+"by themselves".
+
+[NOTE]
+.Passing application properties
+====
+When using non-boot apps, chances are that you want the application properties passed to your app using traditional
+environment variables, as opposed to using the special `SPRING_APPLICATION_JSON` variable. To achieve this, set the
+following variables for streams and tasks, respectively:
+
+[source, properties]
+----
+SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON=false
+SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON=false
+----
+====
 
 == Configuration Reference
 
