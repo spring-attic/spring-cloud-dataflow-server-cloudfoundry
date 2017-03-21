@@ -286,7 +286,7 @@ local filesystem of the Data Flow server is ephemeral and chances are that you d
 
 When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
 
-Note that at the time of writing, Docker resources are not supported.
+Note that at the time of writing, Docker resources are not supported for tasks.
 ====
 
 You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
@@ -382,12 +382,17 @@ example showing *all* customization options available. One can of course only le
 
 == Deploying Docker Applications
 
-Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks using
-Data Flow for Cloud Foundry. This is mainly targeted at non-java apps, as when using Docker the auto-reconfiguration
-magic offered by the java buildpack will not kick in (your Docker app would then not automatically bind to services
-unless it was custom built to include auto-reconfiguration connectors). You can of course still bind services to the
-deployed apps, but those will have to parse `VCAP` variables and Spring Cloud Stream / Spring Cloud Task variables
-"by themselves".
+Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams using
+Data Flow for Cloud Foundry. 
+
+If you are using Spring Boot and RabbitMQ based Docker images you can provide a common deployment property
+to facilitate the apps binding to the RabbitMQ service. Assuming your RabbitMQ service is named `rabbit` you can provide the following:
+
+```
+cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.applicationProperties.stream.spring.rabbitmq.addresses": "${vcap.services.rabbit.credentials.protocols.amqp.uris}"}'
+```
+
+For non-Java or non-Boot apps, your Docker app would have to parse the `VCAP_SERVICES` variable in order to bind to any available services.
 
 [NOTE]
 .Passing application properties
