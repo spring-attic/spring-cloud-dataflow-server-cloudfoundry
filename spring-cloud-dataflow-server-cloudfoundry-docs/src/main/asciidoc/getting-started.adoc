@@ -393,10 +393,10 @@ cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.appl
 For Spring Cloud Task apps, something similar to the following could be used, if using a database service instance named `mysql`:
 
 ```
-cf set-env dataflow-server spring.cloud.dataflow.applicationProperties.task.spring.datasource.url '${vcap.services.mysql.credentials.jdbcUrl}'
-cf set-env dataflow-server spring.cloud.dataflow.applicationProperties.task.spring.datasource.username '${vcap.services.mysql.credentials.username}'
-cf set-env dataflow-server spring.cloud.dataflow.applicationProperties.task.spring.datasource.password '${vcap.services.mysql.credentials.password}'
-cf set-env dataflow-server spring.cloud.dataflow.applicationProperties.task.spring.datasource.driverClassName 'org.mariadb.jdbc.Driver'
+cf set-env SPRING_DATASOURCE_URL '${vcap.services.mysql.credentials.jdbcUrl}'
+cf set-env SPRING_DATASOURCE_USERNAME '${vcap.services.mysql.credentials.username}'
+cf set-env SPRING_DATASOURCE_PASSWORD '${vcap.services.mysql.credentials.password}'
+cf set-env SPRING_DATASOURCE_DRIVER_CLASS_NAME 'org.mariadb.jdbc.Driver'
 ```
 
 
