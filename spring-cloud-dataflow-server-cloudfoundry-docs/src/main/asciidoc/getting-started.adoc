@@ -286,7 +286,6 @@ local filesystem of the Data Flow server is ephemeral and chances are that you d
 
 When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
 
-Note that at the time of writing, Docker resources are not supported for tasks.
 ====
 
 You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
@@ -382,7 +381,7 @@ example showing *all* customization options available. One can of course only le
 
 == Deploying Docker Applications
 
-Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams using
+Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks using
 Data Flow for Cloud Foundry. 
 
 If you are using Spring Boot and RabbitMQ based Docker images you can provide a common deployment property
@@ -391,6 +390,15 @@ to facilitate the apps binding to the RabbitMQ service. Assuming your RabbitMQ s
 ```
 cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.applicationProperties.stream.spring.rabbitmq.addresses": "${vcap.services.rabbit.credentials.protocols.amqp.uris}"}'
 ```
+For Spring Cloud Task apps, something similar to the following could be used, if using a database service instance named `mysql`:
+
+```
+cf set-env SPRING_DATASOURCE_URL '${vcap.services.mysql.credentials.jdbcUrl}'
+cf set-env SPRING_DATASOURCE_USERNAME '${vcap.services.mysql.credentials.username}'
+cf set-env SPRING_DATASOURCE_PASSWORD '${vcap.services.mysql.credentials.password}'
+cf set-env SPRING_DATASOURCE_DRIVER_CLASS_NAME 'org.mariadb.jdbc.Driver'
+```
+
 
 For non-Java or non-Boot apps, your Docker app would have to parse the `VCAP_SERVICES` variable in order to bind to any available services.
 
