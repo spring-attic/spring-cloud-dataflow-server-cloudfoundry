@@ -20,12 +20,14 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * {@link ConfigurationProperties} class to configure various settings of Data Flow running on Cloud Foundry.
  *
  * @author Eric Bottard
  */
+@Validated
 @ConfigurationProperties(CloudFoundryServerConfigurationProperties.PREFIX)
 public class CloudFoundryServerConfigurationProperties {
 
