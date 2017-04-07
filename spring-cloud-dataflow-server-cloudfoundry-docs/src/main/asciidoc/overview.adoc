@@ -40,7 +40,7 @@ Spring Cloud Task makes it easy to create short-lived microservices. We provide 
 processes to be executed on demand in a production environment.
 
 For more details about the core framework components and the supported features, please review Spring Cloud Task's
-http://docs.spring.io/spring-cloud-task/{sct-core-version}/reference/htmlsingle/[reference guide].
+http://docs.spring.io/spring-cloud-task/docs/{sct-core-version}/reference/htmlsingle/[reference guide].
 
 There's a rich ecosystem of Spring Cloud Task http://docs.spring.io/spring-cloud-task-app-starters/docs/{sct-starters-core-version}/reference/htmlsingle[Application-Starters]
 that can be used either as standalone microservice applications or in Spring Cloud Data Flow. For convenience, the generated
