@@ -31,7 +31,9 @@ import org.springframework.test.context.junit4.SpringRunner;
         "spring.cloud.deployer.cloudfoundry.username=myusername",
         "spring.cloud.deployer.cloudfoundry.password=mypassword",
         "spring.cloud.deployer.cloudfoundry.space=myspace",
-        "spring.cloud.deployer.cloudfoundry.url=https://api.run.pivotal.io"})
+        "spring.cloud.deployer.cloudfoundry.url=https://localhost",
+        "spring.cloud.deployer.cloudfoundry.stream.api.timeout=1"
+})
 public class CloudFoundryDataFlowServerApplicationTests {
 
     @Test
