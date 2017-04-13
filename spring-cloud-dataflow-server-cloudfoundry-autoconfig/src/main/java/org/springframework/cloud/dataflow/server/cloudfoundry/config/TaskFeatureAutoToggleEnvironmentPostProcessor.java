@@ -36,33 +36,41 @@ import org.springframework.core.env.MapPropertySource;
  * versions that are not supported.
  *
  * @author Eric Bottard
+ * @author Ilayaperumal Gopinathan
  */
 public class TaskFeatureAutoToggleEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
+	private static final Logger logger = LoggerFactory.getLogger(TaskFeatureAutoToggleEnvironmentPostProcessor.class);
+
 	private static final String TASKS_KEY = FeaturesProperties.FEATURES_PREFIX + "." + FeaturesProperties.TASKS_ENABLED;
 
-	private static final Logger logger = LoggerFactory.getLogger(TaskFeatureAutoToggleEnvironmentPostProcessor.class);
+	private static final String TASK_FEATURE_DEACTIVE_PROPERTIES = "Task Features De-activation";
 
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-
+		AnnotationConfigApplicationContext applicationContext = null;
 		// Create a throwaway AppContext to connect to CC API and assess its version.
 		try {
-			AnnotationConfigApplicationContext applicationContext
-				= new AnnotationConfigApplicationContext();
+			applicationContext = new AnnotationConfigApplicationContext();
 			applicationContext.register(CloudFoundryDeployerAutoConfiguration.EarlyConnectionConfiguration.class);
 			applicationContext.setEnvironment(environment); // Inherit current environment
 			applicationContext.refresh();
 
 			Version version = applicationContext.getBean(Version.class);
 			if (version.lessThan(UnsupportedVersionTaskLauncher.MINIMUM_SUPPORTED_VERSION)) {
-				logger.warn("Targeting Cloud Foundry API {}, which is incompatible with TaskLauncher support. Forcing {} to false", version, TASKS_KEY);
-				environment.getPropertySources().addFirst(new MapPropertySource("Task Features De-activation",
-					Collections.singletonMap(TASKS_KEY, "false")));
+				logger.warn("Targeting Cloud Foundry API {}, which is incompatible with TaskLauncher support. Forcing {} to false",
+						version, TASKS_KEY);
+				environment.getPropertySources().addFirst(new MapPropertySource(TASK_FEATURE_DEACTIVE_PROPERTIES,
+						Collections.singletonMap(TASKS_KEY, "false")));
 			}
 		}
 		catch (Exception ignored) { // Might happen in particular in Integration Tests not targeting an actual CF runtime
 			logger.warn("Could not connect to Cloud Foundry to probe API version", ignored);
+		}
+		finally {
+			if (applicationContext != null) {
+				applicationContext.close();
+			}
 		}
 	}
 }
