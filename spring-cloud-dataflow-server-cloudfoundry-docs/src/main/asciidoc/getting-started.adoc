@@ -112,7 +112,7 @@ applications that are supported by Spring Cloud Data Flow are available in Sprin
 so if you want to use them, you *must* set it as the remote repository as listed below.
 
 ```
-cf set-env dataflow-server MAVEN_REMOTE_REPOSITORIES_REPO1_URL https://repo.spring.io/libs-snapshot
+cf set-env dataflow-server SPRING_APPLICATION_JSON '{ "maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot"} } } }'
 ```
 where `repo1` is an alias name for the remote repository.
 
@@ -242,7 +242,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
-    MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-snapshot
+    SPRING_APPLICATION_JSON '{ "maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot"} } } }'
     JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG'
 services:
 - mysql
