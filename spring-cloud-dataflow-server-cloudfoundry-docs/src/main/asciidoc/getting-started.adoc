@@ -267,6 +267,12 @@ server-unknown:>dataflow config server http://dataflow-server.cfapps.io
 Successfully targeted http://dataflow-server.cfapps.io
 dataflow:>
 ```
+== Security
+
+By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints, 
+as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate. More details about securing the 
+REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please 
+review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands. 
 
 By default, the application registry will be empty. If you would like to register all out-of-the-box stream applications
 built with the RabbitMQ binder in bulk, you can with the following command. For more details, review how to
