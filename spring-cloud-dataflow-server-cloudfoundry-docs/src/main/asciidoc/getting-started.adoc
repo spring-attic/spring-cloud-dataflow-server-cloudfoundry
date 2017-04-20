@@ -683,6 +683,15 @@ stream create fooz --definition "time | log"
 stream deploy fooz --properties "app.time.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.time.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes},app.log.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.log.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes}"
 ----
 
+[[getting-started-ups]]
+== A Note About User Provided Services
+In addition to marketplace services, Cloud Foundry supports
+https://docs.cloudfoundry.org/devguide/services/user-provided.html[User Provided Services]. Throughout this reference manual,
+regular services have been mentioned, but there is nothing precluding the use of UPSs as well, whether for use as the
+messaging middleware (_e.g._ if you'd like to use an external Apache Kafka installation) or for _ad hoc_ usage by some
+ of the stream apps (_e.g._ an Oracle Database).
+
+
 [[getting-started-service-application-rolling-upgrades]]
 == Application Rolling Upgrades
 Similar to Cloud Foundry's https://docs.pivotal.io/pivotalcf/1-7/devguide/deploy-apps/blue-green.html[blue-green] deployments,
