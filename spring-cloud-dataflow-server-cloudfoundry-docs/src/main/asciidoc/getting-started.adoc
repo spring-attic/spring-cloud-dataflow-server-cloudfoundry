@@ -469,9 +469,16 @@ spring.cloud.deployer.cloudfoundry.task.services=
 
 # Timeout to use, in seconds, when doing blocking API calls to Cloud Foundry.
 # (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_API_TIMEOUT
-and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_API_TIMEOUT)
+# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_API_TIMEOUT)
 spring.cloud.deployer.cloudfoundry.stream.apiTimeout=360
 spring.cloud.deployer.cloudfoundry.task.apiTimeout=360
+
+# Timeout to use, in milliseconds, when querying the Cloud Foundry API to compute app status.
+# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_STATUS_TIMEOUT
+# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_STATUS_TIMEOUT)
+spring.cloud.deployer.cloudfoundry.stream.statusTimeout=5000
+spring.cloud.deployer.cloudfoundry.task.statusTimeout=5000
+
 ```
 
 Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
