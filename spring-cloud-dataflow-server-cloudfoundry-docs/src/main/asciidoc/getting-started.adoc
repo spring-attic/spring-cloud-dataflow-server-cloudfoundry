@@ -511,49 +511,30 @@ both Spring Cloud Data Flow and the applications orchestrated using Spring Cloud
 config-server to leverage the same capabilities.
 
 ==== Stream, Task, and Spring Cloud Config Server
-Similar to Spring Cloud Data Flow server, it is also possible to configure both the stream and task applications to
-resolve the centralized properties from config-server.
+Similar to Spring Cloud Data Flow server, it is also possible to configure both the stream and task applications to resolve the centralized properties from config-server.
+Setting the property `spring.cloud.config.uri` for the deployed applications is a common way to bind to the Config Server.
+See the link:https://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_spring_cloud_config_client[Spring Cloud Config Client] reference guide for more information.
+Since this property is likely to be used across all applications deployed by the Data Flow server, the Data Flow Server's property `spring.cloud.dataflow.applicationProperties.stream` for stream apps and `spring.cloud.dataflow.applicationProperties.task` for task apps can be used to pass the `uri` of the Config Server to each deployed stream or task application.  Refer to the section on Common application properties for more information.
 
-Let's assume you'd like to read properties for `time-source` application from config-server.
 
-* Download the `time-source` application starter with "Rabbit binder starter" from http://start-scs.cfapps.io/
-* Load the downloaded project in an IDE
-* Add `@Import(org.springframework.cloud.stream.app.time.source.TimeSourceConfiguration.class)` to import time-source's
-configuration properties
-* Add  `spring-cloud-services-starter-config-client` dependency
-
-* Build the application locally
-
-This completes the custom build of `time-source` application with `spring-cloud-services-starter-config-client`
-library included in it as a dependency. A maven example follows.
+If you're using applications from the link:http://cloud.spring.io/spring-cloud-stream-app-starters/[App Starters project], note that these applications already embed the `spring-cloud-services-starter-config-client` dependency.
+If you're building your application from scratch and want to add the client side support for config server, simply add a reference dependency reference to the config server client library.  A maven example snippet follows:
 
 [source,xml]
 ----
-<dependency>
-  <groupId>org.springframework.cloud.stream.app</groupId>
-  <artifactId>spring-cloud-starter-stream-source-time</artifactId>
-</dependency>
-<dependency>
-  <groupId>org.springframework.cloud</groupId>
-  <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-</dependency>
+...
 <dependency>
   <groupId>io.pivotal.spring.cloud</groupId>
   <artifactId>spring-cloud-services-starter-config-client</artifactId>
   <version>CONFIG_CLIENT_VERSION</version>
 </dependency>
+...
 ----
 
-Where, `CONFIG_CLIENT_VERSION` can be the latest release of link:https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
+Where, `CONFIG_CLIENT_VERSION` can be the latest release of https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
 client for Pivotal Cloud Foundry.
 
-The final `time-source` über-jar is now ready to be registered in Spring Cloud Data Flow.  For more details, review how
-to xref:spring-cloud-dataflow-register-apps[register applications]. With this setup and having the
-deployed application bound to config-server service on Cloud Foundry, we can successfully negotiate, read, and resolve
-centralized properties at the runtime.
-
-[NOTE]
-When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
+Note that you will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed.  
 
 ==== Sample Manifest Template
 Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server and deployed
