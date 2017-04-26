@@ -99,10 +99,16 @@ import org.springframework.util.FileSystemUtils;
 
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<File, Void> eldest) {
+			// freeSpace / totalSpace is per-partition, which may not always be the same for all entries
+			// Use totalSpace as a rough identifier of the partition and only log.info() once
+			long lastTotalSpaceSeen = -1;
 			for (Iterator<File> it = keySet().iterator(); it.hasNext(); ) {
 				File file = it.next();
-				String percentFreeSpace = String.format(java.util.Locale.US,"%.2f", 100f * file.getFreeSpace() / file.getTotalSpace());
-				logger.info("Free Disk Space = {}%, Target Free Space >{}%", percentFreeSpace, String.format(java.util.Locale.US,"%.2f", 100f * targetFreeSpaceRatio));
+				if (file.getTotalSpace() != lastTotalSpaceSeen) {
+					String percentFreeSpace = String.format(java.util.Locale.US,"%.2f", 100f * file.getFreeSpace() / file.getTotalSpace());
+					logger.info("Free Disk Space = {}%, Target Free Space >{}%", percentFreeSpace, String.format(java.util.Locale.US,"%.2f", 100f * targetFreeSpaceRatio));
+					lastTotalSpaceSeen = file.getTotalSpace();
+				}
 				logger.debug("Looking at LRU entry {}, Free Space = {} bytes, Total Space = {} bytes", file, file.getFreeSpace(), file.getTotalSpace());
 				if (shouldDelete(file) && it.hasNext()) { // never delete the most recent entry
 					cleanup(file);
