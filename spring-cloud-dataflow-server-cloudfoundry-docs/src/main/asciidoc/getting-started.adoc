@@ -69,7 +69,7 @@ deployment to fail
 
 [subs=attributes]
 ```
-cf push dataflow-server -m 2G -k 2G --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+cf push dataflow-server -b java_buildpack_offline -m 2G -k 2G --no-start -p spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 cf bind-service dataflow-server redis
 cf bind-service dataflow-server my_mysql
 ```
@@ -732,7 +732,7 @@ Let's deploy the locally built application to Cloud Foundry
 
 [source,bash]
 ----
-→ cf push foo-log-v2 -p demo-0.0.1-SNAPSHOT.jar -n foo-log-v2 --no-start
+→ cf push foo-log-v2 -b java_buildpack_offline -p demo-0.0.1-SNAPSHOT.jar -n foo-log-v2 --no-start
 ----
 
 List Apps.
