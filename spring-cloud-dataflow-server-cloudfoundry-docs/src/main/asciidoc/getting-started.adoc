@@ -112,9 +112,14 @@ applications that are supported by Spring Cloud Data Flow are available in Sprin
 so if you want to use them, you *must* set it as the remote repository as listed below.
 
 ```
-cf set-env dataflow-server SPRING_APPLICATION_JSON '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot", "auth": { "username": "user1", "password": "pwd"} }, "repo2": { "url": "https://repo2.spring.io/libs-snapshot"} }, "proxy": {"protocol":"https", "host": "proxy-host1", "port": "9080", "auth": {"username": "proxy-user1", "password": "proxy-pwd"} } } }'
+cf set-env dataflow-server SPRING_APPLICATION_JSON '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot" } } } }'
 ```
-where `repo1` and `repo2` are the alias names for the remote repositories.
+where `repo1` is the alias name for the remote repository.
+
+[NOTE]
+====
+If you need to configure multiple Maven repositories, a proxy, or authorization for a private repository, see link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#getting-started-maven-configuration[Maven Configuration].
+====
 
 [[configuring-defaults]]
 ===== Configuring Defaults for Deployed Apps
@@ -242,7 +247,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
-    SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot", "auth": { "username": "user1", "password": "pwd"} }, "repo2": { "url": "https://repo2.spring.io/libs-snapshot"} }, "proxy": {"protocol":"https", "host": "proxy-host1", "port": "9080", "auth": {"username": "proxy-user1", "password": "proxy-pwd"} } } }
+    SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot"} } } }
     JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG'
 services:
 - mysql
@@ -382,7 +387,7 @@ example showing *all* customization options available. One can of course only le
 == Deploying Docker Applications
 
 Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks using
-Data Flow for Cloud Foundry. 
+Data Flow for Cloud Foundry.
 
 If you are using Spring Boot and RabbitMQ based Docker images you can provide a common deployment property
 to facilitate the apps binding to the RabbitMQ service. Assuming your RabbitMQ service is named `rabbit` you can provide the following:
@@ -541,7 +546,7 @@ If you're building your application from scratch and want to add the client side
 Where, `CONFIG_CLIENT_VERSION` can be the latest release of https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
 client for Pivotal Cloud Foundry.
 
-Note that you will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed.  
+Note that you will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed.
 
 ==== Sample Manifest Template
 Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server and deployed
