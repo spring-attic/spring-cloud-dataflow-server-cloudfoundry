@@ -217,7 +217,7 @@ NOTE: The current underlying PCF task capabilities are considered experimental f
 versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/enable-disable-specific-features.html[Feature Togglers]
 for how to disable task support in Data Flow.
 
-[[sample-manifest-teample]]
+[[sample-manifest-template]]
 ==== Sample Manifest Template
 
 As an alternative to setting environment variables via `cf set-env` command, you can curate all the relevant env-var's
@@ -546,7 +546,7 @@ If you're building your application from scratch and want to add the client side
 Where, `CONFIG_CLIENT_VERSION` can be the latest release of https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
 client for Pivotal Cloud Foundry.
 
-Note that you will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed.
+Note that you will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed. 
 
 ==== Sample Manifest Template
 Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server and deployed
