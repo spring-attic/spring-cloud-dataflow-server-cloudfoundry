@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,9 @@ package org.springframework.cloud.dataflow.server.cloudfoundry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -43,11 +40,5 @@ public class CloudFoundryDataFlowServerApplicationTests {
 
     @Configuration
     static public class TaskLauncherConfiguration {
-
-        @Bean
-        @Primary
-        public TaskLauncher taskLauncher() {
-            return Mockito.mock(TaskLauncher.class);
-        }
     }
 }
