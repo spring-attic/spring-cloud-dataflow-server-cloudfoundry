@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,10 +15,10 @@
  */
 package org.springframework.cloud.dataflow.server.cloudfoundry;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.context.annotation.Bean;
@@ -27,27 +27,24 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = {"spring.cloud.deployer.cloudfoundry.org=myorg," +
-        "spring.cloud.deployer.cloudfoundry.username=myusername",
-        "spring.cloud.deployer.cloudfoundry.password=mypassword",
-        "spring.cloud.deployer.cloudfoundry.space=myspace",
-        "spring.cloud.deployer.cloudfoundry.url=https://localhost",
-        "spring.cloud.deployer.cloudfoundry.stream.api.timeout=1"
-})
+@SpringBootTest(properties = {
+		"spring.cloud.deployer.cloudfoundry.org=myorg," + "spring.cloud.deployer.cloudfoundry.username=myusername",
+		"spring.cloud.deployer.cloudfoundry.password=mypassword", "spring.cloud.deployer.cloudfoundry.space=myspace",
+		"spring.cloud.deployer.cloudfoundry.url=https://localhost",
+		"spring.cloud.deployer.cloudfoundry.stream.api.timeout=1" })
 public class CloudFoundryDataFlowServerApplicationTests {
 
-    @Test
-    public void contextLoads() {
-    }
+	@Test
+	public void contextLoads() {
+	}
 
+	@Configuration
+	static public class TaskLauncherConfiguration {
 
-    @Configuration
-    static public class TaskLauncherConfiguration {
-
-        @Bean
-        @Primary
-        public TaskLauncher taskLauncher() {
-            return Mockito.mock(TaskLauncher.class);
-        }
-    }
+		@Bean
+		@Primary
+		public TaskLauncher taskLauncher() {
+			return Mockito.mock(TaskLauncher.class);
+		}
+	}
 }

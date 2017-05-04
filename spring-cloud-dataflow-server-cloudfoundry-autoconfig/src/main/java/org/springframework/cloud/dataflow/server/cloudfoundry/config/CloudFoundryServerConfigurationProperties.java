@@ -23,7 +23,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * {@link ConfigurationProperties} class to configure various settings of Data Flow running on Cloud Foundry.
+ * {@link ConfigurationProperties} class to configure various settings of Data Flow
+ * running on Cloud Foundry.
  *
  * @author Eric Bottard
  */
@@ -32,14 +33,19 @@ import org.springframework.validation.annotation.Validated;
 public class CloudFoundryServerConfigurationProperties {
 
 	public static final String PREFIX = "spring.cloud.dataflow.server.cloudfoundry";
-
 	/**
-	 * The target percentag of free disk space to always aim for when cleaning downloaded resources (typically via
-	 * the local maven repository). Specify as an integer greater than zero and less than 100.  Default is 25.
+	 * Whether to turn on reactor style stacktraces.
+	 */
+	public boolean debugReactor = false;
+	/**
+	 * The target percentag of free disk space to always aim for when cleaning downloaded
+	 * resources (typically via the local maven repository). Specify as an integer greater
+	 * than zero and less than 100. Default is 25.
 	 */
 	private int freeDiskSpacePercentage = 25;
 
-	@Min(0)	@Max(100)
+	@Min(0)
+	@Max(100)
 	public int getFreeDiskSpacePercentage() {
 		return freeDiskSpacePercentage;
 	}
@@ -47,11 +53,6 @@ public class CloudFoundryServerConfigurationProperties {
 	public void setFreeDiskSpacePercentage(int freeDiskSpacePercentage) {
 		this.freeDiskSpacePercentage = freeDiskSpacePercentage;
 	}
-
-	/**
-	 * Whether to turn on reactor style stacktraces.
-	 */
-	public boolean debugReactor = false;
 
 	public boolean isDebugReactor() {
 		return debugReactor;
