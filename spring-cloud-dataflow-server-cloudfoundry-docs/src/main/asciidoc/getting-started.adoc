@@ -109,10 +109,10 @@ Spring Cloud Data Flow server implementations (be it for Cloud Foundry, Mesos, Y
 _any_ default remote maven repository configured. This is intentionally designed to provide the flexibility for
 the users, so they can override and point to a remote repository of their choice. The out-of-the-box
 applications that are supported by Spring Cloud Data Flow are available in Spring's repository,
-so if you want to use them, you *must* set it as the remote repository as listed below.
+so if you want to use them, set it as the remote repository as listed below.
 
 ```
-cf set-env dataflow-server SPRING_APPLICATION_JSON '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot" } } } }'
+cf set-env dataflow-server SPRING_APPLICATION_JSON '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release" } } } }'
 ```
 where `repo1` is the alias name for the remote repository.
 
@@ -229,29 +229,26 @@ Following is a sample template to provision the server on PCFDev.
 ----
 ---
 applications:
-- name: {PREFERRED NAME OF THE SERVER APP}
-  host: {PREFERRED HOST}
-  memory: {PREFERRED MEMORY}
-  disk_quota: {PREFERRED DISKQUOTA}
-  timeout: {PREFERRED API TIMEOUT}
-  instances: {NO OF INSTANCES}
+- name: data-flow-server
+  host: data-flow-server
+  memory: 2G
+  disk_quota: 2G
+  instances: 1
   path: {ABSOLUTE PATH TO SERVER UBER-JAR}
   env:
-    SPRING_APPLICATION_NAME: {PREFERRED NAME OF THE SERVER APP}
+    SPRING_APPLICATION_NAME: data-flow-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,redis
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
-    SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-snapshot"} } } }
-    JAVA_OPTS: '-Dlogging.level.cloudfoundry=DEBUG'
+    MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
 services:
 - mysql
-- config-server
 ----
 
 Once you're ready with the relevant properties in this file, you can issue `cf push` command from the directory where
@@ -546,7 +543,9 @@ If you're building your application from scratch and want to add the client side
 Where, `CONFIG_CLIENT_VERSION` can be the latest release of https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
 client for Pivotal Cloud Foundry.
 
-Note that you will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed. 
+NOTE: You will observe a `WARN` logging message if the application that uses this library can not connect to the server when the applicaiton starts and whenever the `/health` endpoint is accessed.
+You can disable the client library if you know that you are not using config server functionality by setting the environment variable `SPRING_CLOUD_CONFIG_ENABLED=false`.
+Another more, drastic option, is to disable the platform health check with the environment variable `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK=none`
 
 ==== Sample Manifest Template
 Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server and deployed
@@ -557,31 +556,31 @@ at the runtime.
 ----
 ---
 applications:
-- name: test-server
-  host: test-server
-  memory: 1G
-  disk_quota: 1G
+- name: data-flow-server
+  host: data-flow-server
+  memory: 2G
+  disk_quota: 2G
   instances: 1
-  path: spring-cloud-dataflow-server-cloudfoundry-VERSION.jar
+  path: {ABSOLUTE PATH TO SERVER UBER-JAR}
   env:
-    SPRING_APPLICATION_NAME: test-server
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: <URL>
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: <ORG>
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: <SPACE>
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: <DOMAIN>
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: <USER>
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
+    SPRING_APPLICATION_NAME: data-flow-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,my-config-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,my-config-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: my-config-server #this is for all the stream applications
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: my-config-server #this is for all the task applications
 services:
 - mysql
-- my-config-server #this is for the server
+- my-config-server
 ----
 
-Where, `config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry. By binding the
+Where, `my-config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry. By binding the
 service to both Spring Cloud Data Flow server and as well as all the Spring Cloud Stream and Spring Cloud Task applications
-through `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: config-server` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server`
 respectively, we can now resolve centralized properties backed by this service.
 
 ==== Self-signed SSL Certificate and Spring Cloud Config Server
