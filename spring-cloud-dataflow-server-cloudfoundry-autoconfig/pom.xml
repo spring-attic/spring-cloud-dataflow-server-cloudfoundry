@@ -24,6 +24,11 @@
 			<version>${spring-cloud-dataflow.version}</version>
 		</dependency>
 		<dependency>
+		<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-cloudfoundry</artifactId>
 			<version>${spring-cloud-deployer-cloudfoundry.version}</version>
@@ -33,7 +38,6 @@
 			<artifactId>spring-cloud-deployer-resource-docker</artifactId>
 			<version>${spring-cloud-deployer-spi.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
