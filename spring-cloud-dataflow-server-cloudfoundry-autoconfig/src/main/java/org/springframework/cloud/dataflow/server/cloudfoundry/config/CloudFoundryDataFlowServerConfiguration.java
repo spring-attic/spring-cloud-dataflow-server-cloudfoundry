@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import reactor.core.publisher.Hooks;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.CloudFoundryOAuthSecurityConfiguration;
 import org.springframework.cloud.dataflow.server.cloudfoundry.resource.LRUCleaningResourceLoaderBeanPostProcessor;
 import org.springframework.cloud.deployer.resource.docker.DockerResource;
 import org.springframework.cloud.deployer.resource.docker.DockerResourceLoader;
@@ -36,6 +37,7 @@ import org.springframework.cloud.deployer.spi.cloudfoundry.CloudFoundryConnectio
 import org.springframework.cloud.deployer.spi.cloudfoundry.CloudFoundryDeploymentProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ResourceLoader;
 
 /**
@@ -44,6 +46,7 @@ import org.springframework.core.io.ResourceLoader;
  * @author Eric Bottard
  */
 @Configuration
+@Import(CloudFoundryOAuthSecurityConfiguration.class)
 public class CloudFoundryDataFlowServerConfiguration {
 
 	@Bean
