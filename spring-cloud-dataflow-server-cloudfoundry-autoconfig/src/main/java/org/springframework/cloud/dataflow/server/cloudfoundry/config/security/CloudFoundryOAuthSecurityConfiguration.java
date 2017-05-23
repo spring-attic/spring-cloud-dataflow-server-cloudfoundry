@@ -38,16 +38,16 @@ import org.springframework.context.annotation.Configuration;
  * When running inside Cloud Foundry, this {@link Configuration} class will reconfigure Spring Cloud Data Flow's security
  * setup in {@link OAuthSecurityConfiguration}, so that only users with the
  * {@link CloudFoundryOAuthSecurityConfiguration#CF_SPACE_DEVELOPER_ROLE} can access the REST APIs.
- *
+ * <p>
  * Therefore, this configuration will ensure that only Cloud Foundry {@code Space Developers} have access to the
  * underlying REST API's.
- *
+ * <p>
  * For this to happen, a REST call will be made to the Cloud Foundry Permissions API via
  * CloudFoundrySecurityService inside the {@link DefaultDataflowAuthoritiesExtractor}.
- *
+ * <p>
  * If the user has the respective permissions, the
  * {@link CloudFoundryOAuthSecurityConfiguration#CF_SPACE_DEVELOPER_ROLE} will be assigned to the user.
- *
+ * <p>
  * See also: https://apidocs.cloudfoundry.org/258/apps/retrieving_permissions_on_a_app.html
  *
  * @author Gunnar Hillert

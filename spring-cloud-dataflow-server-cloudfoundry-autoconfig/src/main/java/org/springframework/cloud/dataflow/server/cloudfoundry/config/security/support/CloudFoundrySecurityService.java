@@ -99,8 +99,7 @@ public class CloudFoundrySecurityService implements EnvironmentAware, Initializi
 		}
 		catch (HttpClientErrorException ex) {
 			if (ex.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
-				throw new CloudFoundryAuthorizationException(Reason.ACCESS_DENIED,
-						"Access denied");
+				return AccessLevel.NONE;
 			}
 			throw new CloudFoundryAuthorizationException(Reason.INVALID_TOKEN,
 					"Invalid token", ex);

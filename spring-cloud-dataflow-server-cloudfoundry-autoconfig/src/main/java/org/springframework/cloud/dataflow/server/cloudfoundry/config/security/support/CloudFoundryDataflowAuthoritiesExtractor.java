@@ -56,8 +56,7 @@ public class CloudFoundryDataflowAuthoritiesExtractor implements AuthoritiesExtr
 	 * {@link CoreSecurityRoles}. The roles are prefixed with the value specified in
 	 * {@link GrantedAuthorityDefaults}.
 	 *
-	 *
-	 * @param Must not be null. Is only used for logging
+	 * @param map Must not be null. Is only used for logging
 	 */
 	@Override
 	public List<GrantedAuthority> extractAuthorities(Map<String, Object> map) {

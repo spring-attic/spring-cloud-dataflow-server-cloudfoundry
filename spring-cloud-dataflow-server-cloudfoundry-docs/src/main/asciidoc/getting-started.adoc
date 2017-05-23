@@ -336,20 +336,105 @@ in the database and you can retrieve information about the task execution using 
 == Security
 
 By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints,
-as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate. More details about securing the
+as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate.
+For more details about securing the
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
 review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
 
 [[getting-started-security-cloud-foundry]]
 === Authentication and Cloud Foundry
 
-When deploying Spring Cloud Data Flow to Cloud Foundry, you can take advantage of the
- https://github.com/pivotal-cf/spring-cloud-sso-connector[_Spring Cloud Single Sign-On Connector_],
- which provides Cloud Foundry specific auto-configuration support for OAuth 2.0,
- when used in conjunction with the _Pivotal Single Sign-On Service_.
+Spring Cloud Data Flow can either integrate with _Pivotal Single Sign-On Service_
+(E.g. on PWS) or _Cloud Foundry User Account and Authentication_ (UAA) Server.
 
-Simply set `security.basic.enabled` to `true` and in Cloud Foundry bind the SSO
-service to your Data Flow Server app and SSO will be enabled.
+[[getting-started-security-cloud-foundry-sso]]
+==== Pivotal Single Sign-On Service
+
+When deploying Spring Cloud Data Flow to Cloud Foundry you can simply bind the
+application to the _Pivotal Single Sign-On Service_. By doing so, Spring Cloud
+Data Flow takes advantage of the
+ https://github.com/pivotal-cf/spring-cloud-sso-connector[_Spring Cloud Single Sign-On Connector_],
+ which provides Cloud Foundry specific auto-configuration support for OAuth 2.0.
+
+Simply bind the _Pivotal Single Sign-On Service_ to your Data Flow Server app and
+Single Sign-On (SSO) via OAuth2 will be enabled by default.
+
+Authorization is similarly support as for non-Cloud Foundry security scenarios.
+Please refer to the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide].
+
+As the provisioning of roles can vary widely across environments, we assign by
+default all Spring Cloud Data Flow roles to users.
+
+This can be customized by providing your own http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor].
+
+[source,java]
+----
+public class MyUserInfoTokenServicesPostProcessor
+	implements BeanPostProcessor {
+
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) {
+		if (bean instanceof UserInfoTokenServices) {
+			final UserInfoTokenServices userInfoTokenServices = (UserInfoTokenServices) bean;
+			userInfoTokenServices.setAuthoritiesExtractor(ctx.getBean(AuthoritiesExtractor.class));
+		}
+		return bean;
+	}
+
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) {
+		return bean;
+	}
+}
+----
+
+And you simply declare it in your configuration class:
+
+[source,java]
+----
+...
+@Bean
+public BeanPostProcessor myUserInfoTokenServicesPostProcessor() {
+	BeanPostProcessor postProcessor = new MyUserInfoTokenServicesPostProcessor();
+	return postProcessor;
+}
+...
+----
+
+[[getting-started-security-cloud-foundry-uaa]]
+==== Cloud Foundry UAA
+
+The availability of this option depends on the used Cloud Foundry environment.
+In order to provide UAA integration, you have to manually provide the necessary
+OAuth2 configuration properties, for instance via the `SPRING_APPLICATION_JSON`
+property.
+
+[source,json]
+----
+{
+  "security.oauth2.client.client-id": "scdf",
+  "security.oauth2.client.client-secret": "scdf-secret",
+  "security.oauth2.client.access-token-uri": "https://login.cf.myhost.com/oauth/token",
+  "security.oauth2.client.user-authorization-uri": "https://login.cf.myhost.com/oauth/authorize",
+  "security.oauth2.resource.user-info-uri": "https://login.cf.myhost.com/userinfo"
+}
+----
+
+Additionally you have to set property the `spring.cloud.dataflow.security.cf-use-uaa`
+to `true`. This property will activate a special
+
+http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor] **CloudFoundryDataflowAuthoritiesExtractor**.
+
+Under the covers this _AuthoritiesExtractor_ will call out to the
+https://apidocs.cloudfoundry.org/253/apps/retrieving_permissions_on_a_app.html[Cloud Foundry
+Apps API] and ensure that users are in fact _Space Developers_.
+
+If the authenticated user is verified as _Space Developer_, all roles will be assigned,
+otherwise no roles whatsoever will be assigned. In that case you may see the following
+Dashboard screen:
+
+.Accessing the Data Flow Dashboard without Roles
+image::{dataflow-asciidoc}/images/cf-getting-started-security-no-roles.png[Dashboard without roles, scaledwidth="100%"]
 
 [[getting-started-app-names-cloud-foundry]]
 == Application Names and Prefixes
