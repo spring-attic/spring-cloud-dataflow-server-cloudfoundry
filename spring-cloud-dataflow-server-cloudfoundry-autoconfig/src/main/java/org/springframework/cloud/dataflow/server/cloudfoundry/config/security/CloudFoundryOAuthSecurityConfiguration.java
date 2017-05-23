@@ -15,92 +15,94 @@
  */
 package org.springframework.cloud.dataflow.server.cloudfoundry.config.security;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryDataflowAuthoritiesExtractor;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundrySecurityService;
+import org.springframework.cloud.dataflow.server.config.security.OAuthSecurityConfiguration;
+import org.springframework.cloud.dataflow.server.config.security.support.DefaultDataflowAuthoritiesExtractor;
 import org.springframework.cloud.dataflow.server.config.security.support.OnSecurityEnabledAndOAuth2Enabled;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
 /**
- * When running inside Cloud Foundry, this {@link Configuration} class will reconfigure Spring Cloud Data Flow's security
- * setup in {@link OAuthSecurityConfiguration}, so that only users with the
- * {@link CloudFoundryOAuthSecurityConfiguration#CF_SPACE_DEVELOPER_ROLE} can access the REST APIs.
+ * When running inside Cloud Foundry, this {@link Configuration} class will reconfigure
+ * Spring Cloud Data Flow's security setup in {@link OAuthSecurityConfiguration}, so that
+ * only users with the CF_SPACE_DEVELOPER_ROLE} can access the REST APIs.
  * <p>
- * Therefore, this configuration will ensure that only Cloud Foundry {@code Space Developers} have access to the
- * underlying REST API's.
+ * Therefore, this configuration will ensure that only Cloud Foundry
+ * {@code Space Developers} have access to the underlying REST API's.
  * <p>
  * For this to happen, a REST call will be made to the Cloud Foundry Permissions API via
  * CloudFoundrySecurityService inside the {@link DefaultDataflowAuthoritiesExtractor}.
  * <p>
- * If the user has the respective permissions, the
- * {@link CloudFoundryOAuthSecurityConfiguration#CF_SPACE_DEVELOPER_ROLE} will be assigned to the user.
+ * If the user has the respective permissions, the CF_SPACE_DEVELOPER_ROLE will be
+ * assigned to the user.
  * <p>
- * See also: https://apidocs.cloudfoundry.org/258/apps/retrieving_permissions_on_a_app.html
+ * See also:
+ * https://apidocs.cloudfoundry.org/258/apps/retrieving_permissions_on_a_app.html
  *
  * @author Gunnar Hillert
+ * @author Ilayaperumal Gopinathan
  */
 @Configuration
 @Conditional(OnSecurityEnabledAndOAuth2Enabled.class)
 @ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
+@Import(CloudFoundryOAuthSecurityConfiguration.CloudFoundryUAAConfiguration.class)
 public class CloudFoundryOAuthSecurityConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger(CloudFoundryOAuthSecurityConfiguration.class);
 
-	@Bean
-	@ConditionalOnProperty(name="spring.cloud.dataflow.security.cf-use-uaa", havingValue="true")
-	public CloudFoundryDataflowAuthoritiesExtractor authoritiesExtractor() {
-		return new CloudFoundryDataflowAuthoritiesExtractor(cloudFoundrySecurityService());
+	@Autowired
+	private UserInfoTokenServices userInfoTokenServices;
+
+	@Autowired(required = false)
+	private CloudFoundryDataflowAuthoritiesExtractor cloudFoundryDataflowAuthoritiesExtractor;
+
+	@PostConstruct
+	public void init() {
+		if (this.cloudFoundryDataflowAuthoritiesExtractor != null) {
+			logger.info("Setting up Cloud Foundry AuthoritiesExtractor for UAA.");
+			this.userInfoTokenServices.setAuthoritiesExtractor(this.cloudFoundryDataflowAuthoritiesExtractor);
+		}
 	}
 
-	@Bean
-	@ConditionalOnProperty(name="spring.cloud.dataflow.security.cf-use-uaa", havingValue="true")
-	public UserInfoTokenServicesPostProcessor UserInfoTokenServicesPostProcessor() {
-		UserInfoTokenServicesPostProcessor userInfoTokenServicesPostProcessor = new UserInfoTokenServicesPostProcessor();
-		return userInfoTokenServicesPostProcessor;
-	}
+	@Configuration
+	@ConditionalOnProperty(name = "spring.cloud.dataflow.security.cf-use-uaa", havingValue = "true")
+	public static class CloudFoundryUAAConfiguration {
 
-	@Bean
-	@ConditionalOnProperty(name="spring.cloud.dataflow.security.cf-use-uaa", havingValue="true")
-	public CloudFoundrySecurityService cloudFoundrySecurityService() {
-		return new CloudFoundrySecurityService();
-	}
+		@Value("${vcap.application.cf_api}")
+		private String cloudControllerUrl;
 
-	public class UserInfoTokenServicesPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+		@Value("${vcap.application.application_id}")
+		private String applicationId;
 
-		private ApplicationContext ctx;
+		@Autowired
+		private OAuth2RestTemplate oAuth2RestTemplate;
 
-		@Override
-		public Object postProcessBeforeInitialization(Object bean, String beanName) {
-			if (bean instanceof UserInfoTokenServices) {
-				logger.info("Setting up Cloud Foundry AuthoritiesExtractor for UAA.");
-				final UserInfoTokenServices userInfoTokenServices = (UserInfoTokenServices) bean;
-				userInfoTokenServices.setAuthoritiesExtractor(ctx.getBean(AuthoritiesExtractor.class));
-			}
-			return bean;
+		@Bean
+		public CloudFoundryDataflowAuthoritiesExtractor authoritiesExtractor() {
+			return new CloudFoundryDataflowAuthoritiesExtractor(cloudFoundrySecurityService());
 		}
 
-		@Override
-		public Object postProcessAfterInitialization(Object bean, String beanName) {
-			return bean;
+		@Bean
+		public CloudFoundrySecurityService cloudFoundrySecurityService() {
+			return new CloudFoundrySecurityService(this.oAuth2RestTemplate, this.cloudControllerUrl,
+					this.applicationId);
 		}
 
-		@Override
-		public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-			this.ctx = applicationContext;
-		}
 	}
 
 }

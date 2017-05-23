@@ -367,6 +367,8 @@ default all Spring Cloud Data Flow roles to users.
 
 This can be customized by providing your own http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor].
 
+One possible approach to set the custom `AuthoritiesExtractor` on the `UserInfoTokenServices` could be this:
+
 [source,java]
 ----
 public class MyUserInfoTokenServicesPostProcessor
@@ -392,13 +394,11 @@ And you simply declare it in your configuration class:
 
 [source,java]
 ----
-...
 @Bean
 public BeanPostProcessor myUserInfoTokenServicesPostProcessor() {
 	BeanPostProcessor postProcessor = new MyUserInfoTokenServicesPostProcessor();
 	return postProcessor;
 }
-...
 ----
 
 [[getting-started-security-cloud-foundry-uaa]]
@@ -420,10 +420,11 @@ property.
 }
 ----
 
-Additionally you have to set property the `spring.cloud.dataflow.security.cf-use-uaa`
-to `true`. This property will activate a special
+By default, the property `spring.cloud.dataflow.security.cf-use-uaa` is set to `true`. This property will activate a special
 
 http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor] **CloudFoundryDataflowAuthoritiesExtractor**.
+
+If CloudFoundry UAA is not used, then make sure to set `spring.cloud.dataflow.security.cf-use-uaa` to `false`.
 
 Under the covers this _AuthoritiesExtractor_ will call out to the
 https://apidocs.cloudfoundry.org/253/apps/retrieving_permissions_on_a_app.html[Cloud Foundry

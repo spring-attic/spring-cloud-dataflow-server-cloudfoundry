@@ -34,7 +34,7 @@ spring:
           apiTimeout: 360
     dataflow:
       security:
-        cf-use-uaa: false
+        cf-use-uaa: true
 
 #
 # If you prefer to use Eureka to locate the Config Server, you can do that by setting

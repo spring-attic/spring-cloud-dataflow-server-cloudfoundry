@@ -34,20 +34,20 @@ import org.springframework.util.StringUtils;
 
 /**
  * This Spring Cloud Data Flow {@link AuthoritiesExtractor} will assign all
- * {@link CoreSecurityRoles} to the authenticated OAuth2 user IF the user is a
- * "Space Developer" in Cloud Foundry.
+ * {@link CoreSecurityRoles} to the authenticated OAuth2 user IF the user is a "Space
+ * Developer" in Cloud Foundry.
  *
  * @author Gunnar Hillert
  *
  */
 public class CloudFoundryDataflowAuthoritiesExtractor implements AuthoritiesExtractor {
 
-	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CloudFoundryDataflowAuthoritiesExtractor.class);
+	private static final org.slf4j.Logger logger = LoggerFactory
+			.getLogger(CloudFoundryDataflowAuthoritiesExtractor.class);
 
 	private final CloudFoundrySecurityService cloudFoundrySecurityService;
 
-	public CloudFoundryDataflowAuthoritiesExtractor(
-			CloudFoundrySecurityService cloudFoundrySecurityService) {
+	public CloudFoundryDataflowAuthoritiesExtractor(CloudFoundrySecurityService cloudFoundrySecurityService) {
 		this.cloudFoundrySecurityService = cloudFoundrySecurityService;
 	}
 
@@ -64,15 +64,15 @@ public class CloudFoundryDataflowAuthoritiesExtractor implements AuthoritiesExtr
 
 		if (cloudFoundrySecurityService.isSpaceDeveloper()) {
 			final List<String> rolesAsStrings = new ArrayList<>();
-			final List<GrantedAuthority> grantedAuthorities =
-				Stream.of(CoreSecurityRoles.values())
+			final List<GrantedAuthority> grantedAuthorities = Stream.of(CoreSecurityRoles.values())
 					.map(roleEnum -> {
 						final String roleName = SecurityConfigUtils.ROLE_PREFIX + roleEnum.getKey();
 						rolesAsStrings.add(roleName);
 						return new SimpleGrantedAuthority(roleName);
 					})
 					.collect(Collectors.toList());
-			logger.info("Adding ALL roles {} to Cloud Foundry Space Developer user {}", StringUtils.collectionToCommaDelimitedString(rolesAsStrings), map);
+			logger.info("Adding ALL roles {} to Cloud Foundry Space Developer user {}",
+					StringUtils.collectionToCommaDelimitedString(rolesAsStrings), map);
 			return grantedAuthorities;
 		}
 		else {
