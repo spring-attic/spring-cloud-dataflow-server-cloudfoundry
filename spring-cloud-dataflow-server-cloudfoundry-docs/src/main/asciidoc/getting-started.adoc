@@ -435,7 +435,7 @@ otherwise no roles whatsoever will be assigned. In that case you may see the fol
 Dashboard screen:
 
 .Accessing the Data Flow Dashboard without Roles
-image::{dataflow-asciidoc}/images/cf-getting-started-security-no-roles.png[Dashboard without roles, scaledwidth="100%"]
+image::cf-getting-started-security-no-roles.png[Dashboard without roles, scaledwidth="100%"]
 
 [[getting-started-app-names-cloud-foundry]]
 == Application Names and Prefixes
