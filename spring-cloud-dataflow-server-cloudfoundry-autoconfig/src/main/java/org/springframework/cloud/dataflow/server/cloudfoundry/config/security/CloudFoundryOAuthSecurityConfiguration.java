@@ -24,9 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryDataflowAuthoritiesExtractor;
+import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryPrincipalExtractor;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundrySecurityService;
 import org.springframework.cloud.dataflow.server.config.security.OAuthSecurityConfiguration;
 import org.springframework.cloud.dataflow.server.config.security.support.DefaultDataflowAuthoritiesExtractor;
@@ -71,11 +73,21 @@ public class CloudFoundryOAuthSecurityConfiguration {
 	@Autowired(required = false)
 	private CloudFoundryDataflowAuthoritiesExtractor cloudFoundryDataflowAuthoritiesExtractor;
 
+	@Autowired(required = false)
+	private PrincipalExtractor principalExtractor;
+
 	@PostConstruct
 	public void init() {
 		if (this.cloudFoundryDataflowAuthoritiesExtractor != null) {
 			logger.info("Setting up Cloud Foundry AuthoritiesExtractor for UAA.");
 			this.userInfoTokenServices.setAuthoritiesExtractor(this.cloudFoundryDataflowAuthoritiesExtractor);
+		}
+		if (this.principalExtractor != null) {
+			logger.info("Setting up Cloud Foundry PrincipalExtractor.");
+			this.userInfoTokenServices.setPrincipalExtractor(this.principalExtractor);
+		}
+		else {
+			this.userInfoTokenServices.setPrincipalExtractor(new CloudFoundryPrincipalExtractor());
 		}
 	}
 
