@@ -81,7 +81,7 @@ public class CloudFoundryOAuthSecurityConfiguration {
 
 	@Configuration
 	@ConditionalOnProperty(name = "spring.cloud.dataflow.security.cf-use-uaa", havingValue = "true")
-	public static class CloudFoundryUAAConfiguration {
+	public class CloudFoundryUAAConfiguration {
 
 		@Value("${vcap.application.cf_api}")
 		private String cloudControllerUrl;
