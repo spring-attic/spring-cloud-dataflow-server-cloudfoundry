@@ -14,7 +14,7 @@
 
 	<properties>
 		<spring-cloud-dataflow.version>1.2.1.RELEASE</spring-cloud-dataflow.version>
-		<spring-cloud-deployer-cloudfoundry.version>1.2.0.RELEASE</spring-cloud-deployer-cloudfoundry.version>
+		<spring-cloud-deployer-cloudfoundry.version>1.2.1.BUILD-SNAPSHOT</spring-cloud-deployer-cloudfoundry.version>
 		<spring-cloud-deployer-spi.version>1.2.0.RELEASE</spring-cloud-deployer-spi.version>
 		<reactor.version>3.0.7.RELEASE</reactor.version>
 	</properties>
