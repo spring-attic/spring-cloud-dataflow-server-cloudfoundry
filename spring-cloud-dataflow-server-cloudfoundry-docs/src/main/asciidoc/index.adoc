@@ -1,16 +1,16 @@
 = Spring Cloud Data Flow Server for Cloud Foundry
 Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hillert; Mark Pollack; Thomas Risberg; Marius Bogoevici; Josh Long ; Michael Minella; David Turanski
 :doctype: book
-:toc:
+:toc: left
 :toclevels: 4
 :source-highlighter: prettify
 :numbered:
 :icons: font
 :hide-uri-scheme:
+:docinfo: shared
 
 :spring-cloud-stream-docs: http://docs.spring.io/spring-cloud-stream/docs/{scst-core-version}/reference/htmlsingle/index.html
 :github-code: https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
-
 
 ifdef::backend-html5[]
 
@@ -27,30 +27,20 @@ endif::backend-html5[]
 
 // ======================================================================================
 
-[[overview]]
-= Spring Cloud Data Flow for Cloud Foundry
-
-This project provides support for orchestrating the deployment of Spring Cloud Stream applications to Cloud Foundry.
-
-include::overview.adoc[]
-
-include::{dataflow-asciidoc}/architecture.adoc[]
-
 include::getting-started.adoc[]
 
+include::{dataflow-asciidoc}/applications.adoc[]
+include::{dataflow-asciidoc}/architecture.adoc[]
 include::{dataflow-asciidoc}/configuration.adoc[]
 
+include::{dataflow-asciidoc}/shell.adoc[]
 include::{dataflow-asciidoc}/streams.adoc[]
-
 ifndef::omit-tasks-docs[]
 include::{dataflow-asciidoc}/tasks.adoc[]
-endif::omit-tasks-docs[]
-
 include::cf-tasks.adoc[]
-
+endif::omit-tasks-docs[]
 include::{dataflow-asciidoc}/dashboard.adoc[]
-
-include::{dataflow-asciidoc}/howto.adoc[]
+include::{dataflow-asciidoc}/api-guide.adoc[]
 
 include::appendix.adoc[]
 
