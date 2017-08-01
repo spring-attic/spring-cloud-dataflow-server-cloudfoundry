@@ -36,6 +36,7 @@
 						<executions>
 							<execution>
 								<id>set-all</id>
+								<phase>initialize</phase>
 								<goals>
 									<goal>set-version</goal>
 								</goals>
@@ -124,7 +125,7 @@
 							</execution>
 							<execution>
 								<id>generate-html5</id>
-								<phase>prepare-package</phase>
+								<phase>generate-resources</phase>
 								<goals>
 									<goal>process-asciidoc</goal>
 								</goals>
