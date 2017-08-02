@@ -12,7 +12,7 @@ mechanism can be used (passing program arguments, editing configuration files be
 link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.),
 although some may prove more practicable than others when running _on_ Cloud Foundry.
 
-NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-registry[application registry] in Spring Cloud Data Flow's Cloud Foundry server is empty. It is intentionally designed to allow users to have the flexibility of http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/_dsl_syntax.html#_register_a_stream_app[choosing and registering] applications, as they find appropriate for the given use-case requirement. Depending on the message-binder of choice, users can register between http://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[RabbitMQ or Apache Kafka] based maven artifacts.
+NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-registry[application registry] in Spring Cloud Data Flow's Cloud Foundry server is empty. It is intentionally designed to allow users to have the flexibility of http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[choosing and registering] applications, as they find appropriate for the given use-case requirement. Depending on the message-binder of choice, users can register between http://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[RabbitMQ or Apache Kafka] based maven artifacts.
 
 === Provision a Redis service instance on Cloud Foundry
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
@@ -214,7 +214,7 @@ still available. This is particularly true for xref:configuring-defaults[configu
 substitute `cf set-env` syntax with `export`.
 
 NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
-versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/enable-disable-specific-features.html[Feature Togglers]
+versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/enable-disable-specific-features.html[Feature Togglers]
 for how to disable task support in Data Flow.
 
 [[sample-manifest-template]]
@@ -483,21 +483,21 @@ Let's assume you've to make an enhancement to update the "logger" to append extr
 @Import(LogSinkConfiguration.class)
 public class DemoApplication {
 
-	@Autowired
-	private LogSinkProperties properties;
+  @Autowired
+  private LogSinkProperties properties;
 
-	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(DemoApplication.class, args);
+  }
 
-	@Bean
-	@ServiceActivator(inputChannel = Sink.INPUT)
-	public LoggingHandler logSinkHandler() {
-		LoggingHandler loggingHandler = new LoggingHandler(this.properties.getLevel().name());
-		loggingHandler.setExpression(this.properties.getExpression());
-		loggingHandler.setLoggerName("TEST [" + this.properties.getName() + "]");
-		return loggingHandler;
-	}
+  @Bean
+  @ServiceActivator(inputChannel = Sink.INPUT)
+  public LoggingHandler logSinkHandler() {
+    LoggingHandler loggingHandler = new LoggingHandler(this.properties.getLevel().name());
+    loggingHandler.setExpression(this.properties.getExpression());
+    loggingHandler.setLoggerName("TEST [" + this.properties.getName() + "]");
+    return loggingHandler;
+  }
 }
 ----
 
@@ -647,3 +647,24 @@ configuration property, the default value is 25.
 # (for setting env var use SPRING_CLOUD_DATAFLOW_SERVER_CLOUDFOUNDRY_FREE_DISK_SPACE_PERCENTAGE)
 spring.cloud.dataflow.server.cloudfoundry.freeDiskSpacePercentage=25
 ----
+
+[[getting-started-app-resolution-options]]
+== Application Resolution Alternatives
+Though we highly recommend using Maven Repository for application link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[resolution and registration]
+in Cloud Foundry, there might be situations where an alternative approach would make sense. Following alternative options
+could come handy for resolving applications when running on Cloud Foundry.
+
+* With the help of Spring Boot, we can serve link:https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html#boot-features-spring-mvc-static-content[static content]
+in Cloud Foundry. A simple Spring Boot application can bundle all the required stream/task applications and by having it
+run on Cloud Foundry, the static application can then serve the Über-jar's. From the Shell, you can, for example, register the
+app with the name `http-source.jar` via `--uri=http://<Route-To-StaticApp>/http-source.jar`.
+
+* The Über-jar's can be hosted on any external server that's reachable via HTTP. They can be resolved from raw GitHub URIs
+as well. From the Shell, you can, for example, register the app with the name `http-source.jar` via `--uri=http://<Raw_GitHub_URI>/http-source.jar`.
+
+* link:http://docs.cloudfoundry.org/buildpacks/staticfile/index.html[Static Buildpack ]support in Cloud Foundry is another
+option. A similar HTTP resolution will work on this model, too.
+
+* link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.html[Volume Services] is another great option.
+The required Über-jar's can be hosted in an external file-system and with the help of volume-services, you can, for
+example, register the app with the name `http-source.jar` via `--uri=file://<Path-To-FileSystem>/http-source.jar`.
