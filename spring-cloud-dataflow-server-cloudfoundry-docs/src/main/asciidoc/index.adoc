@@ -33,7 +33,7 @@ include::{dataflow-asciidoc}/applications.adoc[]
 
 include::{dataflow-asciidoc}/architecture.adoc[]
 
-include::{dataflow-asciidoc}/configuration.adoc[]
+include::configuration.adoc[]
 
 include::{dataflow-asciidoc}/shell.adoc[]
 
