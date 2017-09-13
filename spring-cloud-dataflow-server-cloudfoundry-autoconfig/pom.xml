@@ -24,6 +24,11 @@
 			<version>${spring-cloud-dataflow.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-common-security-config-web</artifactId>
+			<version>${spring-cloud-common-security-config.version}</version>
+		</dependency>
+		<dependency>
 		<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>

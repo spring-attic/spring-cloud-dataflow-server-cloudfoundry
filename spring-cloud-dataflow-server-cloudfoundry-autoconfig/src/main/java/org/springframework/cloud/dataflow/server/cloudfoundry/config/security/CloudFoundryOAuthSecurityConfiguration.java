@@ -27,12 +27,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.cloud.CloudPlatform;
+import org.springframework.cloud.common.security.OAuthSecurityConfiguration;
+import org.springframework.cloud.common.security.support.DefaultAuthoritiesExtractor;
+import org.springframework.cloud.common.security.support.OnSecurityEnabledAndOAuth2Enabled;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryDataflowAuthoritiesExtractor;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryPrincipalExtractor;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundrySecurityService;
-import org.springframework.cloud.dataflow.server.config.security.OAuthSecurityConfiguration;
-import org.springframework.cloud.dataflow.server.config.security.support.DefaultDataflowAuthoritiesExtractor;
-import org.springframework.cloud.dataflow.server.config.security.support.OnSecurityEnabledAndOAuth2Enabled;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +48,7 @@ import org.springframework.security.oauth2.client.OAuth2RestTemplate;
  * {@code Space Developers} have access to the underlying REST API's.
  * <p>
  * For this to happen, a REST call will be made to the Cloud Foundry Permissions API via
- * CloudFoundrySecurityService inside the {@link DefaultDataflowAuthoritiesExtractor}.
+ * CloudFoundrySecurityService inside the {@link DefaultAuthoritiesExtractor}.
  * <p>
  * If the user has the respective permissions, the CF_SPACE_DEVELOPER_ROLE will be
  * assigned to the user.

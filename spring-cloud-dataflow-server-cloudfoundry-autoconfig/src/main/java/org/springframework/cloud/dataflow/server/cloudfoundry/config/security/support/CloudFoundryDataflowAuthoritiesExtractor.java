@@ -15,6 +15,7 @@
  */
 package org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,8 @@ import java.util.stream.Stream;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
-import org.springframework.cloud.dataflow.server.config.security.support.CoreSecurityRoles;
-import org.springframework.cloud.dataflow.server.config.security.support.SecurityConfigUtils;
+import org.springframework.cloud.common.security.support.CoreSecurityRoles;
+import org.springframework.cloud.common.security.support.SecurityConfigUtils;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
