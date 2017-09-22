@@ -293,7 +293,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
-    SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }
+    SPRING_APPLICATION_JSON: '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }'
 services:
 - mysql
 - my-config-server
