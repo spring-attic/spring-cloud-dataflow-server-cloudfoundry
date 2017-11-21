@@ -336,12 +336,12 @@ in the database and you can retrieve information about the task execution using 
 
 Skipper is a tool that allows you to discover Spring Boot applications and manage their lifecycle on multiple Cloud Platforms.
 You can use Skipper standalone or integrate it with Continuous Integration pipelines to help achieve Continuous Deployment
-of applications. For more details, review the link:https://docs.spring.io/spring-cloud-skipper/docs/{skipper-version-type}/reference/htmlsingle/#overview[reference guide]
+of applications. For more details, review the link:https://docs.spring.io/spring-cloud-skipper/docs/{skipper-version}/reference/htmlsingle/#overview[reference guide]
 for a complete overview and the feature capabilities.
 
 Before we begin setting up Skipper to use with Spring Cloud Data Flow, let's review the basics by understanding foundational
 design by which the relevant infrastructure is provisioned in Kubernetes. The tailormade
-link:https://docs.spring.io/spring-cloud-skipper/docs/{skipper-version-type}/reference/htmlsingle/#tour-cloud-foundry[three-minute-tour for Cloud Foundry]
+link:https://docs.spring.io/spring-cloud-skipper/docs/{skipper-version}/reference/htmlsingle/#tour-cloud-foundry[three-minute-tour for Cloud Foundry]
 walks through the fundamentals.
 
 Next up, we will review the relevant artifacts to provision Spring Cloud Skipper in Cloud Foundry.
@@ -534,14 +534,10 @@ spec:
     spring.cloud.dataflow.stream.app.label: log
     spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
     spring.cloud.stream.bindings.applicationMetrics.destination: metrics
-    twitter.credentials.access-token-secret: a3CEjynO4R8basD2eIbLJlmuRKkx8dhsG0bOkb0FkIVqH
     spring.cloud.dataflow.stream.name: foo
-    twitter.credentials.consumer-secret: I0lWLWNaroWlzC7q8TvrNWKCzgOj5k7qqYLS5Bbx2jpym0EU9U
-    twitter.credentials.consumer-key: DDp9YM9M9yfulJrydpkbn3QLL
     spring.metrics.export.triggers.application.includes: integration**
     spring.cloud.stream.metrics.key: foo.log.${spring.cloud.application.guid}
     spring.cloud.stream.bindings.input.group: foo
-    twitter.credentials.access-token: 17580836-OEb0NXhlrMULMGsyUlxVAzbwbWxPsFuJ9oVbaEHrX
     spring.cloud.dataflow.stream.app.type: sink
     spring.cloud.stream.bindings.input.destination: foo.time
   deploymentProperties:
@@ -561,15 +557,11 @@ spec:
     spring.cloud.dataflow.stream.app.label: time
     spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
     spring.cloud.stream.bindings.applicationMetrics.destination: metrics
-    twitter.credentials.access-token-secret: a3CEjynO4R8basD2eIbLJlmuRKkx8dhsG0bOkb0FkIVqH
     spring.cloud.dataflow.stream.name: foo
-    twitter.credentials.consumer-secret: I0lWLWNaroWlzC7q8TvrNWKCzgOj5k7qqYLS5Bbx2jpym0EU9U
-    twitter.credentials.consumer-key: DDp9YM9M9yfulJrydpkbn3QLL
     spring.metrics.export.triggers.application.includes: integration**
     spring.cloud.stream.metrics.key: foo.time.${spring.cloud.application.guid}
     spring.cloud.stream.bindings.output.producer.requiredGroups: foo
     spring.cloud.stream.bindings.output.destination: foo.time
-    twitter.credentials.access-token: 17580836-OEb0NXhlrMULMGsyUlxVAzbwbWxPsFuJ9oVbaEHrX
     spring.cloud.dataflow.stream.app.type: source
   deploymentProperties:
     spring.cloud.deployer.group: foo
@@ -646,14 +638,10 @@ spec:
     spring.cloud.dataflow.stream.app.label: log
     spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
     spring.cloud.stream.bindings.applicationMetrics.destination: metrics
-    twitter.credentials.access-token-secret: a3CEjynO4R8basD2eIbLJlmuRKkx8dhsG0bOkb0FkIVqH
     spring.cloud.dataflow.stream.name: foo
-    twitter.credentials.consumer-secret: I0lWLWNaroWlzC7q8TvrNWKCzgOj5k7qqYLS5Bbx2jpym0EU9U
-    twitter.credentials.consumer-key: DDp9YM9M9yfulJrydpkbn3QLL
     spring.metrics.export.triggers.application.includes: integration**
     spring.cloud.stream.metrics.key: foo.log.${spring.cloud.application.guid}
     spring.cloud.stream.bindings.input.group: foo
-    twitter.credentials.access-token: 17580836-OEb0NXhlrMULMGsyUlxVAzbwbWxPsFuJ9oVbaEHrX
     spring.cloud.dataflow.stream.app.type: sink
     spring.cloud.stream.bindings.input.destination: foo.time
   deploymentProperties:
@@ -674,15 +662,11 @@ spec:
     spring.cloud.dataflow.stream.app.label: time
     spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
     spring.cloud.stream.bindings.applicationMetrics.destination: metrics
-    twitter.credentials.access-token-secret: a3CEjynO4R8basD2eIbLJlmuRKkx8dhsG0bOkb0FkIVqH
     spring.cloud.dataflow.stream.name: foo
-    twitter.credentials.consumer-secret: I0lWLWNaroWlzC7q8TvrNWKCzgOj5k7qqYLS5Bbx2jpym0EU9U
-    twitter.credentials.consumer-key: DDp9YM9M9yfulJrydpkbn3QLL
     spring.metrics.export.triggers.application.includes: integration**
     spring.cloud.stream.metrics.key: foo.time.${spring.cloud.application.guid}
     spring.cloud.stream.bindings.output.producer.requiredGroups: foo
     spring.cloud.stream.bindings.output.destination: foo.time
-    twitter.credentials.access-token: 17580836-OEb0NXhlrMULMGsyUlxVAzbwbWxPsFuJ9oVbaEHrX
     spring.cloud.dataflow.stream.app.type: source
   deploymentProperties:
     spring.cloud.deployer.group: foo
