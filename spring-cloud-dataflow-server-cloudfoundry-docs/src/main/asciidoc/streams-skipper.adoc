@@ -1,0 +1,293 @@
+[[streams-using-skipper]]
+[[streams-using-skipper]]
+= Streams deployed using Skipper
+
+We will proceed with the assumption that Spring Cloud Data Flow, Spring Cloud Skipper, RDBMS, and desired messaging
+middleware is up and running in PWS.
+
+[source,console,options=nowrap]
+----
+± cf apps                                                                                                                                                                                                                                         [1h] ✭
+Getting apps in org ORG / space SPACE as email@pivotal.io...
+OK
+
+name                         requested state   instances   memory   disk   urls
+skipper-server               started           1/1         1G       1G     skipper-server.cfapps.io
+dataflow-server              started           1/1         1G       1G     dataflow-server.cfapps.io
+----
+
+Verify the available platforms in Skipper.
+
+[source,console,options=nowrap]
+----
+skipper:>config http://skipper-server.cfapps.io/api
+Successfully targeted http://skipper-server.cfapps.io/api
+skipper:>platform list
+╔═══════╤════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ Name  │    Type    │                                                 Description                                                 ║
+╠═══════╪════════════╪═════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║default│local       │ShutdownTimeout = [30], EnvVarsToInherit = [TMP,LANG,LANGUAGE,LC_.*,PATH], JavaCmd =                         ║
+║       │            │[/home/vcap/app/.java-buildpack/open_jdk_jre/bin/java], WorkingDirectoriesRoot = [/home/vcap/tmp],           ║
+║       │            │DeleteFilesOnExit = [true]                                                                                   ║
+║pws    │cloudfoundry│org = [scdf-ci], space = [space-sabby], url = [https://api.run.pivotal.io]                                   ║
+╚═══════╧════════════╧═════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+----
+
+Let's start with deploying a stream with the `time-source` pointing to 1.2.0.RELEASE and `log-sink` pointing
+to 1.1.0.RELEASE. The goal is to rolling upgrade the `log-sink` application to 1.2.0.RELEASE.
+
+```
+dataflow:>app register --name time --type source --uri maven://org.springframework.cloud.stream.app:time-source-rabbit:1.2.0.RELEASE
+Successfully registered application 'source:time'
+
+dataflow:>app register --name log --type sink --uri maven://org.springframework.cloud.stream.app:log-sink-rabbit:1.1.0.RELEASE
+Successfully registered application 'sink:log'
+
+dataflow:>app info source:time
+Information about source application 'time':
+Resource URI: maven://org.springframework.cloud.stream.app:time-source-rabbit:1.2.0.RELEASE
+
+dataflow:>app info sink:log
+Information about sink application 'log':
+Resource URI: maven://org.springframework.cloud.stream.app:log-sink-rabbit:1.1.0.RELEASE
+```
+
+. Create stream.
+
++
+```
+dataflow:>stream create foo --definition "time | log"
+Created new stream 'foo'
+```
++
+
+. Deploy stream.
+
++
+```
+dataflow:>stream skipper deploy foo --platformName pws
+Deployment request has been sent for stream 'foo'
+```
++
+
+[NOTE]
+====
+While deploying the stream, we are supplying `--platformName` and that indicates the platform repository (i.e., `pws`) to
+use when deploying the stream applications via Skipper.
+====
+
+. List apps.
+
++
+[source,console,options=nowrap]
+----
+$ cf apps                                                                                                                                                                                                                                         [1h] ✭
+Getting apps in org ORG / space SPACE as email@pivotal.io...
+
+name                         requested state   instances   memory   disk   urls
+foo-log-v1                   started           1/1         1G       1G     foo-log-v1.cfapps.io
+foo-time-v1                  started           1/1         1G       1G     foo-time-v1.cfapps.io
+skipper-server               started           1/1         1G       1G     skipper-server.cfapps.io
+dataflow-server              started           1/1         1G       1G     dataflow-server.cfapps.io
+----
++
+
+. Verify logs.
+
++
+[source,console,options=nowrap]
+----
+$ cf logs foo-log-v1
+...
+...
+2017-11-20T15:39:43.76-0800 [APP/PROC/WEB/0] OUT 2017-11-20 23:39:43.761  INFO 12 --- [ foo.time.foo-1] log-sink                                 : 11/20/17 23:39:43
+2017-11-20T15:39:44.75-0800 [APP/PROC/WEB/0] OUT 2017-11-20 23:39:44.757  INFO 12 --- [ foo.time.foo-1] log-sink                                 : 11/20/17 23:39:44
+2017-11-20T15:39:45.75-0800 [APP/PROC/WEB/0] OUT 2017-11-20 23:39:45.757  INFO 12 --- [ foo.time.foo-1] log-sink                                 : 11/20/17 23:39:45
+----
++
+
+. Verify history in Skipper.
+
++
+[source,console,options=nowrap]
+----
+skipper:>history --release-name foo
+╔═══════╤════════════════════════════╤════════╤════════════╤═══════════════╤════════════════╗
+║Version│        Last updated        │ Status │Package Name│Package Version│  Description   ║
+╠═══════╪════════════════════════════╪════════╪════════════╪═══════════════╪════════════════╣
+║1      │Mon Nov 20 15:34:37 PST 2017│DEPLOYED│foo         │1.0.0          │Install complete║
+╚═══════╧════════════════════════════╧════════╧════════════╧═══════════════╧════════════════╝
+----
++
+
+. Verify the package manifest in Skipper. The `log-sink` should be at 1.1.0.RELEASE.
+
++
+[source,yml,options=nowrap]
+----
+skipper:>manifest get foo
+
+---
+# Source: log.yml
+apiVersion: skipper.spring.io/v1
+kind: SpringCloudDeployerApplication
+metadata:
+  name: log
+spec:
+  resource: maven://org.springframework.cloud.stream.app:log-sink-rabbit
+  version: 1.1.0.RELEASE
+  applicationProperties:
+    spring.cloud.dataflow.stream.app.label: log
+    spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
+    spring.cloud.stream.bindings.applicationMetrics.destination: metrics
+    spring.cloud.dataflow.stream.name: foo
+    spring.metrics.export.triggers.application.includes: integration**
+    spring.cloud.stream.metrics.key: foo.log.${spring.cloud.application.guid}
+    spring.cloud.stream.bindings.input.group: foo
+    spring.cloud.dataflow.stream.app.type: sink
+    spring.cloud.stream.bindings.input.destination: foo.time
+  deploymentProperties:
+    spring.cloud.deployer.indexed: true
+    spring.cloud.deployer.group: foo
+
+---
+# Source: time.yml
+apiVersion: skipper.spring.io/v1
+kind: SpringCloudDeployerApplication
+metadata:
+  name: time
+spec:
+  resource: maven://org.springframework.cloud.stream.app:time-source-rabbit
+  version: 1.2.0.RELEASE
+  applicationProperties:
+    spring.cloud.dataflow.stream.app.label: time
+    spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
+    spring.cloud.stream.bindings.applicationMetrics.destination: metrics
+    spring.cloud.dataflow.stream.name: foo
+    spring.metrics.export.triggers.application.includes: integration**
+    spring.cloud.stream.metrics.key: foo.time.${spring.cloud.application.guid}
+    spring.cloud.stream.bindings.output.producer.requiredGroups: foo
+    spring.cloud.stream.bindings.output.destination: foo.time
+    spring.cloud.dataflow.stream.app.type: source
+  deploymentProperties:
+    spring.cloud.deployer.group: foo
+----
+
+. Let's update `log-sink` from 1.1.0.RELEASE to 1.2.0.RELEASE
+
++
+[source,console,options=nowrap]
+----
+dataflow:>stream skipper update --name foo --properties version.log=1.2.0.RELEASE
+Update request has been sent for stream 'foo'
+----
++
+
+. List apps.
+
++
+[source,console,options=nowrap]
+----
+± cf apps                                                                                                                                                                                                                                         [1h] ✭
+Getting apps in org ORG / space SPACE as email@pivotal.io...
+
+Getting apps in org scdf-ci / space space-sabby as sanandan@pivotal.io...
+OK
+
+name                         requested state   instances   memory   disk   urls
+foo-log-v2                   started           1/1         1G       1G     foo-log-v2.cfapps.io
+foo-log-v1                   stopped           0/1         1G       1G
+foo-time-v1                  started           1/1         1G       1G     foo-time-v1.cfapps.io
+skipper-server               started           1/1         1G       1G     skipper-server.cfapps.io
+dataflow-server              started           1/1         1G       1G     dataflow-server.cfapps.io
+----
++
+
+[NOTE]
+====
+Notice that there are two versions of the `log-sink` applications. The `foo-log-v1` application instance is going down
+(route already removed) and the newly spawned `foo-log-v2` application is bootstrapping. The version number is incremented and
+the version-number (`v2`) is included in the new application name.
+====
+
+. Once the new application is up and running, let's verify the logs.
+
++
+[source,console,options=nowrap]
+----
+$ cf logs foo-log-v2
+...
+...
+2017-11-20T18:38:35.00-0800 [APP/PROC/WEB/0] OUT 2017-11-21 02:38:35.003  INFO 18 --- [foo.time.foo-1] foo-log-v2                              : 11/21/17 02:38:34
+2017-11-20T18:38:36.00-0800 [APP/PROC/WEB/0] OUT 2017-11-21 02:38:36.004  INFO 18 --- [foo.time.foo-1] foo-log-v2                              : 11/21/17 02:38:35
+2017-11-20T18:38:37.00-0800 [APP/PROC/WEB/0] OUT 2017-11-21 02:38:37.005  INFO 18 --- [foo.time.foo-1] foo-log-v2                              : 11/21/17 02:38:36
+----
++
+
+. Let's look at the updated package manifest in Skipper. We should now be seeing `log-sink` at 1.2.0.RELEASE.
+
++
+[source,yml,options=nowrap]
+----
+skipper:>manifest get --release-name foo
+
+---
+# Source: log.yml
+apiVersion: skipper.spring.io/v1
+kind: SpringCloudDeployerApplication
+metadata:
+  name: log
+spec:
+  resource: maven://org.springframework.cloud.stream.app:log-sink-rabbit
+  version: 1.2.0.RELEASE
+  applicationProperties:
+    spring.cloud.dataflow.stream.app.label: log
+    spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
+    spring.cloud.stream.bindings.applicationMetrics.destination: metrics
+    spring.cloud.dataflow.stream.name: foo
+    spring.metrics.export.triggers.application.includes: integration**
+    spring.cloud.stream.metrics.key: foo.log.${spring.cloud.application.guid}
+    spring.cloud.stream.bindings.input.group: foo
+    spring.cloud.dataflow.stream.app.type: sink
+    spring.cloud.stream.bindings.input.destination: foo.time
+  deploymentProperties:
+    spring.cloud.deployer.indexed: true
+    spring.cloud.deployer.group: foo
+    spring.cloud.deployer.count: 1
+
+---
+# Source: time.yml
+apiVersion: skipper.spring.io/v1
+kind: SpringCloudDeployerApplication
+metadata:
+  name: time
+spec:
+  resource: maven://org.springframework.cloud.stream.app:time-source-rabbit
+  version: 1.2.0.RELEASE
+  applicationProperties:
+    spring.cloud.dataflow.stream.app.label: time
+    spring.cloud.stream.metrics.properties: spring.application.name,spring.application.index,spring.cloud.application.*,spring.cloud.dataflow.*
+    spring.cloud.stream.bindings.applicationMetrics.destination: metrics
+    spring.cloud.dataflow.stream.name: foo
+    spring.metrics.export.triggers.application.includes: integration**
+    spring.cloud.stream.metrics.key: foo.time.${spring.cloud.application.guid}
+    spring.cloud.stream.bindings.output.producer.requiredGroups: foo
+    spring.cloud.stream.bindings.output.destination: foo.time
+    spring.cloud.dataflow.stream.app.type: source
+  deploymentProperties:
+    spring.cloud.deployer.group: foo
+----
+
+. Verify history in Skipper.
+
++
+[source,console,options=nowrap]
+----
+skipper:>history --release-name foo
+╔═══════╤════════════════════════════╤════════╤════════════╤═══════════════╤════════════════╗
+║Version│        Last updated        │ Status │Package Name│Package Version│  Description   ║
+╠═══════╪════════════════════════════╪════════╪════════════╪═══════════════╪════════════════╣
+║2      │Mon Oct 30 16:21:55 PDT 2017│DEPLOYED│foo         │1.0.0          │Upgrade complete║
+║1      │Mon Oct 30 16:18:28 PDT 2017│DELETED │foo         │1.0.0          │Delete complete ║
+╚═══════╧════════════════════════════╧════════╧════════════╧═══════════════╧════════════════╝
+----
