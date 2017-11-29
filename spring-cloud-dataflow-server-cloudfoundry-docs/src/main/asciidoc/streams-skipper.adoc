@@ -1,5 +1,4 @@
 [[streams-using-skipper]]
-[[streams-using-skipper]]
 = Streams deployed using Skipper
 
 We will proceed with the assumption that Spring Cloud Data Flow, Spring Cloud Skipper, RDBMS, and desired messaging
@@ -20,9 +19,7 @@ Verify the available platforms in Skipper.
 
 [source,console,options=nowrap]
 ----
-skipper:>config http://skipper-server.cfapps.io/api
-Successfully targeted http://skipper-server.cfapps.io/api
-skipper:>platform list
+dataflow:>stream skipper platform-list
 ╔═══════╤════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║ Name  │    Type    │                                                 Description                                                 ║
 ╠═══════╪════════════╪═════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
@@ -106,12 +103,12 @@ $ cf logs foo-log-v1
 ----
 +
 
-. Verify history in Skipper.
+. Verify the stream history.
 
 +
 [source,console,options=nowrap]
 ----
-skipper:>history --release-name foo
+dataflow:>stream skipper history --name foo
 ╔═══════╤════════════════════════════╤════════╤════════════╤═══════════════╤════════════════╗
 ║Version│        Last updated        │ Status │Package Name│Package Version│  Description   ║
 ╠═══════╪════════════════════════════╪════════╪════════════╪═══════════════╪════════════════╣
@@ -125,7 +122,7 @@ skipper:>history --release-name foo
 +
 [source,yml,options=nowrap]
 ----
-skipper:>manifest get foo
+dataflow:>stream skipper manifest --name foo
 
 ---
 # Source: log.yml
@@ -224,7 +221,7 @@ $ cf logs foo-log-v2
 ----
 +
 
-. Let's look at the updated package manifest in Skipper. We should now be seeing `log-sink` at 1.2.0.RELEASE.
+. Let's look at the updated package manifest persisted in Skipper. We should now be seeing `log-sink` at 1.2.0.RELEASE.
 
 +
 [source,yml,options=nowrap]
@@ -277,17 +274,40 @@ spec:
   deploymentProperties:
     spring.cloud.deployer.group: foo
 ----
++
 
-. Verify history in Skipper.
+. Verify stream history for the latest updates.
 
 +
 [source,console,options=nowrap]
 ----
-skipper:>history --release-name foo
+dataflow:>stream skipper history --name foo
 ╔═══════╤════════════════════════════╤════════╤════════════╤═══════════════╤════════════════╗
 ║Version│        Last updated        │ Status │Package Name│Package Version│  Description   ║
 ╠═══════╪════════════════════════════╪════════╪════════════╪═══════════════╪════════════════╣
-║2      │Mon Oct 30 16:21:55 PDT 2017│DEPLOYED│foo         │1.0.0          │Upgrade complete║
-║1      │Mon Oct 30 16:18:28 PDT 2017│DELETED │foo         │1.0.0          │Delete complete ║
+║2      │Mon Nov 20 15:39:37 PST 2017│DEPLOYED│foo         │1.0.0          │Upgrade complete║
+║1      │Mon Nov 20 15:34:37 PST 2017│DELETED │foo         │1.0.0          │Delete complete ║
+╚═══════╧════════════════════════════╧════════╧════════════╧═══════════════╧════════════════╝
+----
++
+
+. Rolling-back to the previous version is just a command away.
+
++
+[source,console,options=nowrap]
+----
+dataflow:>stream skipper rollback --name foo
+Rollback request has been sent for the stream 'foo'
+
+...
+...
+
+dataflow:>stream skipper history --name foo
+╔═══════╤════════════════════════════╤════════╤════════════╤═══════════════╤════════════════╗
+║Version│        Last updated        │ Status │Package Name│Package Version│  Description   ║
+╠═══════╪════════════════════════════╪════════╪════════════╪═══════════════╪════════════════╣
+║3      │Mon Nov 20 15:41:37 PST 2017│DEPLOYED│foo         │1.0.0          │Upgrade complete║
+║2      │Mon Nov 20 15:39:37 PST 2017│DELETED │foo         │1.0.0          │Delete complete ║
+║1      │Mon Nov 20 15:34:37 PST 2017│DELETED │foo         │1.0.0          │Delete complete ║
 ╚═══════╧════════════════════════════╧════════╧════════════╧═══════════════╧════════════════╝
 ----
