@@ -29,6 +29,52 @@ Note: Since analytics feature is enabled by default, the Data Flow server is exp
 
 The REST endpoint `/features` provides information on the features enabled/disabled.
 
+[[configuring-defaults]]
+== Configuring Defaults for Deployed Apps
+You can also set other optional properties that alter the way Spring Cloud Data Flow will deploy stream and task apps:
+
+* The default memory and disk sizes for a deployed application can be configured. By default they are 1024 MB memory
+and 1024 MB disk. To change these, as an example to 512 and 2048 respectively, use
++
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_MEMORY 512
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_DISK 2048
+```
+
+* The default number of instances to deploy is set to 1, but can be overridden using
++
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_INSTANCES 1
+```
+
+* You can set the buildpack that will be used to deploy each application. For example, to use the Java offline buildback,
+set the following environment variable
++
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_BUILDPACK java_buildpack_offline
+```
+
+* The health check mechanism used by Cloud Foundry to assert if apps are running can be customized. Current supported options
+are `http` (the default), `port` and `none`. Change the default like so:
++
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK port
+```
++
+There are also options for the health check endpoint and timeout, `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_ENDPOINT` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_TIMEOUT`.  These default to `/health` (the Spring Boot default location` and `120` seconds.
+[NOTE]
+====
+These settings can be configured separately for stream and task apps. To alter settings for tasks, simply
+substitute `STREAM` with `TASK` in the property name. As an example,
+
+```
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_MEMORY 512
+```
+====
+
+TIP: All the properties mentioned above are `@ConfigurationProperties` of the
+Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/{deployer-branch-or-tag}/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
+
 
 [[getting-started-security]]
 == Security
