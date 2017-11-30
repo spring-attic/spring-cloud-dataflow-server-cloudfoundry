@@ -29,7 +29,7 @@ cf create-service cloudamqp lemur rabbit
 ```
 
 Rabbit is typically used as a messaging middleware between streaming apps and would be bound to each deployed app
-thanks to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting (see below).
+thanks to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting in Data Flow configuration or `SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES` setting in Skipper.
 
 === Provision a MySQL service instance on Cloud Foundry
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
@@ -82,11 +82,11 @@ env:
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_DOMAIN: cfapps.io
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_USERNAME: {email}
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_PASSWORD: {password}
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: rabbit
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: {middlewareServiceName}
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX: false
 ----
 +
-You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands. Once you have the desired
+You need to fill in \{org}, \{space}, \{email},  \{password} and {middlewareServiceName} before running these commands. Once you have the desired
 config values in the `manifest.yml`, you can run `cf push` command to provision the skipper-server.
 +
 WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
