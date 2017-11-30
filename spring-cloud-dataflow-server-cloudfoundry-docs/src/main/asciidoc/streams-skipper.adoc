@@ -226,7 +226,7 @@ $ cf logs foo-log-v2
 +
 [source,yml,options=nowrap]
 ----
-skipper:>manifest get --release-name foo
+dataflow:>stream skipper manifest --name foo
 
 ---
 # Source: log.yml
