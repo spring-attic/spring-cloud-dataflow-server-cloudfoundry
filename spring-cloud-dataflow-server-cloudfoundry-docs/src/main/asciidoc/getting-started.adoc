@@ -1,6 +1,7 @@
 [[getting-started]]
 = Getting started
 
+[[getting-started-requirements]]
 == System Requirements
 
 The Spring Cloud Data Flow server deploys streams (collections of long lived applications) and short lived tasks to Cloud Foundry.
@@ -41,28 +42,66 @@ cf create-service cleardb spark my_mysql
 An RDBMS is used to persist Data Flow state, such as stream definitions and deployment ids.
 It can also be used for tasks to persist execution history.
 
-[[running-on-cloudfoundry]]
-== Server installation on Cloud Foundry
-Download the server and shell applications
-
+[[getting-started-cloudfoundry]]
+== Cloud Foundry Installation
+. Download the Data Flow server and shell applications
++
 [subs=attributes]
 ```
 wget http://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/{project-version}/spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
+. Download Skipper if you want the added features of upgrading and rolling back Streams since Data Flow delegates to Skipper for those features.
++
+[source,yaml,options=nowrap,subs=attributes]
+----
+wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
+wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-shell/{skipper-version}/spring-cloud-skipper-shell-{skipper-version}.jar
+----
+. Run the Skipper Server if you want the added feature set described above.
+Let's review the sample `manifest.yml` file to deploy the skipper-server application to Cloud Foundry.
++
+[source,yaml,options=nowrap]
+----
+---
+applications:
+- name: skipper-server
+  host: skipper-server
+  memory: 1G
+  disk_quota: 1G
+  instances: 1
+  timeout: 180
+  path: <PATH TO THE DOWNLOADED SKIPPER SERVER UBER-JAR>
+env:
+    SPRING_APPLICATION_NAME: skipper-server
+    SPRING_CLOUD_SKIPPER_SERVER_ENABLE_LOCAL_PLATFORM: false
+    SPRING_CLOUD_SKIPPER_SERVER_STRATEGIES_HEALTHCHECK.TIMEOUTINMILLIS: 300000
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_URL: https://api.run.pivotal.io
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_ORG: {org}
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SPACE: {space}
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_DOMAIN: cfapps.io
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_USERNAME: {email}
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_PASSWORD: {password}
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: rabbit
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX: false
+----
++
+You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands. Once you have the desired
+config values in the `manifest.yml`, you can run `cf push` command to provision the skipper-server.
++
+WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
+certs (e.g. in development). Do not use for production.
 
-Now you need to configure the server.
-One of the most important configurations is providing providing credentials to the
-Cloud Foundry instance so that the server can spawn applications itself.
+. Configure and run the Data Flow Server
++
+One of the most important configurations is providing providing credentials to the Cloud Foundry instance so that the server can spawn applications itself.
 Any Spring Boot compatible configuration mechanism can be used (passing program arguments, editing configuration files before building the application, using
-link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.), although some may prove more practicable than others when running _on_ Cloud Foundry.
+link:https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config], using environment variables, etc.), although some may prove more practicable than others depending how you typically deploy applications to Cloud Foundry.
 
-NOTE: If you would like the added features of upgrading and rolling back Streams, download and install the Skipper server.
-Instructions on how to install and deploy Skipper can be found in the <<spring-cloud-skipper-integration>> section.
-
-In this next sections we will show how to deploy Data Flow using environment variables or a Cloud Foundry manifest.
+In this next section we will show how to deploy Data Flow using environment variables or a Cloud Foundry manifest.
 However, there are some general configuration details you should be aware of in either approach.
 
+[[getting-started-cloudfoundry-general-configuration]]
 === General Configuration
 
 NOTE: You must use a unique name for your app; an app with the same name in the same organization will cause your
@@ -76,13 +115,13 @@ how to configure this PCF property.  Also, the Data Flow server itself implement
 free disk space when it falls below a low water mark value.
 
 NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
-applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the app.
+applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the server application.
 
 NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-registry[application registry] in Spring Cloud Data Flow's Cloud Foundry server is empty. It is intentionally designed to allow users to have the flexibility of http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[choosing and registering] applications, as they find appropriate for the given use-case requirement. Depending on the message-binder of choice, users can register between http://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[RabbitMQ or Apache Kafka] based maven artifacts.
 
 NOTE: If you need to configure multiple Maven repositories, a proxy, or authorization for a private repository, see link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#getting-started-maven-configuration[Maven Configuration].
 
-
+[[getting-started-cloudfoundry-deploying-using-env-vars]]
 === Deploying using environment variables
 
 The following configuration is for Pivotal Web Services. You need to fill in \{org}, \{space},
@@ -117,10 +156,10 @@ cf set-env dataflow-server SPRING_APPLICATION_JSON '{"maven": { "remote-reposito
 ```
 where `repo1` is the alias name for the remote repository.
 
-NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.  Instructions on how to deploy Skipper can be found in the <<spring-cloud-skipper-integration>> section.
+NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.
 
 ----
-cf set-env dataflow-server SKIPPER_CLIENT_HOST https://<skipper-host-name>/api
+cf set-env dataflow-server SPRING_CLOUD_SKIPPER_CLIENT_URI https://<skipper-host-name>/api
 ----
 
 You can issue now `cf push` command and reference the Data Flow server .jar.
@@ -132,7 +171,7 @@ cf bind-service dataflow-server redis
 cf bind-service dataflow-server my_mysql
 ```
 
-[[sample-manifest-template]]
+[[getting-started-cloudfoundry-deploying-using-manifest]]
 === Deploying using a Manifest
 
 As an alternative to setting environment variables via `cf set-env` command, you can curate all the relevant env-var's
@@ -172,14 +211,14 @@ NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first 
 ----
 applications:
   env:
-    SPRING_CLIENT_HOST: https://<skipper-host-name>/api
+    SPRING_CLOUD_SKIPPER_CLIENT_URI: https://<skipper-host-name>/api
 ----
 
 Once you're ready with the relevant properties in this file, you can issue `cf push` command from the directory where
 this file is stored.
 
-[[running-on-local-machine]]
-== Server installation on Local Machine
+[[getting-started-cloudfoundry-on-local]]
+== Local Machine Installation
 
 To run the server application locally, targeting your Cloud Foundry installation, you you need to configure the
 application either by passing in command line arguments (see below) or setting a number of environment variables.
@@ -207,25 +246,27 @@ You need to fill in \{org}, \{space}, \{email} and \{password} before running th
 WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
 certs (e.g. in development). Do not use for production.
 
+NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.
+
+----
+export SKIPPER_CLIENT_HOST https://<skipper-host-name>/api
+----
+
 Now we are ready to start the server application:
 
 [subs=attributes]
 ```
-java -jar spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar [--option1=value1] [--option2=value2] [etc.]
+java -jar spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 ```
 
 TIP: Of course, all other parameterization options that were available when running the server _on_ Cloud Foundry are
 still available. This is particularly true for xref:configuring-defaults[configuring defaults] for applications. Just
 substitute `cf set-env` syntax with `export`.
 
-NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
-versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/enable-disable-specific-features.html[Feature Togglers]
-for how to disable task support in Data Flow.
+[[getting-started-data-flow-shell]]
+== Data Flow Shell
 
-== Running Spring Cloud Data Flow Shell
-
-Run the shell and optionally target the Admin application if not running on the same host (will typically be the case if
-deployed on Cloud Foundry as explained xref:running-on-cloudfoundry[here])
+Run the shell and optionally target the Server application using the `dataflow config` command.
 
 [source,bash,subs=attributes]
 ----
@@ -238,43 +279,65 @@ Successfully targeted http://dataflow-server.cfapps.io
 dataflow:>
 ```
 
+[[getting-started-deploying-streams]]
+== Deploying Streams
+
+. Import Apps
++
 By default, the application registry will be empty. If you would like to register all out-of-the-box stream applications
 built with the RabbitMQ binder in bulk, you can with the following command. For more details, review how to
 xref:spring-cloud-dataflow-register-apps[register applications].
-
++
 ```
-dataflow:>app import --uri http://bit.ly/Avogadro-SR1-stream-applications-rabbit-maven
-
+dataflow:>app import --uri http://bit.ly/Celsius-GA-stream-applications-rabbit-maven
 ```
-
-[NOTE]
-.A Note about application URIs
-====
-While Spring Cloud Data Flow for Cloud Foundry leverages the core Data Flow project, and as such theoretically supports
-registering apps using any scheme, the use of `file://` URIs does not really make sense on Cloud Foundry. Indeed, the
-local filesystem of the Data Flow server is ephemeral and chances are that you don't want to manually upload your apps there.
-
-When deploying apps using Data Flow for Cloud Foundry, a typical choice is to use `maven://` coordinates, or maybe `http://` URIs.
-
-====
-
-You can now use the shell commands to list available applications (source/processors/sink) and create streams. For example:
-
++
+There are two options for deploying Streams. The "traditional" way that Data Flow has always used and a new way that delegates to the Skipper server. Deploying using Skipper will enable you to update and rollback the streams while the traditional way will not.
++
+. Create Streams without skipper
++
+Create a simple stream with an HTTP source and a log sink.
++
 [source]
 ----
 dataflow:> stream create --name httptest --definition "http | log" --deploy
 ----
-
++
 NOTE: You will need to wait a little while until the apps are actually deployed successfully
 before posting data.  Tail the log file for each application to verify
 the application has started.
-
++
 Now post some data. The URL will be unique to your deployment, the following is just an example
++
 [source]
 ----
 dataflow:> http post --target http://dataflow-AxwwAhK-httptest-http.cfapps.io --data "hello world"
 ----
 Look to see if `hello world` ended up in log files for the `log` application.
++
+. Create Streams with Skipper
++
+[source]
+----
+dataflow:> stream create --name httptest --definition "http | log"
+dataflow:> stream skipper deploy --name httptest --platformName pws
+----
++
+Look to see if `hello world` ended up in log files for the `log` application.
++
+[NOTE]
+====
+Skipper includes the concept of link:https://docs.spring.io/spring-cloud-skipper/docs/current/reference/htmlsingle/#platforms[platforms],
+so it is important to define the "accounts" based on the project preferences. In the above YAML file, the accounts map
+to `pws` as the platform. This can be modified, and of course, you can have any number of platform definitions.
+More details are in Spring Cloud Skipper reference guide.
+====
++
+You can read more about the general features of using Skipper to deploy streams in the section <<spring-cloud-dataflow-stream-lifecycle-skipper>> and how to upgrade and rollback streams in the section <<spring-cloud-dataflow-streams-skipper>>.
+
+
+[[getting-started-deploying-tasks]]
+== Deploying Tasks
 
 To run a simple task application, you can register all the out-of-the-box task applications with the following command.
 
@@ -299,292 +362,7 @@ You will see the year `2017` printed in the logs. The execution status of the ta
 in the database and you can retrieve information about the task execution using the shell commands
 `task execution list` and `task execution status --id <ID_OF_TASK>` or though the Data Flow UI.
 
-[[spring-cloud-skipper-integration]]
-== Spring Cloud Skipper Integration
+NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
+versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/enable-disable-specific-features.html[Feature Togglers]
+for how to disable task support in Data Flow.
 
-Skipper is a tool that allows you to discover Spring Boot applications and manage their lifecycle on multiple Cloud Platforms.
-You can use Skipper standalone or integrate it with Continuous Integration pipelines to help achieve Continuous Deployment
-of applications. For more details, review the link:https://docs.spring.io/spring-cloud-skipper/docs/{skipper-version}/reference/htmlsingle/#overview[reference guide]
-for a complete overview and the feature capabilities.
-
-Before we begin setting up Skipper to use with Spring Cloud Data Flow, let's review the basics by understanding foundational
-design by which the relevant infrastructure is provisioned in Kubernetes. The tailormade
-link:https://docs.spring.io/spring-cloud-skipper/docs/{skipper-version}/reference/htmlsingle/#tour-cloud-foundry[three-minute-tour for Cloud Foundry]
-walks through the fundamentals.
-
-Next up, we will review the relevant artifacts to provision Spring Cloud Skipper in Cloud Foundry.
-
-=== Download the Spring Cloud Skipper and Shell apps
-
-[source,yaml,options=nowrap,subs=attributes]
-----
-wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
-wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-shell/{skipper-version}/spring-cloud-skipper-shell-{skipper-version}.jar
-----
-
-==== Running the Skipper Server
-Similar to SCDF-server, you can either deploy the skipper-server application on Cloud Foundry or on your local machine.
-
-Let's review the sample `manifest.yml` file to deploy the skipper-server application to Cloud Foundry.
-
-[source,yaml,options=nowrap]
-----
----
-applications:
-- name: skipper-server
-  host: skipper-server
-  memory: 1G
-  disk_quota: 1G
-  instances: 1
-  path: <PATH TO THE DOWNLOADED SKIPPER SERVER UBER-JAR>
-env:
-    SPRING_APPLICATION_NAME: skipper-server
-    SPRING_CLOUD_SKIPPER_SERVER_ENABLE_LOCAL_PLATFORM: false
-    SPRING_CLOUD_SKIPPER_SERVER_STRATEGIES_HEALTHCHECK.TIMEOUTINMILLIS: 300000
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_URL: https://api.run.pivotal.io
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_ORG: {org}
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SPACE: {space}
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_DOMAIN: cfapps.io
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_USERNAME: {email}
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_PASSWORD: {password}
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: rabbit
-    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX: false
-----
-
-You need to fill in \{org}, \{space}, \{email} and \{password} before running these commands. Once you have the desired
-config values in the `manifest.yml`, you can run `cf push` command to provision the skipper-server.
-
-WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
-certs (e.g. in development). Do not use for production.
-
-[NOTE]
-====
-Skipper includes the concept of link:https://docs.spring.io/spring-cloud-skipper/docs/current/reference/htmlsingle/#platforms[platforms],
-so it is important to define the "accounts" based on the project preferences. In the above YAML file, the accounts map
-to `pws` as the platform. This can be modified, and of course, you can have any number of platform definitions.
-More details are in Spring Cloud Skipper reference guide.
-====
-
-==== Running the Skipper Shell
-Run the shell by using `java -jar`, e.g.
-
-[source,bash,subs=attributes]
-----
-$ java -jar $ java -jar spring-cloud-skipper-shell-{skipper-version}.jar
-----
-
-Then run the `config` command point pass the `uri` of where skipper is running.
-You can then see the connection is working by issuing the `platform list` command
-
-[source,bash,options="nowrap"]
-----
-server-unknown:>config --uri https://mlp-skipper.cfapps.io/api
-Successfully targeted https://mlp-skipper.cfapps.io/api
-skipper:>platform list
-╔════╤════════════╤═════════════════════════════════════════════════════════════════════════╗
-║Name│    Type    │                               Description                               ║
-╠════╪════════════╪═════════════════════════════════════════════════════════════════════════╣
-║pws │cloudfoundry│org = [scdf-ci], space = [space-mark], url = [https://api.run.pivotal.io]║
-╚════╧════════════╧═════════════════════════════════════════════════════════════════════════╝
-----
-
-
-[[getting-started-app-names-cloud-foundry]]
-== Application Names and Prefixes
-
-To help avoid clashes with routes across spaces in Cloud Foundry, a naming strategy to provide a random prefix to a
-deployed application is available and is enabled by default. The https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry#application-name-settings-and-deployments[default configurations]
-are overridable and the respective properties can be set via `cf set-env` commands.
-
-For instance, if you'd like to disable the randomization, you can override it through:
-
-```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX false
-```
-
-=== Using Custom Routes
-
-As an alternative to random name, or to get even more control over the hostname used by the deployed apps, one can use
-custom deployment properties, as such:
-
-[source]
-----
-dataflow:>stream create foo --definition "http | log"
-
-sdataflow:>stream deploy foo --properties "deployer.http.cloudfoundry.domain=mydomain.com,
-                                          deployer.http.cloudfoundry.host=myhost,
-                                          deployer.http.cloudfoundry.route-path=my-path"
-----
-
-This would result in the `http` app being bound to the URL `http://myhost.mydomain.com/my-path`. Note that this is an
-example showing *all* customization options available. One can of course only leverage one or two out of the three.
-
-== Deploying Docker Applications
-
-Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks using
-Data Flow for Cloud Foundry.
-
-If you are using Spring Boot and RabbitMQ based Docker images you can provide a common deployment property
-to facilitate the apps binding to the RabbitMQ service. Assuming your RabbitMQ service is named `rabbit` you can provide the following:
-
-```
-cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.applicationProperties.stream.spring.rabbitmq.addresses": "${vcap.services.rabbit.credentials.protocols.amqp.uris}"}'
-```
-For Spring Cloud Task apps, something similar to the following could be used, if using a database service instance named `mysql`:
-
-```
-cf set-env SPRING_DATASOURCE_URL '${vcap.services.mysql.credentials.jdbcUrl}'
-cf set-env SPRING_DATASOURCE_USERNAME '${vcap.services.mysql.credentials.username}'
-cf set-env SPRING_DATASOURCE_PASSWORD '${vcap.services.mysql.credentials.password}'
-cf set-env SPRING_DATASOURCE_DRIVER_CLASS_NAME 'org.mariadb.jdbc.Driver'
-```
-
-
-For non-Java or non-Boot apps, your Docker app would have to parse the `VCAP_SERVICES` variable in order to bind to any available services.
-
-[NOTE]
-.Passing application properties
-====
-When using non-boot apps, chances are that you want the application properties passed to your app using traditional
-environment variables, as opposed to using the special `SPRING_APPLICATION_JSON` variable. To achieve this, set the
-following variables for streams and tasks, respectively:
-
-[source, properties]
-----
-SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON=false
-SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON=false
-----
-====
-
-
-[[getting-started-service-binding-at-application-level]]
-== Application Level Service Bindings
-When deploying streams in Cloud Foundry, you can take advantage of application specific service bindings, so not all
-services are globally configured for all the apps orchestrated by Spring Cloud Data Flow.
-
-For instance, if you'd like to provide `mysql` service binding only for the `jdbc` application in the following stream
-definition, you can pass the service binding as a deployment property.
-
-[source]
-----
-dataflow:>stream create --name httptojdbc --definition "http | jdbc"
-dataflow:>stream deploy --name httptojdbc --properties "deployer.jdbc.cloudfoundry.services=mysqlService"
-----
-
-Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http`
-application wouldn't get the binding by this method.
-If you have more than one service to bind, they can be passed as comma separated items
-(_eg_: `deployer.jdbc.cloudfoundry.services=mysqlService,someService`).
-
-[[getting-started-ups]]
-== A Note About User Provided Services
-In addition to marketplace services, Cloud Foundry supports
-https://docs.cloudfoundry.org/devguide/services/user-provided.html[User Provided Services] (UPS). Throughout this reference manual,
-regular services have been mentioned, but there is nothing precluding the use of UPSs as well, whether for use as the
-messaging middleware (_e.g._ if you'd like to use an external Apache Kafka installation) or for _ad hoc_ usage by some
- of the stream apps (_e.g._ an Oracle Database).
-
-Let's review an example of extracting and supplying the connection credentials from an UPS.
-
-* A sample UPS setup for Apache Kafka.
-
-[source,bash]
-----
-cf create-user-provided-service kafkacups -p '{”brokers":"HOST:PORT","zkNodes":"HOST:PORT"}'
-----
-
-* The UPS credentials will be wrapped within `VCAP_SERVICES` and it can be supplied directly in the stream definition like
-the following.
-
-[source]
-----
-stream create fooz --definition "time | log"
-stream deploy fooz --properties "app.time.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.time.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes},app.log.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.log.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes}"
-----
-
-
-[[getting-started-maximum-disk-quota-configuration]]
-== Maximum Disk Quota Configuration
-By default, every application in Cloud Foundry starts with 1G disk quota and this can be adjusted to a default maximum of
-2G. The default maximum can also be overridden up to 10G via Pivotal Cloud Foundry's (PCF) Ops Manager GUI.
-
-This configuration is relevant for Spring Cloud Data Flow because every stream and task deployment is composed of applications
-(typically Spring Boot uber-jar's) and those applications are resolved from a remote maven repository. After resolution,
-the application artifacts are downloaded to the local Maven Repository for caching/reuse. With this happening in the background,
-there is a possibility the default disk quota (_1G_) fills up rapidly; especially, when we are experimenting with streams that
-are made up of unique applications.  In order to overcome this disk limitation and depending
-on your scaling requirements,you may want to change the default maximum from 2G to 10G. Let's review the
-steps to change the default maximum disk quota allocation.
-
-=== PCF's Operations Manager Configuration
-
-From PCF's Ops Manager, Select "*Pivotal Elastic Runtime*" tile and navigate to "*Application Developer Controls*" tab.
-Change the "*Maximum Disk Quota per App (MB)*" setting from 2048 to 10240 (_10G_). Save the disk quota update and hit
-"Apply Changes" to complete the configuration override.
-
-=== Scale Application
-
-Once the disk quota change is applied successfully and assuming you've a xref:running-on-cloudfoundry[running application],
-you may scale the application with a new `disk_limit` through CF CLI.
-
-[source,bash]
-----
-→ cf scale dataflow-server -k 10GB
-
-Scaling app dataflow-server in org ORG / space SPACE as user...
-OK
-
-....
-....
-....
-....
-
-     state     since                    cpu      memory           disk           details
-#0   running   2016-10-31 03:07:23 PM   1.8%     497.9M of 1.1G   193.9M of 10G
-----
-
-[source,bash]
-----
-→ cf apps
-Getting apps in org ORG / space SPACE as user...
-OK
-
-name              requested state   instances   memory   disk   urls
-dataflow-server   started           1/1         1.1G     10G    dataflow-server.apps.io
-----
-
-=== Configuring target free disk percentage
-
-Even when configuring the Data Flow server to use 10G of space, there is the possibility of exhausting
-the available space on the local disk.  The server implements a least recently used (LRU) algorithm that
-will remove maven artifacts from the local maven repository.  This is configured using the following
-configuration property, the default value is 25.
-
-[source]
-----
-# The low water mark percentage, expressed as in integer between 0 and 100, that triggers cleanup of
-# the local maven repository
-# (for setting env var use SPRING_CLOUD_DATAFLOW_SERVER_CLOUDFOUNDRY_FREE_DISK_SPACE_PERCENTAGE)
-spring.cloud.dataflow.server.cloudfoundry.freeDiskSpacePercentage=25
-----
-
-[[getting-started-app-resolution-options]]
-== Application Resolution Alternatives
-Though we highly recommend using Maven Repository for application link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[resolution and registration]
-in Cloud Foundry, there might be situations where an alternative approach would make sense. Following alternative options
-could come handy for resolving applications when running on Cloud Foundry.
-
-* With the help of Spring Boot, we can serve link:https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html#boot-features-spring-mvc-static-content[static content]
-in Cloud Foundry. A simple Spring Boot application can bundle all the required stream/task applications and by having it
-run on Cloud Foundry, the static application can then serve the Über-jar's. From the Shell, you can, for example, register the
-app with the name `http-source.jar` via `--uri=http://<Route-To-StaticApp>/http-source.jar`.
-
-* The Über-jar's can be hosted on any external server that's reachable via HTTP. They can be resolved from raw GitHub URIs
-as well. From the Shell, you can, for example, register the app with the name `http-source.jar` via `--uri=http://<Raw_GitHub_URI>/http-source.jar`.
-
-* link:http://docs.cloudfoundry.org/buildpacks/staticfile/index.html[Static Buildpack ]support in Cloud Foundry is another
-option. A similar HTTP resolution will work on this model, too.
-
-* link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.html[Volume Services] is another great option.
-The required Über-jar's can be hosted in an external file-system and with the help of volume-services, you can, for
-example, register the app with the name `http-source.jar` via `--uri=file://<Path-To-FileSystem>/http-source.jar`.
