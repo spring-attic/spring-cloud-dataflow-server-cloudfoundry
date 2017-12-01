@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-server-cloudfoundry-parent</artifactId>
-		<version>1.3.0.M3</version>
+		<version>1.3.0.BUILD-SNAPSHOT</version>
 	</parent>
 	<description>Spring Cloud Data Flow Server CloudFoundry</description>
 	<properties>
@@ -15,12 +15,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dataflow-server-cloudfoundry</artifactId>
-			<version>1.3.0.M3</version>
+			<version>1.3.0.BUILD-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dataflow-server-cloudfoundry-autoconfig</artifactId>
-			<version>1.3.0.M3</version>
+			<version>1.3.0.BUILD-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<profiles>
