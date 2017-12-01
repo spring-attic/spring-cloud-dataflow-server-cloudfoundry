@@ -51,14 +51,14 @@ It can also be used for tasks to persist execution history.
 wget http://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/{project-version}/spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
-. Download Skipper if you want the added features of upgrading and rolling back Streams since Data Flow delegates to Skipper for those features.
+. Optionally, download http://cloud.spring.io/spring-cloud-skipper/[Skipper] if you want the added features of upgrading and rolling back Streams since Data Flow delegates to Skipper for those features.
 +
 [source,yaml,options=nowrap,subs=attributes]
 ----
 wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
 wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-shell/{skipper-version}/spring-cloud-skipper-shell-{skipper-version}.jar
 ----
-. Run the Skipper Server if you want the added feature set described above.
+. Optionally, run the Skipper Server if you want the added feature set described above.
 Let's review the sample `manifest.yml` file to deploy the skipper-server application to Cloud Foundry.
 +
 [source,yaml,options=nowrap]
@@ -83,6 +83,7 @@ env:
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_USERNAME: {email}
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_PASSWORD: {password}
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: {middlewareServiceName}
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SKIP_SSL_VALIDATION: false
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX: false
 ----
 +
@@ -218,12 +219,10 @@ Once you're ready with the relevant properties in this file, you can issue `cf p
 this file is stored.
 
 [[getting-started-cloudfoundry-on-local]]
-== Local Machine Installation
+== Local Installation
 
-To run the server application locally, targeting your Cloud Foundry installation, you you need to configure the
-application either by passing in command line arguments (see below) or setting a number of environment variables.
-
-To use environment variables set the following:
+To run the server application locally, on your laptop or desktop, and target your Cloud Foundry installation, configure the
+Data Flow server by setting the following environment variables.
 
 ```
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL=https://api.run.pivotal.io
@@ -248,6 +247,8 @@ certs (e.g. in development). Do not use for production.
 
 NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.
 
+NOTE: Since Skipper is a Spring Boot application, you can also pass the configuration properties as command line options instead of environment variables.  `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` becomes `--spring.cloud.deployer.cloudfoundry.stream.services`.
+
 ----
 export SKIPPER_CLIENT_HOST https://<skipper-host-name>/api
 ----
@@ -266,7 +267,7 @@ substitute `cf set-env` syntax with `export`.
 [[getting-started-data-flow-shell]]
 == Data Flow Shell
 
-Run the shell and optionally target the Server application using the `dataflow config` command.
+Run the shell target the Server application using the `dataflow config` command if the shell is not running on the same machine as the Data Flow Server.
 
 [source,bash,subs=attributes]
 ----
@@ -316,6 +317,7 @@ dataflow:> http post --target http://dataflow-AxwwAhK-httptest-http.cfapps.io --
 Look to see if `hello world` ended up in log files for the `log` application.
 +
 . Create Streams with Skipper
+This section assumes you have deployed Skipper and configured the Data Flow server's `SPRING_CLOUD_SKIPPER_CLIENT_URI` property to reference the Skipper server.
 +
 [source]
 ----
