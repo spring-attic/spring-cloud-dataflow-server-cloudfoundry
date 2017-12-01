@@ -39,6 +39,8 @@ badges:
 
 Spring Cloud Data Flow for Cloud Foundry is a toolkit for building data integration and real-time data processing pipelines that are deployed to Cloud Foundry.
 
+<br>
+
 Pipelines consist of [Spring Boot](https://projects.spring.io/spring-boot/) apps, built using the [Spring Cloud Stream](https://cloud.spring.io/spring-cloud-stream/) or [Spring Cloud Task](https://cloud.spring.io/spring-cloud-task/) microservice frameworks. This makes Spring Cloud Data Flow suitable for a range of data processing use cases, from import/export to event streaming and predictive analytics.
 
 {% endcapture %}
@@ -49,15 +51,18 @@ Pipelines consist of [Spring Boot](https://projects.spring.io/spring-boot/) apps
 
 ## Overview
 
-A selection of pre-built [stream](http://cloud.spring.io/spring-cloud-stream-app-starters/) and [task/batch](http://cloud.spring.io/spring-cloud-task-app-starters/) starter apps for various data integration and processing scenarios facilitate learning and experimentation.
+The Data Flow Server for Cloud Foundry deploys data pipelines to Cloud Foundry.  Long lived data pipelines, where an unbounded amount of data is consumed or produced, are known as Streams.  Streams consist of multiple applications communicating via messaging middleware and are deployed on Cloud Foundry as 'LRP's, aka 'Long Running Processes'.  Short lived data pipelines, applications that process a finite set of data and then terminate, are known as Tasks.  Task applications are deployed as [Cloud Foundry Tasks](https://docs.cloudfoundry.org/devguide/using-tasks.html). You need PCF version 1.7.12 or higher to run tasks. Tasks are an experimental feature in PCF 1.7 and 1.8 and a GA feature in PCF 1.9
+
+You can get started with common use cases by selecting from a collection pre-built [stream](http://cloud.spring.io/spring-cloud-stream-app-starters/) and [task/batch](http://cloud.spring.io/spring-cloud-task-app-starters/) starter apps for various data integration and processing scenarios facilitate learning and experimentation.
 
 [Custom](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#custom-applications) stream and task applications, targeting different middleware or data services, can be built using the familiar Spring Boot style programming model.
 
+The [dashboard](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#dashboard-introduction) offers a graphical editor for building new pipelines interactively, as well as views of deployable apps and running apps with metrics.  The dashboard also serves as a administrative managagement console for Tasks.
+
+The Spring Could Data Flow server exposes a [REST API](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#api-guide-overview) for composing and deploying data pipelines. A separate [shell](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#getting-started-deploying-spring-cloud-dataflow) makes it easy to work with the API from an interactive command line.
+
 A [stream DSL](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#_stream_dsl) makes it easy to specify which apps to deploy and how to connect outputs and inputs. A new [composed task DSL](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#_composed_task_dsl) was added in v1.2.  A [Java DSL](https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#spring-cloud-dataflow-stream-java-dsl) was added in v1.3
 
-The [dashboard](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#dashboard-introduction) offers a graphical editor for building new pipelines interactively, as well as views of deployable apps and running apps with metrics.
-
-The Spring Could Data Flow server exposes a [REST API](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#api-guide-overview) for composing and deploying data pipelines. A separate [shell](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#getting-started-deploying-spring-cloud-dataflow) makes it easy to work with the API from the command line.
 
 <span id="quick-start"></span>
 
