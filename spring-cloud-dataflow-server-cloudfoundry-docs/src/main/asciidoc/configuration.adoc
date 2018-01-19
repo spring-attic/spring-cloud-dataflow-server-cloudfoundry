@@ -282,7 +282,7 @@ By default, the Data Flow server is unsecured and runs on an unencrypted HTTP co
 as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate.
 For more details about securing the
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
-review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
+review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
 
 [[getting-started-security-cloud-foundry]]
 === Authentication and Cloud Foundry
@@ -303,7 +303,7 @@ Simply bind the _Pivotal Single Sign-On Service_ to your Data Flow Server app an
 Single Sign-On (SSO) via OAuth2 will be enabled by default.
 
 Authorization is similarly support as for non-Cloud Foundry security scenarios.
-Please refer to the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide].
+Please refer to the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide].
 
 As the provisioning of roles can vary widely across environments, we assign by
 default all Spring Cloud Data Flow roles to users.

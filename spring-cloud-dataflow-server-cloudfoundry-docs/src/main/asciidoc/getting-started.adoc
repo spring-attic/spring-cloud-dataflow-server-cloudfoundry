@@ -365,6 +365,6 @@ in the database and you can retrieve information about the task execution using 
 `task execution list` and `task execution status --id <ID_OF_TASK>` or though the Data Flow UI.
 
 NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
-versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/enable-disable-specific-features.html[Feature Togglers]
+versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#enable-disable-specific-features[Feature Togglers]
 for how to disable task support in Data Flow.
 
