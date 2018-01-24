@@ -148,7 +148,7 @@ NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first 
 
 ----
 cf set-env dataflow-server SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI https://<skipper-host-name>/api
-cf set-env dataflow-server SPRING_CLOUD_DATAFLOW_FEATURES_ENABLED true
+cf set-env dataflow-server SPRING_CLOUD_DATAFLOW_FEATURES_SKIPPER_ENABLED true
 ----
 
 The Spring Cloud Data Flow server does not have _any_ default remote maven repository configured.
