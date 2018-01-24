@@ -99,6 +99,7 @@
 								<dataflow-branch-or-tag>${dataflow-branch-or-tag}</dataflow-branch-or-tag>
 								<dataflow-asciidoc>https://raw.githubusercontent.com/spring-cloud/spring-cloud-dataflow/${dataflow-branch-or-tag}/spring-cloud-dataflow-docs/src/main/asciidoc</dataflow-asciidoc>
 								<deployer-branch-or-tag>${deployer-branch-or-tag}</deployer-branch-or-tag>
+								<skipper-version>${spring-cloud-skipper.version}</skipper-version>
 								<skipper-branch-or-tag>${skipper-branch-or-tag}</skipper-branch-or-tag>
 
 								<!-- The following two are deps of this project and set automatically.-->

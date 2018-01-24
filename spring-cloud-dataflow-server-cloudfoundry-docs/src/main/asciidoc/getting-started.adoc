@@ -44,11 +44,16 @@ It can also be used for tasks to persist execution history.
 
 [[getting-started-cloudfoundry]]
 == Cloud Foundry Installation
+Starting 1.3.x, the Data Flow Server can run in either `skipper` or `classic` (non-skipper) modes.
+The modes can be specified when starting the Data Flow server using the property `spring.cloud.dataflow.features.skipper-enabled`.
+By default, the `classic` mode is enabled.
+
 . Download the Data Flow server and shell applications
 +
 [subs=attributes]
 ```
 wget http://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/{project-version}/spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+
 wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
 . Optionally, download http://cloud.spring.io/spring-cloud-skipper/[Skipper] if you want the added features of upgrading and rolling back Streams since Data Flow delegates to Skipper for those features.
@@ -56,10 +61,9 @@ wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework
 [source,yaml,options=nowrap,subs=attributes]
 ----
 wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
-wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-shell/{skipper-version}/spring-cloud-skipper-shell-{skipper-version}.jar
 ----
-. Optionally, run the Skipper Server if you want the added feature set described above.
-Let's review the sample `manifest.yml` file to deploy the skipper-server application to Cloud Foundry.
++
+Push Skipper to Cloud Foundry only if you want to run Spring Cloud Data Flow server in `skipper` mode.  Here is a sample manifest for Skipper.
 +
 [source,yaml,options=nowrap]
 ----
@@ -140,28 +144,27 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION false
 ```
 
-WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
-certs (e.g. in development). Do not use for production.
+NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running and set the server to be in 'skipper mode
 
-NOTE: If you are deploying in an environment that requires you to sign on using the Pivotal Single Sign-On Service,
-refer to the section <<getting-started-security-cloud-foundry>> for information on how to configure the server.
+----
+cf set-env dataflow-server SPRING_CLOUD_SKIPPER_CLIENT_URI https://<skipper-host-name>/api
+cf set-env dataflow-server SPRING_CLOUD_DATAFLOW_FEATURES_ENABLED true
+----
 
-Spring Cloud Data Flow server implementations (be it for Cloud Foundry, Mesos, YARN, or Kubernetes) do not have
-_any_ default remote maven repository configured. This is intentionally designed to provide the flexibility for
-the users, so they can override and point to a remote repository of their choice. The out-of-the-box
-applications that are supported by Spring Cloud Data Flow are available in Spring's repository,
-so if you want to use them, set it as the remote repository as listed below.
+The Spring Cloud Data Flow server does not have _any_ default remote maven repository configured.
+This is intentionally designed to provide the flexibility the users, so they can override and point to a remote repository of their choice.
+The out-of-the-box applications that are supported by Spring Cloud Data Flow are available in Spring's repository, so if you want to use them, set it as the remote repository as listed below.
 
 ```
 cf set-env dataflow-server SPRING_APPLICATION_JSON '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release" } } } }'
 ```
 where `repo1` is the alias name for the remote repository.
 
-NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.
+WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
+certs (e.g. in development). Do not use for production.
 
-----
-cf set-env dataflow-server SPRING_CLOUD_SKIPPER_CLIENT_URI https://<skipper-host-name>/api
-----
+NOTE: If you are deploying in an environment that requires you to sign on using the Pivotal Single Sign-On Service,
+refer to the section <<getting-started-security-cloud-foundry>> for information on how to configure the server.
 
 You can issue now `cf push` command and reference the Data Flow server .jar.
 
@@ -206,13 +209,14 @@ services:
 - mysql
 ----
 
-NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.  Instructions on how to install and deploy Skipper can be found in the <<spring-cloud-skipper-integration>> section.
+NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running and set the feature toggle to use skipper.
 
 [source,yml]
 ----
 applications:
   env:
     SPRING_CLOUD_SKIPPER_CLIENT_URI: https://<skipper-host-name>/api
+    SPRING_CLOUD_DATAFLOW_FEATURES_SKIPPER_ENABLED: true
 ----
 
 Once you're ready with the relevant properties in this file, you can issue `cf push` command from the directory where
@@ -221,8 +225,7 @@ this file is stored.
 [[getting-started-cloudfoundry-on-local]]
 == Local Installation
 
-To run the server application locally, on your laptop or desktop, and target your Cloud Foundry installation, configure the
-Data Flow server by setting the following environment variables.
+To run the server application locally, on your laptop or desktop, and target your Cloud Foundry installation, configure the Data Flow server by setting the following environment variables.
 
 ```
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL=https://api.run.pivotal.io
@@ -245,12 +248,13 @@ You need to fill in \{org}, \{space}, \{email} and \{password} before running th
 WARNING: Only set 'Skip SSL Validation' to true if you're running on a Cloud Foundry instance using self-signed
 certs (e.g. in development). Do not use for production.
 
-NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running.
+NOTE: If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the uri location of where the Skipper server is running and enable the Skipper feature toggle..
 
 NOTE: Since Skipper is a Spring Boot application, you can also pass the configuration properties as command line options instead of environment variables.  `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` becomes `--spring.cloud.deployer.cloudfoundry.stream.services`.
 
 ----
 export SKIPPER_CLIENT_HOST https://<skipper-host-name>/api
+export SPRING_CLOUD_DATAFLOW_FEATURES_SKIPPER_ENABLED true
 ----
 
 Now we are ready to start the server application:
@@ -266,19 +270,28 @@ substitute `cf set-env` syntax with `export`.
 
 [[getting-started-data-flow-shell]]
 == Data Flow Shell
-
-Run the shell target the Server application using the `dataflow config` command if the shell is not running on the same machine as the Data Flow Server.
+Launching the Data Flow shell requires the appropriate data flow server mode to be specified.
+To start the Data Flow Shell for the Data Flow server running in `classic` mode:
 
 [source,bash,subs=attributes]
 ----
 $ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ----
 
+To start the Data Flow Shell for the Data Flow server running in `skipper` mode:
+
+[source,bash,subs=attributes]
+----
+$ java -jar spring-cloud-dataflow-shell-{project-version}.jar --dataflow.mode=skipper
+----
+If the Data Flow Server and shell are not running on the same host, point the shell to the Data Flow server URL:
 ```
 server-unknown:>dataflow config server http://dataflow-server.cfapps.io
 Successfully targeted http://dataflow-server.cfapps.io
 dataflow:>
 ```
+Alternatively, pass in the command line option `--dataflow.uri`.  The shell's command line option `--help1 shows what is available.
+
 
 [[getting-started-deploying-streams]]
 == Deploying Streams
@@ -290,7 +303,7 @@ built with the RabbitMQ binder in bulk, you can with the following command. For 
 xref:spring-cloud-dataflow-register-apps[register applications].
 +
 ```
-dataflow:>app import --uri http://bit.ly/Celsius-GA-stream-applications-rabbit-maven
+dataflow:>app import --uri http://bit.ly/Celsius-SR1-stream-applications-rabbit-maven
 ```
 +
 There are two options for deploying Streams. The "traditional" way that Data Flow has always used and a new way that delegates to the Skipper server. Deploying using Skipper will enable you to update and rollback the streams while the traditional way will not.
@@ -344,11 +357,11 @@ You can read more about the general features of using Skipper to deploy streams 
 To run a simple task application, you can register all the out-of-the-box task applications with the following command.
 
 ```
-dataflow:>app import --uri http://bit.ly/Addison-GA-task-applications-maven
+dataflow:>app import --uri http://bit.ly/Clark-GA-task-applications-maven
 
 ```
 
-Now create a simple link:http://docs.spring.io/spring-cloud-task-app-starters/docs/1.0.1.RELEASE/reference/html/_timestamp_task.html[timestamp] task.
+Now create a simple link:https://docs.spring.io/spring-cloud-task-app-starters/docs/Clark.RELEASE/reference/html/_timestamp_task.html[timestamp] task.
 
 ```
 dataflow:>task create mytask --definition "timestamp --format='yyyy'"
