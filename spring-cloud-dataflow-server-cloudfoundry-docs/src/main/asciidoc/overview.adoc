@@ -1,4 +1,4 @@
-[[spring-cloud-data-flow-overview]]
+streams[[spring-cloud-data-flow-overview]]
 == Spring Cloud Data Flow
 Spring Cloud Data Flow is a cloud-native orchestration service for composable microservice applications on modern runtimes.
 With Spring Cloud Data Flow, developers can create and orchestrate data pipelines for common use cases such as data ingest,
