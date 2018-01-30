@@ -58,6 +58,12 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_BUILDPACK j
 are `http` (the default), `port` and `none`.
 +
 There are also environment variables to specify the the http based health check endpoint and timeout, `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_ENDPOINT` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_TIMEOUT`.  These default to `/health` (the Spring Boot default location` and `120` seconds.
+
+* You can also specify deployment properties using the dsl. For instance if you want to set the allocated memory for the `http` app to 512m and also bind a mysql service to the `jdbc` application.
+```
+dataflow:> stream create --name mysqlstream --definition "http | jdbc --tableName=names --columns=name"
+dataflow:> stream deploy --name mysqlstream --properties "deployer.http.memory=512, deployer.jdbc.cloudfoundry.services=mysql"
+```
 [NOTE]
 ====
 These settings can be configured separately for stream and task apps. To alter settings for tasks, simply
