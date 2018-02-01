@@ -51,7 +51,7 @@ Pipelines consist of [Spring Boot](https://projects.spring.io/spring-boot/) apps
 
 ## Overview
 
-The Data Flow Server for Cloud Foundry deploys data pipelines to Cloud Foundry.  Long lived data pipelines, where an unbounded amount of data is consumed or produced, are known as Streams.  Streams consist of multiple applications communicating via messaging middleware and are deployed on Cloud Foundry as 'LRP's, aka 'Long Running Processes'.  Short lived data pipelines, applications that process a finite set of data and then terminate, are known as Tasks.  Task applications are deployed as [Cloud Foundry Tasks](https://docs.cloudfoundry.org/devguide/using-tasks.html). You need PCF version 1.7.12 or higher to run tasks. Tasks are an experimental feature in PCF 1.7 and 1.8 and a GA feature in PCF 1.9
+The Data Flow Server for Cloud Foundry deploys data pipelines to Cloud Foundry.  Long lived data pipelines, where an unbounded amount of data is consumed or produced, are known as Streams.  Streams consist of multiple applications communicating via messaging middleware and are deployed on Cloud Foundry as 'LRP's, aka 'Long Running Processes'.  Short lived data pipelines, applications that process a finite set of data and then terminate, are known as Tasks.  Task applications are deployed as [Cloud Foundry Tasks](https://docs.cloudfoundry.org/devguide/using-tasks.html).
 
 You can get started with common use cases by selecting from a collection pre-built [stream](http://cloud.spring.io/spring-cloud-stream-app-starters/) and [task/batch](http://cloud.spring.io/spring-cloud-task-app-starters/) starter apps for various data integration and processing scenarios facilitate learning and experimentation.
 
@@ -61,14 +61,14 @@ The [dashboard](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHO
 
 The Spring Could Data Flow server exposes a [REST API](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#api-guide-overview) for composing and deploying data pipelines. A separate [shell](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#getting-started-deploying-spring-cloud-dataflow) makes it easy to work with the API from an interactive command line.
 
-A [stream DSL](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#_stream_dsl) makes it easy to specify which apps to deploy and how to connect outputs and inputs. A new [composed task DSL](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#_composed_task_dsl) was added in v1.2.  A [Java DSL](https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#spring-cloud-dataflow-stream-java-dsl) was added in v1.3
+A [stream DSL](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#_stream_dsl) makes it easy to specify which apps to deploy and how to connect outputs and inputs. A new [composed task DSL](http://docs.spring.io/spring-cloud-dataflow/docs/current-SNAPSHOT/reference/htmlsingle/#_composed_task_dsl) was added in v1.2. A [Java DSL](https://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current/reference/htmlsingle/#spring-cloud-dataflow-stream-java-dsl) was added in v1.3
 
 
 <span id="quick-start"></span>
 
 ## Getting Started
 
-The getting started section of the [latest GA release](https://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/1.2.4.RELEASE/reference/htmlsingle/#getting-started) or the [latest Milestone release](https://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/1.3.0.M3/reference/htmlsingle/#getting-started) is the best place follow detailed step by step instructions.
+The getting started section of the [latest GA release](https://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current/reference/htmlsingle/#getting-started) or the [latest Snapshot release](https://docs.spring.io/spring-cloud-dataflow-server-cloudfoundry/docs/current-SNAPSHOT/reference/htmlsingle/#getting-started) is the best place follow detailed step by step instructions.
 
 ## PCF vs. OSS CF Compatibility
 
@@ -87,12 +87,14 @@ of Cloud Foundry releases; specifically identified by the Diego version.
 
 ### Sample Projects
 
-Check out the [Data Flow Samples Documentation](https://docs.spring.io/spring-cloud-dataflow-samples/docs/current/reference/html/) for a dozen samples for common use-cases.
+
+Check out the [Spring Cloud Data Flow Samples Documentation](https://docs.spring.io/spring-cloud-dataflow-samples/docs/current/reference/htmlsingle/) for a dozen samples for common use-cases.
 
 
 ### Related Projects
 
 * [Spring Cloud Data Flow](http://cloud.spring.io/spring-cloud-dataflow/)
+* [Spring Cloud Skipper](http://cloud.spring.io/spring-cloud-skipper/)
 * [Spring Cloud Stream](http://cloud.spring.io/spring-cloud-stream/)
 * [Spring Cloud Stream Applications](https://github.com/spring-cloud/spring-cloud-stream-app-starters)
 * [Spring Cloud Task](https://github.com/spring-cloud/spring-cloud-task/)
