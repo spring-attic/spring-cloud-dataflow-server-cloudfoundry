@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,14 @@
 
 package org.springframework.cloud.dataflow.server.cloudfoundry.config;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import reactor.core.publisher.Hooks;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.CloudFoundryOAuthSecurityConfiguration;
 import org.springframework.cloud.deployer.resource.docker.DockerResource;
@@ -31,12 +39,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ResourceLoader;
-import reactor.core.publisher.Hooks;
-
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Configuration class for customizing Cloud Foundry deployer.
