@@ -4,12 +4,24 @@
 [[getting-started-requirements]]
 == System Requirements
 
-The Spring Cloud Data Flow server deploys streams (collections of long lived applications) and short lived tasks to Cloud Foundry.
-The server can run on Cloud Foundry itself or on your laptop but it is common to run the server in Cloud Foundry.
-This section covers the required services in Cloud Foundry that are needed to support the server and deploying streams and tasks.
+The Spring Cloud Data Flow server deploys streams (long-lived applications) and tasks (short-lived applications) to Cloud
+Foundry. The server is a lightweight Spring Boot application and it can run on Cloud Foundry or your laptop, but it is
+common to run the server in Cloud Foundry.
 
+Spring Cloud Data Flow requires a few data services to perform streaming, task/batch processing, and analytics. There are
+two options to provisioning Spring Cloud Data Flow and related services on Cloud Foundry.
+
+- The simplest and the automated method is to use the link:https://network.pivotal.io/products/p-dataflow[Spring Cloud Data Flow for PCF]
+tile. This is an opinionated tile for Pivotal Cloud Foundry and the tile automatically provisions the server and the required
+data services, thus simplifying the overall getting-started experience. You can read more about the installation
+link:http://docs.pivotal.io/scdf/[here].
+- Alternatively, you can provision all the components manually. The following section goes into the specifics on how it
+is done.
 
 === Provision a Redis service instance on Cloud Foundry
+A redis instance is required for analytics apps, and would typically be bound to such apps when you create an analytics
+stream using the <<getting-started.adoc#getting-started-service-binding-at-application-level,per-app-binding>> feature.
+
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
@@ -17,10 +29,12 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service rediscloud 30mb redis
 ```
 
-A redis instance is required for analytics apps, and would typically be bound to such apps when you create an analytics
-stream using the <<getting-started.adoc#getting-started-service-binding-at-application-level,per-app-binding>> feature.
-
 === Provision a Rabbit service instance on Cloud Foundry
+RabbitMQ is used as a messaging middleware between streaming apps and would be bound to each deployed streaming
+apps. Apache Kafka is the other option. We can use `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting in Data
+Flow configuration or `SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES` setting in
+Skipper, which will automatically bind RabbitMQ to the deployed streaming applications.
+
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
@@ -28,10 +42,9 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service cloudamqp lemur rabbit
 ```
 
-Rabbit is typically used as a messaging middleware between streaming apps and would be bound to each deployed app
-thanks to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting in Data Flow configuration or `SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES` setting in Skipper.
-
 === Provision a MySQL service instance on Cloud Foundry
+An RDBMS is used to persist Data Flow state, such as stream/task definitions, deployments, and executions.
+
 Use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 
@@ -39,13 +52,10 @@ For example when using link:https://run.pivotal.io/[Pivotal Web Services]:
 cf create-service cleardb spark my_mysql
 ```
 
-An RDBMS is used to persist Data Flow state, such as stream definitions and deployment ids.
-It can also be used for tasks to persist execution history.
-
 [[getting-started-cloudfoundry]]
 == Cloud Foundry Installation
-Starting 1.3.x, the Data Flow Server can run in either `skipper` or `classic` (non-skipper) modes.
-The modes can be specified when starting the Data Flow server using the property `spring.cloud.dataflow.features.skipper-enabled`.
+Starting 1.3.x, the Data Flow Server can run in either `skipper` or `classic` (non-skipper) modes. The modes can be
+specified when starting the Data Flow server using the property `spring.cloud.dataflow.features.skipper-enabled`.
 By default, the `classic` mode is enabled.
 
 . Download the Data Flow server and shell applications
@@ -63,7 +73,8 @@ wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework
 wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
 ----
 +
-Push Skipper to Cloud Foundry only if you want to run Spring Cloud Data Flow server in `skipper` mode.  Here is a sample manifest for Skipper.
+Push Skipper to Cloud Foundry only if you want to run Spring Cloud Data Flow server in `skipper` mode.  Here is a sample
+manifest for Skipper.
 +
 [source,yaml,options=nowrap]
 ----
@@ -90,6 +101,7 @@ env:
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SKIP_SSL_VALIDATION: false
     SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX: false
 ----
+
 +
 You need to fill in \{org}, \{space}, \{email},  \{password} and {middlewareServiceName} before running these commands. Once you have the desired
 config values in the `manifest.yml`, you can run `cf push` command to provision the skipper-server.
