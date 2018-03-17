@@ -12,12 +12,6 @@ The task functionality depends on the latest versions of PCF for runtime support
 release requires PCF version 1.7.12 or higher to run tasks.  Tasks are an experimental
 feature in PCF 1.7 and 1.8 and a GA feature in PCF 1.9.
 
-== Tooling
-
-It is important to note that there is no Apps Manager support for tasks as of this release.
-When running applications as tasks through Spring Cloud Data Flow, the only way is to view them
-within the context of CF CLI.
-
 == Task Database Schema
 
 The database schema for Task applications was changed slighlty from the 1.0.x to 1.1.x version of
