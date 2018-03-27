@@ -88,7 +88,7 @@ public class CloudFoundryDataFlowServerConfiguration {
 	@PostConstruct
 	public void afterPropertiesSet() {
 		if (cloudFoundryServerConfigurationProperties().isDebugReactor()) {
-			Hooks.onOperator(op -> op.operatorStacktrace());
+			Hooks.onOperatorDebug();
 		}
 	}
 
