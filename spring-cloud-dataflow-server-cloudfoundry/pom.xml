@@ -34,6 +34,11 @@
 			<artifactId>reactor-core</artifactId>
 			<version>${reactor.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.ipc</groupId>
+			<artifactId>reactor-netty</artifactId>
+			<version>${reactor-netty.version}</version>
+		</dependency>
 
 	</dependencies>
 	<build>
