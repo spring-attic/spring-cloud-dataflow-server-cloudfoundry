@@ -463,6 +463,15 @@ as part of an individual deployment request by using the `deployer.<app-name>` s
 
 will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
 
+One can also pass JAVA_OPTS as a deployment property when deploying a stream.
+
+```
+>stream deploy --name ticktock --properties "deployer.time.cloudfoundry.javaOpts=-Duser.timezone=America/New_York"
+```
+
+This property can also be set at the global level for all the streams as applicable to any deployment property using
+`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_JAVA_OPTS` as the server level property.
+
 == Debugging
 If you want to get better insights into what is happening when your streams and tasks are being deployed, you may want
 to turn on the following features:
