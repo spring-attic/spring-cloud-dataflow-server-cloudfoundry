@@ -69,6 +69,35 @@ dataflow:>task launch foo
 Launched task 'foo'
 ----
 
+=== Launch a Task with arguments and properties
+
+When a task is launched, any properties that need to be passed as command line arguments to the task application can be set when launching the task, as follows:
+
+```
+dataflow:>task launch mytask --arguments "--key1=value1,--key2=value2"
+
+```
+
+Additional properties meant for a `TaskLauncher` itself can be passed in by using a `--properties` option.
+The format of this option is a comma-separated string of properties prefixed with `app.<task definition name>.<property>`.
+Properties are passed to `TaskLauncher` as application properties.
+It is up to an implementation to choose how those are passed into an actual task application.
+If the property is prefixed with `deployer` instead of `app`, it is passed to `TaskLauncher` as a deployment property and its meaning may be `TaskLauncher` implementation specific.
+
+```
+dataflow:>task launch mytask --properties "deployer.timestamp.custom1=value1,app.timestamp.custom2=value2"
+
+```
+
+One can also pass JAVA_OPTS as the CF deployer property when the task is launched.
+
+```
+task launch --name mytask --properties "deployer.mytask.cloudfoundry.javaOpts=-Duser.timezone=America/New_York"
+```
+
+The JAVA_OPTS can also be set as the global property for all the tasks using
+`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_JAVA_OPTS`
+
 === View Task Logs
 
 As previously mentioned, the CL CLI is the way to interact with tasks on PCF,
