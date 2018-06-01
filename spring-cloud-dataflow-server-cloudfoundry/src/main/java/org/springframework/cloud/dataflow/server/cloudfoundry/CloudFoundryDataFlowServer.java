@@ -18,6 +18,7 @@ package org.springframework.cloud.dataflow.server.cloudfoundry;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cloud.dataflow.server.EnableDataFlowServer;
 
 /**
@@ -25,7 +26,7 @@ import org.springframework.cloud.dataflow.server.EnableDataFlowServer;
  *
  * @author Eric Bottard
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = SessionAutoConfiguration.class)
 @EnableDataFlowServer
 public class CloudFoundryDataFlowServer {
 

@@ -61,4 +61,5 @@ public class CloudFoundryServerConfigurationProperties {
 	public void setDebugReactor(boolean debugReactor) {
 		this.debugReactor = debugReactor;
 	}
+
 }
