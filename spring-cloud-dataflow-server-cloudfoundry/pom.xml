@@ -35,6 +35,16 @@
 			<artifactId>reactor-core</artifactId>
 			<version>${reactor.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-cloudfoundry-connector</artifactId>
+			<version>${spring-cloud-cloudfoundry-connector}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-spring-service-connector</artifactId>
+			<version>${spring-cloud-cloudfoundry-connector}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
