@@ -280,6 +280,11 @@ option. A similar HTTP resolution will work on this model, too.
 The required Über-jar's can be hosted in an external file-system and with the help of volume-services, you can, for
 example, register the app with the name `http-source.jar` via `--uri=file://<Path-To-FileSystem>/http-source.jar`.
 
+[[getting-started-connection-pool]]
+== Database Connection Pool
+The Data Flow Server uses the Spring Cloud Connector library to create the DataSource with a default connection pool size of 4.
+To change the connection pool size and maximum wait time, set the following two properties `spring.cloud.dataflow.server.cloudfoundry.maxPoolSize` and `spring.cloud.dataflow.server.cloudfoundry.maxWaitTime`.
+The wait time is specified in milliseconds.
 
 [[getting-started-security]]
 == Security
