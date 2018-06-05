@@ -8,17 +8,17 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-parent</artifactId>
-		<version>1.5.1.BUILD-SNAPSHOT</version>
+		<version>1.5.1.RELEASE</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<spring-cloud-dataflow.version>1.5.1.BUILD-SNAPSHOT</spring-cloud-dataflow.version>
+		<spring-cloud-dataflow.version>1.5.1.RELEASE</spring-cloud-dataflow.version>
 		<spring-cloud-deployer-cloudfoundry.version>1.4.0.RELEASE</spring-cloud-deployer-cloudfoundry.version>
 		<spring-cloud-deployer-spi.version>1.3.2.RELEASE</spring-cloud-deployer-spi.version>
 		<spring-cloud-common-security-config.version>1.0.2.RELEASE</spring-cloud-common-security-config.version>
 		<!-- skipper version used only in doc generation -->
-		<spring-cloud-skipper.version>1.0.5.BUILD-SNAPSHOT</spring-cloud-skipper.version>
+		<spring-cloud-skipper.version>1.0.5.RELEASE</spring-cloud-skipper.version>
 		<reactor.version>3.1.5.RELEASE</reactor.version>
 	</properties>
 
