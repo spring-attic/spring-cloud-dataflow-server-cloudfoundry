@@ -44,10 +44,6 @@ public class CloudFoundryServerConfigurationProperties {
 	 */
 	private int freeDiskSpacePercentage = 25;
 
-	private int maxPoolSize = 4;
-
-	int maxWaitTime = 30000;
-
 	@Min(0)
 	@Max(100)
 	public int getFreeDiskSpacePercentage() {
@@ -66,19 +62,4 @@ public class CloudFoundryServerConfigurationProperties {
 		this.debugReactor = debugReactor;
 	}
 
-	public int getMaxPoolSize() {
-		return maxPoolSize;
-	}
-
-	public void setMaxPoolSize(int maxPoolSize) {
-		this.maxPoolSize = maxPoolSize;
-	}
-
-	public int getMaxWaitTime() {
-		return maxWaitTime;
-	}
-
-	public void setMaxWaitTime(int maxWaitTime) {
-		this.maxWaitTime = maxWaitTime;
-	}
 }
