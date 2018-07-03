@@ -19,7 +19,7 @@
 		<spring-cloud-common-security-config.version>1.0.2.RELEASE</spring-cloud-common-security-config.version>
 		<spring-cloud-cloudfoundry-connector>2.0.2.RELEASE</spring-cloud-cloudfoundry-connector>
 		<!-- skipper version used only in doc generation -->
-		<spring-cloud-skipper.version>1.0.6.RELEASE</spring-cloud-skipper.version>
+		<spring-cloud-skipper.version>1.0.7.RELEASE</spring-cloud-skipper.version>
 		<reactor.version>3.1.5.RELEASE</reactor.version>
 	</properties>
 
