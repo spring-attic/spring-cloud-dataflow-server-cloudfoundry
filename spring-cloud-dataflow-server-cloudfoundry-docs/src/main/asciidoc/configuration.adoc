@@ -614,3 +614,41 @@ services:
 - mysql
 - my-config-server #this is for the server
 ----
+
+[[getting-started-scheduling-configuration]]
+== Configure Scheduling
+In this section we will discuss how to configure Spring Cloud Data Flow to connect to the https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
+
+The 2 environment variables that have to be added or updated in your environment for Scheduling to be configured are the following:
+
+. Enable scheduling for Spring Cloud Data Flow by setting `spring.cloud.dataflow.features.schedules-enabled` to true
+. Binding the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
+
+The sample manifest shown below displays both the environment properties configured, assuming you have a PCF-Scheduler service available with the name `myscheduler`.
+
+[source,yml]
+----
+---
+applications:
+- name: data-flow-server
+  host: data-flow-server
+  memory: 2G
+  disk_quota: 2G
+  instances: 1
+  path: {PATH TO SERVER UBER-JAR}
+  env:
+    SPRING_APPLICATION_NAME: data-flow-server
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL: https://api.local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG: pcfdev-org
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE: pcfdev-space
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,myscheduler
+    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
+    SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES_ENABLED: true
+    SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }
+services:
+- mysql
+----
