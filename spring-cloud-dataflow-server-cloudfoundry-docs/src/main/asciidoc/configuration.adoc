@@ -619,8 +619,6 @@ services:
 == Configure Scheduling
 In this section we will discuss how to configure Spring Cloud Data Flow to connect to the https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
 
-NOTE: So before following the instructions below, be sure to have an instance of the PCF-Scheduler service running in your Cloud Foundry space.  To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following from the cf CLI: `cf create-service scheduler-for-pcf standard <name of service>`
-
 The 2 environment variables that have to be added or updated in your environment for Scheduling to be configured are the following:
 
 . Enable scheduling for Spring Cloud Data Flow by setting `spring.cloud.dataflow.features.schedules-enabled` to true
@@ -649,7 +647,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,myscheduler
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
-    SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES-ENABLED: true
+    SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES_ENABLED: true
     SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }
 services:
 - mysql
