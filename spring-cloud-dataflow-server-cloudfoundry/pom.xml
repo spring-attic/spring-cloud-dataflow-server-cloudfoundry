@@ -34,11 +34,6 @@
 			<artifactId>spring-cloud-spring-service-connector</artifactId>
 			<version>${spring-cloud-cloudfoundry-connector}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-scheduler-cloudfoundry</artifactId>
-			<version>${spring-cloud-scheduler-cloudfoundry}</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>
