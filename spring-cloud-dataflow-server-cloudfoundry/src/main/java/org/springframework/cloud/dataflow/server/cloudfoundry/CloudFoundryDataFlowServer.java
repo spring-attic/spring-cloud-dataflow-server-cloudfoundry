@@ -20,13 +20,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cloud.dataflow.server.EnableDataFlowServer;
+import org.springframework.cloud.scheduler.spi.cloudfoundry.CloudFoundrySchedulerAutoConfiguration;
 
 /**
  * Bootstrap class for the Cloud Foundry Spring Cloud Data Flow Server.
  *
  * @author Eric Bottard
  */
-@SpringBootApplication(exclude = SessionAutoConfiguration.class)
+@SpringBootApplication(exclude = {SessionAutoConfiguration.class, CloudFoundrySchedulerAutoConfiguration.class} )
 @EnableDataFlowServer
 public class CloudFoundryDataFlowServer {
 
