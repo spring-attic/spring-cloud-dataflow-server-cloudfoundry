@@ -15,7 +15,7 @@
 	<properties>
 		<spring-cloud-dataflow.version>1.6.0.M2</spring-cloud-dataflow.version>
 		<spring-cloud-deployer-cloudfoundry.version>1.4.1.RELEASE</spring-cloud-deployer-cloudfoundry.version>
-		<spring-cloud-deployer-spi.version>1.3.2.RELEASE</spring-cloud-deployer-spi.version>
+		<spring-cloud-deployer-spi.version>1.3.3.RELEASE</spring-cloud-deployer-spi.version>
 		<spring-cloud-common-security-config.version>1.0.2.RELEASE</spring-cloud-common-security-config.version>
 		<spring-cloud-cloudfoundry-connector>2.0.2.RELEASE</spring-cloud-cloudfoundry-connector>
 		<!-- skipper version used only in doc generation -->
