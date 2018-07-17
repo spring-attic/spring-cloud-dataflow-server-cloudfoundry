@@ -243,20 +243,22 @@ OK
 name              requested state   instances   memory   disk   urls
 dataflow-server   started           1/1         1.1G     10G    dataflow-server.apps.io
 ----
-
-=== Configuring target free disk percentage
+[[managing-disk-utilization]]
+== Managing disk utilization
 
 Even when configuring the Data Flow server to use 10G of space, there is the possibility of exhausting
-the available space on the local disk.  The server implements a least recently used (LRU) algorithm that
-will remove maven artifacts from the local maven repository.  This is configured using the following
-configuration property, the default value is 25.
-
+the available space on the local disk.
+If you deploy the Data Flow server using the default `port` health check type, you will have to monitor the disk space on the server explicitly in order to avoid running out space.
+If you deploy the server using the `http` health check type (see below) the Data Flow server will be restarted if there is low disk space.
+This is due to Spring Boot's link:https://github.com/spring-projects/spring-boot/blob/v1.5.14.RELEASE/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/health/DiskSpaceHealthIndicator.java[Disk Space Health Indicator].
+You can link:https://docs.spring.io/spring-boot/docs/1.5.14.RELEASE/reference/htmlsingle/#common-application-properties[configure] the settings of the Disk Space Health Indicator using the properties with the prefix `management.health.diskspace`.
+Use of link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.html[Volume Services] for the Data Flow server to store `.jar` artifacts before pushing them to Cloud Foundry is being investigated for version 1.7.
 [source]
 ----
-# The low water mark percentage, expressed as in integer between 0 and 100, that triggers cleanup of
-# the local maven repository
-# (for setting env var use SPRING_CLOUD_DATAFLOW_SERVER_CLOUDFOUNDRY_FREE_DISK_SPACE_PERCENTAGE)
-spring.cloud.dataflow.server.cloudfoundry.freeDiskSpacePercentage=25
+---
+  ...
+  health-check-type: http
+  health-check-http-endpoint: /management/health
 ----
 
 [[configuration-app-resolution-options]]
