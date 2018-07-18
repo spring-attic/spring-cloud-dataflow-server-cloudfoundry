@@ -627,6 +627,8 @@ The 3 environment variables that have to be added or updated in your environment
 . Binding the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
 . Establish the url to the PCF-Scheduler via the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment variable.
 
+NOTE: Any task definitions that need to be scheduled, must be created after the above configurations have been configured.
+
 The sample manifest shown below displays both the environment properties configured, assuming you have a PCF-Scheduler service available with the name `myscheduler`.
 
 [source,yml]
