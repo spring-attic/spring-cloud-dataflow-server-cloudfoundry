@@ -18,8 +18,6 @@ package org.springframework.cloud.dataflow.server.cloudfoundry;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cloud.dataflow.server.EnableDataFlowServer;
 
@@ -28,7 +26,7 @@ import org.springframework.cloud.dataflow.server.EnableDataFlowServer;
  *
  * @author Eric Bottard
  */
-@SpringBootApplication(exclude = {SessionAutoConfiguration.class, RedisAutoConfiguration.class, DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {SessionAutoConfiguration.class})
 @EnableDataFlowServer
 public class CloudFoundryDataFlowServer {
 
