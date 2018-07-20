@@ -300,7 +300,7 @@ built with the RabbitMQ binder in bulk, you can with the following command. For 
 xref:spring-cloud-dataflow-register-apps[register applications].
 +
 ```
-dataflow:>app import --uri http://bit.ly/Darwin-GA-stream-applications-rabbit-maven
+dataflow:>app import --uri http://bit.ly/Darwin-SR1-stream-applications-rabbit-maven
 ```
 +
 There are two options for deploying Streams. The "traditional" way that Data Flow has always used and a new way that delegates to the Skipper server. Deploying using Skipper will enable you to update and rollback the streams while the traditional way will not.
@@ -702,11 +702,11 @@ dataflow:>stream history --name ticker-314
 To run a simple task application, you can register all the out-of-the-box task applications with the following command.
 
 ```
-dataflow:>app import --uri https://bit.ly/Clark-GA-task-applications-maven
+dataflow:>app import --uri http://bit.ly/Dearborn-GA-task-applications-maven
 
 ```
 
-Now create a simple link:https://docs.spring.io/spring-cloud-task-app-starters/docs/Clark.RELEASE/reference/html/_timestamp_task.html[timestamp] task.
+Now create a simple link:https://docs.spring.io/spring-cloud-task-app-starters/docs/Dearborn.RELEASE/reference/htmlsingle/#spring-cloud-task-modules-tasks[timestamp] task.
 
 ```
 dataflow:>task create mytask --definition "timestamp --format='yyyy'"
