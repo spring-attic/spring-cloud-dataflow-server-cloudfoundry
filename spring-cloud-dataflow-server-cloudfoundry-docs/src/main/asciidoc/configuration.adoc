@@ -1,100 +1,117 @@
 [[configuration]]
-= Server Configuration
+== Server Configuration
 
-[partintro]
---
-In this section you will learn how to configure Spring Cloud Data Flow server's features such as the relational database to use and security.
-You will also learn how to configure Spring Cloud Data Flow shell's features.
---
+This section describes how to configure Spring Cloud Data Flow server's features, such as security and which relational database to use.
+It also describes how to configure Spring Cloud Data Flow shell's features.
 
 [[enable-disable-specific-features]]
-== Feature Toggles
+=== Feature Toggles
 
-Data Flow server offers specific set of features that can be enabled/disabled when launching. These features include all the lifecycle operations, REST endpoints (server, client implementations including Shell and the UI) for:
+Data Flow server offers a specific set of features that you can enable or disable when launching. These features include all the lifecycle operations and REST endpoints (server, client implementations including Shell and the UI) for:
 
-. Streams
-. Tasks
-. Analytics
+* Streams
+* Tasks
+* Analytics
 
-One can enable, disable these features by setting the following boolean properties when launching the Data Flow server:
+You can enable or disable these features by setting the following boolean properties when you launch the Data Flow server:
 
 * `spring.cloud.dataflow.features.streams-enabled`
 * `spring.cloud.dataflow.features.tasks-enabled`
 * `spring.cloud.dataflow.features.analytics-enabled`
 
-By default, all the features are enabled.
-Note: Since analytics feature is enabled by default, the Data Flow server is expected to have a valid Redis store available as analytic repository as we provide a default implementation of analytics based on Redis.
-      This also means that the Data Flow server's `health` depends on the redis store availability as well.
-      If you do not want to enabled HTTP endpoints to read analytics data written to Redis, then disable the analytics feature using the property mentioned above.
+By default, all features are enabled.
+Note: Since the analytics feature is enabled by default, the Data Flow server is expected to have a valid Redis store available as its analytic repository (we provide a default implementation of analytics based on Redis). This also means that the Data Flow server's `health` depends on the redis store availability as well. If you do not want to enable HTTP endpoints to read analytics data written to Redis, you can disable the analytics feature by using the `spring.cloud.dataflow.features.analytics-enabled` property to `false`.
 
-The REST endpoint `/features` provides information on the features enabled/disabled.
+The REST endpoint (`/features`) provides information on the enabled and disabled features.
 
 [[configuration-app-defaults]]
-== Deployer Properties
-You can also set other optional properties that alter the way Spring Cloud Data Flow will deploy stream and task apps to Cloud Foundry:
+=== Deployer Properties
+You can also set other optional properties that alter the way Spring Cloud Data Flow deploys stream and task apps to Cloud Foundry:
 
-* The default memory and disk sizes for a deployed application can be configured. By default they are 1024 MB memory
-and 1024 MB disk. To change these, as an example to 512 and 2048 respectively, use
+* You can configure the default memory and disk sizes for a deployed application. By default, they are 1024 MB memory
+and 1024 MB disk. To change these to (for example) 512 and 2048 respectively, use the following commands:
 +
-```
+====
+[source]\
+----
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_MEMORY 512
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_DISK 2048
-```
+----
+====
 
-* The default number of instances to deploy is set to 1, but can be overridden using
+* The default number of instances to deploy is set to 1, but you can override it by using the following command:
 +
-```
+====
+[source]
+----
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_INSTANCES 1
-```
+----
+====
 
-* You can set the buildpack that will be used to deploy each application. For example, to use the Java offline buildback,
-set the following environment variable
+* You can set the buildpack that is used to deploy each application. For example, to use the Java offline buildback,
+set the following environment variable:
 +
-```
+====
+[source]
+----
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_BUILDPACK java_buildpack_offline
-```
+----
+====
 
-* The health check mechanism used by Cloud Foundry to assert if apps are running can be customized using the environment variable `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK`. Current supported options
-are `http` (the default), `port` and `none`.
+* You can customize the health check mechanism used by Cloud Foundry to assert whether apps are running by using the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK` environment variable. The current supported options
+are `http` (the default), `port`, and `none`.
 +
-There are also environment variables to specify the the http based health check endpoint and timeout, `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_ENDPOINT` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_TIMEOUT`.  These default to `/health` (the Spring Boot default location` and `120` seconds.
+You can also set environment variables that specify the the HTTP-based health check endpoint and timeout: `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_ENDPOINT` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK_TIMEOUT`, respectively. These default to `/health` (the Spring Boot default location) and `120` seconds.
 
-* You can also specify deployment properties using the dsl. For instance if you want to set the allocated memory for the `http` app to 512m and also bind a mysql service to the `jdbc` application.
-```
+* You can also specify deployment properties by using the DSL. For instance, if you want to set the allocated memory for the `http` application to 512m and also bind a mysql service to the `jdbc` application, you can run the following commands:
++
+====
+[source]
+----
 dataflow:> stream create --name mysqlstream --definition "http | jdbc --tableName=names --columns=name"
 dataflow:> stream deploy --name mysqlstream --properties "deployer.http.memory=512, deployer.jdbc.cloudfoundry.services=mysql"
-```
+----
+====
++
 [NOTE]
-====
-These settings can be configured separately for stream and task apps. To alter settings for tasks, simply
-substitute `STREAM` with `TASK` in the property name. As an example,
+=====
+You can configure these settings separately for stream and task apps. To alter settings for tasks,
+substitute `TASK` for `STREAM` in the property name, as the following example shows:
 
-```
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_MEMORY 512
-```
 ====
+[source]
+----
+cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_MEMORY 512
+----
+====
+=====
 
 TIP: All the properties mentioned above are `@ConfigurationProperties` of the
 Cloud Foundry deployer. See link:https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry/blob/{deployer-branch-or-tag}/src/main/java/org/springframework/cloud/deployer/spi/cloudfoundry/CloudFoundryDeploymentProperties.java[CloudFoundryDeploymentProperties.java] for more information.
 
 [[configuration-app-names-cloud-foundry]]
-== Application Names and Prefixes
+=== Application Names and Prefixes
 
-To help avoid clashes with routes across spaces in Cloud Foundry, a naming strategy to provide a random prefix to a
-deployed application is available and is enabled by default. The https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry#application-name-settings-and-deployments[default configurations]
-are overridable and the respective properties can be set via `cf set-env` commands.
+To help avoid clashes with routes across spaces in Cloud Foundry, a naming strategy that provides a random prefix to a
+deployed application is available and is enabled by default. You can override the https://github.com/spring-cloud/spring-cloud-deployer-cloudfoundry#application-name-settings-and-deployments[default configurations]
+and set the respective properties by using `cf set-env` commands.
 
-For instance, if you'd like to disable the randomization, you can override it through:
+For instance, if you want to disable the randomization, you can override it by using the following command:
 
-```
+====
+[source]
+----
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_ENABLE_RANDOM_APP_NAME_PREFIX false
-```
+----
+====
+
 [[configuration-custom-routes]]
-== Custom Routes
+=== Custom Routes
 
-As an alternative to random name, or to get even more control over the hostname used by the deployed apps, one can use
-custom deployment properties, as such:
+As an alternative to a random name or to get even more control over the hostname used by the deployed apps, you can use
+custom deployment properties, as the following example shows:
 
+====
 [source]
 ----
 dataflow:>stream create foo --definition "http | log"
@@ -103,121 +120,137 @@ sdataflow:>stream deploy foo --properties "deployer.http.cloudfoundry.domain=myd
                                           deployer.http.cloudfoundry.host=myhost,
                                           deployer.http.cloudfoundry.route-path=my-path"
 ----
+====
 
-This would result in the `http` app being bound to the URL `http://myhost.mydomain.com/my-path`. Note that this is an
-example showing *all* customization options available. One can of course only leverage one or two out of the three.
+The preceding example binds the `http` app to the `http://myhost.mydomain.com/my-path` URL. Note that this
+example shows *all* of the available customization options. In practice, you can use only one or two out of the three.
 
 [[configuration-docker-apps]]
-== Docker Applications
+=== Docker Applications
 
-Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks using
+Starting with version 1.2, it is possible to register and deploy Docker based apps as part of streams and tasks by using
 Data Flow for Cloud Foundry.
 
+If you use Spring Boot and RabbitMQ-based Docker images, you can provide a common deployment property
+to facilitate binding the apps to the RabbitMQ service. Assuming your RabbitMQ service is named `rabbit`, you can provide the following:
 
-If you are using Spring Boot and RabbitMQ based Docker images you can provide a common deployment property
-to facilitate the apps binding to the RabbitMQ service. Assuming your RabbitMQ service is named `rabbit` you can provide the following:
-
-```
+====
+[source]
+----
 cf set-env dataflow-server SPRING_APPLICATION_JSON '{"spring.cloud.dataflow.applicationProperties.stream.spring.rabbitmq.addresses": "${vcap.services.rabbit.credentials.protocols.amqp.uris}"}'
-```
-For Spring Cloud Task apps, something similar to the following could be used, if using a database service instance named `mysql`:
+----
+====
 
-```
+For Spring Cloud Task apps, you can use something similar to the following, if you use a database service instance named `mysql`:
+
+====
+[source]
+----
 cf set-env SPRING_DATASOURCE_URL '${vcap.services.mysql.credentials.jdbcUrl}'
 cf set-env SPRING_DATASOURCE_USERNAME '${vcap.services.mysql.credentials.username}'
 cf set-env SPRING_DATASOURCE_PASSWORD '${vcap.services.mysql.credentials.password}'
 cf set-env SPRING_DATASOURCE_DRIVER_CLASS_NAME 'org.mariadb.jdbc.Driver'
-```
+----
+====
 
-
-For non-Java or non-Boot apps, your Docker app would have to parse the `VCAP_SERVICES` variable in order to bind to any available services.
+For non-Java or non-Boot applications, your Docker app must parse the `VCAP_SERVICES` variable in order to bind to any available services.
 
 [NOTE]
 .Passing application properties
-====
-When using non-boot apps, chances are that you want the application properties passed to your app using traditional
-environment variables, as opposed to using the special `SPRING_APPLICATION_JSON` variable. To achieve this, set the
+=====
+When using non-Boot applications, chances are that you want to pass the application properties passed by using traditional
+environment variables, as opposed to using the special `SPRING_APPLICATION_JSON` variable. To do so, set the
 following variables for streams and tasks, respectively:
 
+====
 [source, properties]
 ----
 SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON=false
 SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON=false
 ----
 ====
-
+=====
 
 [[configuration-service-binding-at-application-level]]
-== Application Level Service Bindings
-When deploying streams in Cloud Foundry, you can take advantage of application specific service bindings, so not all
+=== Application-level Service Bindings
+
+When deploying streams in Cloud Foundry, you can take advantage of application-specific service bindings, so not all
 services are globally configured for all the apps orchestrated by Spring Cloud Data Flow.
 
-For instance, if you'd like to provide `mysql` service binding only for the `jdbc` application in the following stream
-definition, you can pass the service binding as a deployment property.
+For instance, if you wat to provide a `mysql` service binding only for the `jdbc` application in the following stream
+definition, you can pass the service binding as a deployment property:
 
+====
 [source]
 ----
 dataflow:>stream create --name httptojdbc --definition "http | jdbc"
 dataflow:>stream deploy --name httptojdbc --properties "deployer.jdbc.cloudfoundry.services=mysqlService"
 ----
 
-Where, `mysqlService` is the name of the service specifically only bound to `jdbc` application and the `http`
-application wouldn't get the binding by this method.
-If you have more than one service to bind, they can be passed as comma separated items
-(_eg_: `deployer.jdbc.cloudfoundry.services=mysqlService,someService`).
+
+where `mysqlService` is the name of the service specifically bound only to the `jdbc` application and the `http`
+application does not get the binding by this method.
+====
+
+If you have more than one service to bind, they can be passed as comma-separated items
+(for example: `deployer.jdbc.cloudfoundry.services=mysqlService,someService`).
 
 [[configuration-ups]]
-== User Provided Services
+=== User-provided Services
 In addition to marketplace services, Cloud Foundry supports
-https://docs.cloudfoundry.org/devguide/services/user-provided.html[User Provided Services] (UPS). Throughout this reference manual,
-regular services have been mentioned, but there is nothing precluding the use of UPSs as well, whether for use as the
-messaging middleware (_e.g._ if you'd like to use an external Apache Kafka installation) or for _ad hoc_ usage by some
- of the stream apps (_e.g._ an Oracle Database).
+https://docs.cloudfoundry.org/devguide/services/user-provided.html[User-provided Services] (UPS). Throughout this reference manual,
+regular services have been mentioned, but there is nothing precluding the use of User-provided Services as well, whether for use as the
+messaging middleware (for example, if you want to use an external Apache Kafka installation) or for use by some
+of the stream applications (for example, an Oracle Database).
 
-Let's review an example of extracting and supplying the connection credentials from an UPS.
+Now we review an example of extracting and supplying the connection credentials from a UPS.
 
-* A sample UPS setup for Apache Kafka.
+The following example shows a sample UPS setup for Apache Kafka:
 
+====
 [source,bash]
 ----
 cf create-user-provided-service kafkacups -p '{”brokers":"HOST:PORT","zkNodes":"HOST:PORT"}'
 ----
+====
 
-* The UPS credentials will be wrapped within `VCAP_SERVICES` and it can be supplied directly in the stream definition like
-the following.
+The UPS credentials are wrapped within `VCAP_SERVICES`, and they can be supplied directly in the stream definition, as
+the following example shows.
 
+====
 [source]
 ----
 stream create fooz --definition "time | log"
 stream deploy fooz --properties "app.time.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.time.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes},app.log.spring.cloud.stream.kafka.binder.brokers=${vcap.services.kafkacups.credentials.brokers},app.log.spring.cloud.stream.kafka.binder.zkNodes=${vcap.services.kafkacups.credentials.zkNodes}"
 ----
-
+====
 
 [[configuration-maximum-disk-quota-configuration]]
-== Maximum Disk Quota
+=== Maximum Disk Quota
 By default, every application in Cloud Foundry starts with 1G disk quota and this can be adjusted to a default maximum of
-2G. The default maximum can also be overridden up to 10G via Pivotal Cloud Foundry's (PCF) Ops Manager GUI.
+2G. The default maximum can also be overridden up to 10G by using Pivotal Cloud Foundry's (PCF) Ops Manager GUI.
 
 This configuration is relevant for Spring Cloud Data Flow because every stream and task deployment is composed of applications
-(typically Spring Boot uber-jar's) and those applications are resolved from a remote maven repository. After resolution,
-the application artifacts are downloaded to the local Maven Repository for caching/reuse. With this happening in the background,
-there is a possibility the default disk quota (_1G_) fills up rapidly; especially, when we are experimenting with streams that
-are made up of unique applications.  In order to overcome this disk limitation and depending
-on your scaling requirements,you may want to change the default maximum from 2G to 10G. Let's review the
+(typically Spring Boot uber-jar's), and those applications are resolved from a remote maven repository. After resolution,
+the application artifacts are downloaded to the local Maven Repository for caching and reuse. With this happening in the background,
+the default disk quota (1G) can fill up rapidly, especially when we experiment with streams that
+are made up of unique applications. In order to overcome this disk limitation and depending
+on your scaling requirements, you may want to change the default maximum from 2G to 10G. Let's review the
 steps to change the default maximum disk quota allocation.
 
-=== PCF's Operations Manager
+==== PCF's Operations Manager
 
-From PCF's Ops Manager, Select "*Pivotal Elastic Runtime*" tile and navigate to "*Application Developer Controls*" tab.
-Change the "*Maximum Disk Quota per App (MB)*" setting from 2048 to 10240 (_10G_). Save the disk quota update and hit
-"Apply Changes" to complete the configuration override.
+From PCF's Ops Manager, select the "`Pivotal Elastic Runtime`" tile and navigate to the "`Application Developer Controls`" tab.
+Change the "`Maximum Disk Quota per App (MB)`" setting from 2048 (2G) to 10240 (10G). Save the disk quota update and click
+"`Apply Changes`" to complete the configuration override.
 
 [[configuration-scaling]]
-== Scale Application
+=== Scale Application
 
-Once the disk quota change is applied successfully and assuming you've a xref:running-on-cloudfoundry[running application],
-you may scale the application with a new `disk_limit` through CF CLI.
+Once the disk quota change has been successfully applied and assuming you have a xref:running-on-cloudfoundry[running application],
+you can scale the application with a new `disk_limit` through the CF CLI, as the following example shows:
 
+====
 [source,bash]
 ----
 → cf scale dataflow-server -k 10GB
@@ -233,7 +266,11 @@ OK
      state     since                    cpu      memory           disk           details
 #0   running   2016-10-31 03:07:23 PM   1.8%     497.9M of 1.1G   193.9M of 10G
 ----
+====
 
+You can then list the applications and see the new maximum disk space, as the following example shows:
+
+====
 [source,bash]
 ----
 → cf apps
@@ -243,16 +280,23 @@ OK
 name              requested state   instances   memory   disk   urls
 dataflow-server   started           1/1         1.1G     10G    dataflow-server.apps.io
 ----
+====
+
 [[managing-disk-utilization]]
-== Managing disk utilization
+=== Managing Disk Use
 
 Even when configuring the Data Flow server to use 10G of space, there is the possibility of exhausting
 the available space on the local disk.
-If you deploy the Data Flow server using the default `port` health check type, you will have to monitor the disk space on the server explicitly in order to avoid running out space.
-If you deploy the server using the `http` health check type (see below) the Data Flow server will be restarted if there is low disk space.
+If you deploy the Data Flow server by using the default `port` health check type, you must explicitly monitor the disk space on the server in order to avoid running out space.
+If you deploy the server by using the `http` health check type (see the next example), the Data Flow server is restarted if there is low disk space.
 This is due to Spring Boot's link:https://github.com/spring-projects/spring-boot/blob/v1.5.14.RELEASE/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/health/DiskSpaceHealthIndicator.java[Disk Space Health Indicator].
-You can link:https://docs.spring.io/spring-boot/docs/1.5.14.RELEASE/reference/htmlsingle/#common-application-properties[configure] the settings of the Disk Space Health Indicator using the properties with the prefix `management.health.diskspace`.
-Use of link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.html[Volume Services] for the Data Flow server to store `.jar` artifacts before pushing them to Cloud Foundry is being investigated for version 1.7.
+You can link:https://docs.spring.io/spring-boot/docs/1.5.14.RELEASE/reference/htmlsingle/#common-application-properties[configure] the settings of the Disk Space Health Indicator by using the properties that have the `management.health.diskspace` prefix.
+
+For version 1.7, we are investigating the use of link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.html[Volume Services] for the Data Flow server to store `.jar` artifacts before pushing them to Cloud Foundry.
+
+The following example shows how to deploy the `http` health check type to an endpoint called `/management/health`:
+
+====
 [source]
 ----
 ---
@@ -260,71 +304,74 @@ Use of link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.h
   health-check-type: http
   health-check-http-endpoint: /management/health
 ----
+====
 
 [[configuration-app-resolution-options]]
-== Application Resolution Alternatives
+=== Application Resolution Alternatives
+
 Though we highly recommend using Maven Repository for application link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[resolution and registration]
-in Cloud Foundry, there might be situations where an alternative approach would make sense. Following alternative options
-could come handy for resolving applications when running on Cloud Foundry.
+in Cloud Foundry, there might be situations where an alternative approach would make sense. The following alternative options
+could help you resolve applications when running on Cloud Foundry.
 
 * With the help of Spring Boot, we can serve link:https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html#boot-features-spring-mvc-static-content[static content]
-in Cloud Foundry. A simple Spring Boot application can bundle all the required stream/task applications and by having it
-run on Cloud Foundry, the static application can then serve the Über-jar's. From the Shell, you can, for example, register the
-app with the name `http-source.jar` via `--uri=http://<Route-To-StaticApp>/http-source.jar`.
+in Cloud Foundry. A simple Spring Boot application can bundle all the required stream and task applications. By having it
+run on Cloud Foundry, the static application can then serve the über-jar's. From the shell, you can, for example, register the
+application with the name `http-source.jar` by using `--uri=http://<Route-To-StaticApp>/http-source.jar`.
 
-* The Über-jar's can be hosted on any external server that's reachable via HTTP. They can be resolved from raw GitHub URIs
-as well. From the Shell, you can, for example, register the app with the name `http-source.jar` via `--uri=http://<Raw_GitHub_URI>/http-source.jar`.
+* The über-jar's can be hosted on any external server that's reachable over HTTP. They can be resolved from raw GitHub URIs
+as well. From the shell, you can, for example, register the app with the name `http-source.jar` by using `--uri=http://<Raw_GitHub_URI>/http-source.jar`.
 
-* link:http://docs.cloudfoundry.org/buildpacks/staticfile/index.html[Static Buildpack ]support in Cloud Foundry is another
-option. A similar HTTP resolution will work on this model, too.
+* link:http://docs.cloudfoundry.org/buildpacks/staticfile/index.html[Static Buildpack] support in Cloud Foundry is another
+option. A similar HTTP resolution works on this model, too.
 
 * link:https://docs.cloudfoundry.org/devguide/services/using-vol-services.html[Volume Services] is another great option.
-The required Über-jar's can be hosted in an external file-system and with the help of volume-services, you can, for
-example, register the app with the name `http-source.jar` via `--uri=file://<Path-To-FileSystem>/http-source.jar`.
+The required über-jars can be hosted in an external file system. With the help of volume-services, you can, for
+example, register the application with the name `http-source.jar` by using `--uri=file://<Path-To-FileSystem>/http-source.jar`.
 
 [[getting-started-connection-pool]]
-== Database Connection Pool
-The Data Flow Server uses the Spring Cloud Connector library to create the DataSource with a default connection pool size of 4.
+=== Database Connection Pool
+The Data Flow server uses the Spring Cloud Connector library to create the DataSource with a default connection pool size of `4`.
 To change the connection pool size and maximum wait time, set the following two properties `spring.cloud.dataflow.server.cloudfoundry.maxPoolSize` and `spring.cloud.dataflow.server.cloudfoundry.maxWaitTime`.
 The wait time is specified in milliseconds.
 
 [[getting-started-security]]
-== Security
+=== Security
 
-By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints,
-as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate.
+By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints
+(as well as the Data Flow Dashboard) by enabling HTTPS and requiring clients to authenticate.
 For more details about securing the
-REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
-review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
+REST endpoints and configuring to authenticate against an OAUTH backend (UAA and SSO running on Cloud Foundry), please
+review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide]. You can configure the security configurations in `dataflow-server.yml` or pass them as environment variables through `cf set-env` commands.
 
 [[getting-started-security-cloud-foundry]]
-=== Authentication and Cloud Foundry
+==== Authentication and Cloud Foundry
 
-Spring Cloud Data Flow can either integrate with _Pivotal Single Sign-On Service_
-(E.g. on PWS) or _Cloud Foundry User Account and Authentication_ (UAA) Server.
+Spring Cloud Data Flow can either integrate with Pivotal Single Sign-On Service
+(for example, on PWS) or Cloud Foundry User Account and Authentication (UAA) Server.
 
 [[getting-started-security-cloud-foundry-sso]]
-==== Pivotal Single Sign-On Service
+===== Pivotal Single Sign-On Service
 
-When deploying Spring Cloud Data Flow to Cloud Foundry you can simply bind the
-application to the _Pivotal Single Sign-On Service_. By doing so, Spring Cloud
+When deploying Spring Cloud Data Flow to Cloud Foundry, you can bind the
+application to the Pivotal Single Sign-On Service. By doing so, Spring Cloud
 Data Flow takes advantage of the
- https://github.com/pivotal-cf/spring-cloud-sso-connector[_Spring Cloud Single Sign-On Connector_],
- which provides Cloud Foundry specific auto-configuration support for OAuth 2.0.
+https://github.com/pivotal-cf/spring-cloud-sso-connector[Spring Cloud Single Sign-On Connector],
+which provides Cloud Foundry-specific auto-configuration support for OAuth 2.0.
 
-Simply bind the _Pivotal Single Sign-On Service_ to your Data Flow Server app and
-Single Sign-On (SSO) via OAuth2 will be enabled by default.
+To do so, bind the Pivotal Single Sign-On Service to your Data Flow Server application and
+Single Sign-On (SSO) over OAuth2 will be enabled by default.
 
-Authorization is similarly support as for non-Cloud Foundry security scenarios.
-Please refer to the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide].
+Authorization is similarly supported for non-Cloud Foundry security scenarios.
+See the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide].
 
-As the provisioning of roles can vary widely across environments, we assign by
-default all Spring Cloud Data Flow roles to users.
+As the provisioning of roles can vary widely across environments, we by
+default assign all Spring Cloud Data Flow roles to users.
 
-This can be customized by providing your own http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor].
+You can customize this behavior by providing your own http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[`AuthoritiesExtractor`].
 
-One possible approach to set the custom `AuthoritiesExtractor` on the `UserInfoTokenServices` could be this:
+The following example shows one possible approach to set the custom `AuthoritiesExtractor` on the `UserInfoTokenServices`:
 
+====
 [source,java]
 ----
 public class MyUserInfoTokenServicesPostProcessor
@@ -345,9 +392,11 @@ public class MyUserInfoTokenServicesPostProcessor
 	}
 }
 ----
+====
 
-And you simply declare it in your configuration class:
+Then you can declare it in your configuration class as follows:
 
+====
 [source,java]
 ----
 @Bean
@@ -356,15 +405,19 @@ public BeanPostProcessor myUserInfoTokenServicesPostProcessor() {
 	return postProcessor;
 }
 ----
+====
 
 [[getting-started-security-cloud-foundry-uaa]]
-==== Cloud Foundry UAA
+===== Cloud Foundry UAA
 
-The availability of this option depends on the used Cloud Foundry environment.
+The availability of Cloud Foundry User Account and Authentication (UAA) depends on the Cloud Foundry environment.
 In order to provide UAA integration, you have to manually provide the necessary
-OAuth2 configuration properties, for instance via the `SPRING_APPLICATION_JSON`
-property.
+OAuth2 configuration properties (for example, by setting the `SPRING_APPLICATION_JSON`
+property).
 
+The following JSON example shows how to create a security configuration:
+
+====
 [source,json]
 ----
 {
@@ -375,144 +428,158 @@ property.
   "security.oauth2.resource.user-info-uri": "https://login.cf.myhost.com/userinfo"
 }
 ----
+====
 
-By default, the property `spring.cloud.dataflow.security.cf-use-uaa` is set to `true`. This property will activate a special
+By default, the `spring.cloud.dataflow.security.cf-use-uaa`  property is set to `true`. This property activate a special
+http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[`AuthoritiesExtractor`] called `CloudFoundryDataflowAuthoritiesExtractor`.
 
-http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor] **CloudFoundryDataflowAuthoritiesExtractor**.
+If you do not use CloudFoundry UAA, you should set `spring.cloud.dataflow.security.cf-use-uaa` to `false`.
 
-If CloudFoundry UAA is not used, then make sure to set `spring.cloud.dataflow.security.cf-use-uaa` to `false`.
-
-Under the covers this _AuthoritiesExtractor_ will call out to the
+Under the covers, this `AuthoritiesExtractor` calls out to the
 https://apidocs.cloudfoundry.org/253/apps/retrieving_permissions_on_a_app.html[Cloud Foundry
-Apps API] and ensure that users are in fact _Space Developers_.
+Apps API] and ensure that users are in fact Space Developers.
 
-If the authenticated user is verified as _Space Developer_, all roles will be assigned,
-otherwise no roles whatsoever will be assigned. In that case you may see the following
+If the authenticated user is verified as a Space Developera, all roles are assigned.
+Otherwise, no roles whatsoever are assigned. In that case, you may see the following
 Dashboard screen:
 
 .Accessing the Data Flow Dashboard without Roles
 image::cf-getting-started-security-no-roles.png[Dashboard without roles, scaledwidth="100%"]
 
-== Configuration Reference
+=== Configuration Reference
 
-The following pieces of configuration must be provided. These are Spring Boot `@ConfigurationProperties` so you can set
-them as environment variables or by any other means that Spring Boot supports.  Here is a listing in environment
-variable format as that is an easy way to get started configuring Boot applications in Cloud Foundry.
+You must provide several pieces of configuration. These are Spring Boot `@ConfigurationProperties`, so you can set
+them as environment variables or by any other means that Spring Boot supports. The following listing is in environment
+variable format, as that is an easy way to get started configuring Boot applications in Cloud Foundry:
 
-```
-# Default values cited after the equal sign.
-# Example values, typical for Pivotal Web Services, cited as a comment
+====
+[source,bash]
+----
+# Default values appear after the equal signs.
+# Example values, typical for Pivotal Web Services, are included as comments.
 
-# url of the CF API (used when using cf login -a for example), e.g. https://api.run.pivotal.io
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL)
+# URL of the CF API (used when using cf login -a for example) - for example, https://api.run.pivotal.io
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL).
 spring.cloud.deployer.cloudfoundry.url=
 
-# name of the organization that owns the space above, e.g. youruser-org
-# (For Setting Env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG)
+# The name of the organization that owns the space above - for example, youruser-org
+# (To set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG).
 spring.cloud.deployer.cloudfoundry.org=
 
-# name of the space into which modules will be deployed, e.g. development
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE)
+# The name of the space into which modules will be deployed - for example, development
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE).
 spring.cloud.deployer.cloudfoundry.space=
 
-# the root domain to use when mapping routes, e.g. cfapps.io
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN)
+# The root domain to use when mapping routes - for example, cfapps.io
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN).
 spring.cloud.deployer.cloudfoundry.domain=
 
-# username and password of the user to use to create apps
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD)
+# The user name and password of the user to use to create applications
+# (to set the environment variables, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME
+# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD).
 spring.cloud.deployer.cloudfoundry.username=
 spring.cloud.deployer.cloudfoundry.password=
 
-# Whether to allow self-signed certificates during SSL validation
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION)
+# Whether to allow self-signed certificates during SSL validation (you should NOT do so in production)
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION).
 spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 
-# Comma separated set of service instance names to bind to every stream app deployed.
-# Amongst other things, this should include a service that will be used
-# for Spring Cloud Stream binding, e.g. rabbit
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES)
+# A comma-separated set of service instance names to bind to every deployed stream application.
+# Among other things, this should include a service that is used
+# for Spring Cloud Stream binding, such as Rabbit
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES).
 spring.cloud.deployer.cloudfoundry.stream.services=
 
-# Health check type to use for stream apps. Accepts 'none' and 'port'
+# The health check type to use for stream apps. Accepts 'none' and 'port'.
 spring.cloud.deployer.cloudfoundry.stream.health-check=
 
 
-# Comma separated set of service instance names to bind to every task app deployed.
-# Amongst other things, this should include an RDBMS service that will be used
-# for Spring Cloud Task execution reporting, e.g. my_mysql
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES)
+# A comma-separated set of service instance names to bind to every deployed task application.
+# Among other things, this should include an RDBMS service that is used
+# for Spring Cloud Task execution reporting, such as my_mysql
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES).
 spring.cloud.deployer.cloudfoundry.task.services=
 
-# Timeout to use, in seconds, when doing blocking API calls to Cloud Foundry.
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_API_TIMEOUT
-# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_API_TIMEOUT)
+# Timeout, in seconds, to use when doing blocking API calls to Cloud Foundry
+# (to set the  environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_API_TIMEOUT
+# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_API_TIMEOUT).
 spring.cloud.deployer.cloudfoundry.stream.apiTimeout=360
 spring.cloud.deployer.cloudfoundry.task.apiTimeout=360
 
-# Timeout to use, in milliseconds, when querying the Cloud Foundry API to compute app status.
-# (for setting env var use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_STATUS_TIMEOUT
-# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_STATUS_TIMEOUT)
+# Timeout, in milliseconds, to use when querying the Cloud Foundry API to compute app status
+# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_STATUS_TIMEOUT
+# and SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_STATUS_TIMEOUT).
 spring.cloud.deployer.cloudfoundry.stream.statusTimeout=5000
 spring.cloud.deployer.cloudfoundry.task.statusTimeout=5000
+----
+====
 
-```
-
-Note that you can set the following properties `spring.cloud.deployer.cloudfoundry.services`,
-`spring.cloud.deployer.cloudfoundry.buildpack` or the Spring Cloud Deployer standard
+Note that you can set `spring.cloud.deployer.cloudfoundry.services`,
+`spring.cloud.deployer.cloudfoundry.buildpack`, or the Spring Cloud Deployer-standard
 `spring.cloud.deployer.memory` and `spring.cloud.deployer.disk`
-as part of an individual deployment request by using the `deployer.<app-name>` shortcut. For example
+as part of an individual deployment request by using the `deployer.<app-name>` shortcut, as the following example shows:
 
-```
->stream create --name ticktock --definition "time | log"
->stream deploy --name ticktock --properties "deployer.time.memory=2g"
-```
+====
+[source]
+----
+stream create --name ticktock --definition "time | log"
+stream deploy --name ticktock --properties "deployer.time.memory=2g"
+----
+====
 
-will deploy the time source with 2048MB of memory, while the log sink will use the default 1024MB.
+The commands in the preceding example deploy the time source with 2048MB of memory, while the log sink uses the default 1024MB.
 
-One can also pass JAVA_OPTS as a deployment property when deploying a stream.
+When you deploy a stream, you can also pass `JAVA_OPTS` as a deployment property, as the following example shows:
 
-```
->stream deploy --name ticktock --properties "deployer.time.cloudfoundry.javaOpts=-Duser.timezone=America/New_York"
-```
+====
+[source,bash]
+----
+stream deploy --name ticktock --properties "deployer.time.cloudfoundry.javaOpts=-Duser.timezone=America/New_York"
+----
+====
 
-This property can also be set at the global level for all the streams as applicable to any deployment property using
+You can also set this property at the global level for all the streams as applicable to any deployment property by setting
 `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_JAVA_OPTS` as the server level property.
 
-== Debugging
+=== Debugging
 If you want to get better insights into what is happening when your streams and tasks are being deployed, you may want
 to turn on the following features:
 
-* Reactor "stacktraces", showing which operators were involved before an error occurred. This is helpful as the deployer
+* Reactor "`stacktraces`", showing which operators were involved before an error occurred. This feature is helpful, as the deployer
 relies on project reactor and regular stacktraces may not always allow understanding the flow before an error happened.
-Note that this comes with a performance penalty, so is disabled by default.
+Note that this comes with a performance penalty, so it is disabled by default.
 +
-```
+====
+[source,bash]
+----
 spring.cloud.dataflow.server.cloudfoundry.debugReactor = true
-```
-* Deployer and Cloud Foundry client library request/response logs. This allows seeing detailed conversation between
+----
+====
+* Deployer and Cloud Foundry client library request and response logs. This feature allows seeing a detailed conversation between
 the Data Flow server and the Cloud Foundry Cloud Controller.
 +
-```
+====
+[source,data]
+----
 logging.level.cloudfoundry-client = DEBUG
+----
+====
 
-```
+=== Spring Cloud Config Server
+You can use Spring Cloud Config Server to centralize configuration properties for Spring Boot applications. Likewise,
+both Spring Cloud Data Flow and the applications orchestrated by Spring Cloud Data Flow can be integrated with
+a configuration server to use the same capabilities.
 
-== Spring Cloud Config Server
-Spring Cloud Config Server can be used to centralize configuration properties for Spring Boot applications. Likewise,
-both Spring Cloud Data Flow and the applications orchestrated using Spring Cloud Data Flow can be integrated with
-config-server to leverage the same capabilities.
-
-=== Stream, Task, and Spring Cloud Config Server
-Similar to Spring Cloud Data Flow server, it is also possible to configure both the stream and task applications to resolve the centralized properties from config-server.
-Setting the property `spring.cloud.config.uri` for the deployed applications is a common way to bind to the Config Server.
+==== Stream, Task, and Spring Cloud Config Server
+Similar to Spring Cloud Data Flow server, you can configure both the stream and task applications to resolve the centralized properties from the configuration server.
+Setting the `spring.cloud.config.uri` property for the deployed applications is a common way to bind to the configuration server.
 See the link:https://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_spring_cloud_config_client[Spring Cloud Config Client] reference guide for more information.
-Since this property is likely to be used across all applications deployed by the Data Flow server, the Data Flow Server's property `spring.cloud.dataflow.applicationProperties.stream` for stream apps and `spring.cloud.dataflow.applicationProperties.task` for task apps can be used to pass the `uri` of the Config Server to each deployed stream or task application.  Refer to the section on Common application properties for more information.
+Since this property is likely to be used across all applications deployed by the Data Flow server, the Data Flow server's `spring.cloud.dataflow.applicationProperties.stream` property for stream applications and `spring.cloud.dataflow.applicationProperties.task` property for task applications can be used to pass the `uri` of the Config Server to each deployed stream or task application. See the section on http://docs.spring.io/spring-cloud-dataflow/docs/current/reference/htmlsingle/#spring-cloud-dataflow-global-properties[common application properties] for more information.
 
+Note that, if you use applications from the link:http://cloud.spring.io/spring-cloud-stream-app-starters/[App Starters project], these applications already embed the `spring-cloud-services-starter-config-client` dependency.
+If you build your application from scratch and want to add the client side support for config server, you can add a dependency reference to the config server client library. The following snippet shows a Maven example:
 
-If you're using applications from the link:http://cloud.spring.io/spring-cloud-stream-app-starters/[App Starters project], note that these applications already embed the `spring-cloud-services-starter-config-client` dependency.
-If you're building your application from scratch and want to add the client side support for config server, simply add a reference dependency reference to the config server client library.  A maven example snippet follows:
-
+====
 [source,xml]
 ----
 ...
@@ -524,21 +591,24 @@ If you're building your application from scratch and want to add the client side
 ...
 ----
 
-Where, `CONFIG_CLIENT_VERSION` can be the latest release of https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
+where `CONFIG_CLIENT_VERSION` can be the latest release of the https://github.com/pivotal-cf/spring-cloud-services-connector/releases[Spring Cloud Config Server]
 client for Pivotal Cloud Foundry.
+====
 
-NOTE: You will observe a `WARN` logging message if the application that uses this library can not connect to the config
-server when the applicaiton starts and whenever the `/health` endpoint is accessed.
-You can disable the client library if you know that you are not using config server functionality by setting the
-environment variable `SPRING_CLOUD_CONFIG_ENABLED=false`.
-Another, more drastic option, is to disable the platform health check with the environment variable
-`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK=none`
+NOTE: You may see a `WARN` logging message if the application that uses this library cannot connect to the configuration
+server when the application starts and whenever the `/health` endpoint is accessed.
+If you know that you are not using config server functionality, you can disable the client library by setting the
+`SPRING_CLOUD_CONFIG_ENABLED` environment variable to `false`.
+Another, more drastic, option is to disable the platform health check by setting the
+`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_HEALTH_CHECK` environment variable to `none`.
 
-=== Sample Manifest Template
-Following `manifest.yml` template includes the required env-var's for the Spring Cloud Data Flow server and deployed
-apps/tasks to successfully run on Cloud Foundry and automatically resolve centralized properties from `my-config-server`
-at the runtime.
+==== Sample Manifest Template
 
+The following `manifest.yml` template includes the required environment variables for the Spring Cloud Data Flow server and deployed
+applications and tasks to successfully run on Cloud Foundry and automatically resolve centralized properties from `my-config-server`
+at runtime:
+
+====
 [source,yml]
 ----
 ---
@@ -566,26 +636,31 @@ services:
 - my-config-server
 ----
 
-Where, `my-config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry. By binding the
-service to both Spring Cloud Data Flow server as well as all the Spring Cloud Stream and Spring Cloud Task applications
+where `my-config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry.
+====
+
+By binding the
+service to both Spring Cloud Data Flow server and all the Spring Cloud Stream and Spring Cloud Task applications
 respectively, we can now resolve centralized properties backed by this service.
 
-=== Self-signed SSL Certificate and Spring Cloud Config Server
+==== Self-signed SSL Certificate and Spring Cloud Config Server
+
 Often, in a development environment, we may not have a valid certificate to enable SSL communication between clients and
-the backend services. However, the config-server for Pivotal Cloud Foundry uses HTTPS for all client-to-service communication,
-so it is necessary to add a self-signed SSL certificate in environments with no valid certificates.
+the backend services. However, the configuration server for Pivotal Cloud Foundry uses HTTPS for all client-to-service communication,
+so we need to add a self-signed SSL certificate in environments with no valid certificates.
 
-Using the same `manifest.yml` template listed in the previous section, for the server, we can provide the self-signed
-SSL certificate via: `TRUST_CERTS: <API_ENDPOINT>`.
+By using the same `manifest.yml` template listed in the previous section for the server, we can provide the self-signed
+SSL certificate by setting `TRUST_CERTS: <API_ENDPOINT>`.
 
-However, the deployed applications __also__ require `TRUST_CERTS` as a _flat env-var_ (as opposed to being wrapped inside
-`SPRING_APPLICATION_JSON`), so we will have to instruct the server with yet another set of tokens `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
-and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false` for stream and task applications
-respectively. With this setup, the applications will receive their application properties as regular environment variables
+However, the deployed applications also require `TRUST_CERTS` as a flat environment variable (as opposed to being wrapped inside
+`SPRING_APPLICATION_JSON`), so we must instruct the server with yet another set of tokens (`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
+and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false`) for stream and task applications,
+respectively. With this setup, the applications receive their application properties as regular environment variables.
 
-Let's review the updated `manifest.yml` with the required changes. Both the Data Flow server and deployed applications
-would get their config from the `my-config-server` Cloud Config server (deployed as a Cloud Foundry service)
+The following listing shows the updated `manifest.yml` with the required changes. Both the Data Flow server and deployed applications
+get their configuration from the `my-config-server` Cloud Config server (deployed as a Cloud Foundry service).
 
+====
 [source,yml]
 ----
 ---
@@ -616,23 +691,25 @@ services:
 - mysql
 - my-config-server #this is for the server
 ----
+====
 
 [[getting-started-scheduling-configuration]]
-== Configure Scheduling
-In this section we will discuss how to configure Spring Cloud Data Flow to connect to the https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
+=== Configure Scheduling
+This section discusses how to configure Spring Cloud Data Flow to connect to the https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
 
-NOTE: Before following the instructions below, be sure to have an instance of the PCF-Scheduler service running in your Cloud Foundry space.  To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following from the cf CLI: `cf create-service scheduler-for-pcf standard <name of service>`
+NOTE: Before following these instructions, be sure to have an instance of the PCF-Scheduler service running in your Cloud Foundry space.  To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following from the CF CLI: `cf create-service scheduler-for-pcf standard <name of service>`
 
-The 3 environment variables that have to be added or updated in your environment for Scheduling to be configured are the following:
+For scheduling, you must add (or update) the following environment variables in your environment:
 
-. Enable scheduling for Spring Cloud Data Flow by setting `spring.cloud.dataflow.features.schedules-enabled` to true
-. Binding the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
-. Establish the url to the PCF-Scheduler via the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment variable.
+* Enable scheduling for Spring Cloud Data Flow by setting `spring.cloud.dataflow.features.schedules-enabled` to `true`.
+* Bind the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
+* Establish the URL to the PCF-Scheduler by setting the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment variable.
 
-NOTE: Any task definitions that need to be scheduled, must be created after the above configurations have been configured.
+NOTE: After creating the preceding configurations, you must create any task definitions that need to be scheduled.
 
-The sample manifest shown below displays both the environment properties configured, assuming you have a PCF-Scheduler service available with the name `myscheduler`.
+The following sample manifest shows both environment properties configured (assuming you have a PCF-Scheduler service available with the name `myscheduler`):
 
+====
 [source,yml]
 ----
 ---
@@ -660,5 +737,6 @@ applications:
 services:
 - mysql
 ----
+====
 
-NOTE: The SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL has the following format: `scheduler.<Domain-Name>` for example: `https://scheduler.sys.mycf.cf-app.com`.
+NOTE: The `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` has the following format: `scheduler.<Domain-Name>` (for example, `https://scheduler.sys.mycf.cf-app.com`).

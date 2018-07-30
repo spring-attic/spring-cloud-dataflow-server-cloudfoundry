@@ -1,113 +1,126 @@
 [[tasks-on-cloudfoundry]]
-= Tasks on Cloud Foundry
+== Tasks on Cloud Foundry
 
 Spring Cloud Data Flow's task functionality exposes new task capabilities within
-the Pivotal Cloud Foundry runtime. It is important to note that the current underlying PCF
-task capabilities are considered experimental for PCF version versions less than 1.9.  See
- <<enable-disable-specific-features>> for how to disable task support in Data Flow.
+the Pivotal Cloud Foundry runtime.
 
-== Version Compatibility
+IMPORTANT: The current underlying PCF
+task capabilities are considered experimental for PCF version versions less than 1.9.  See
+<<enable-disable-specific-features>> for how to disable task support in Data Flow.
+
+=== Version Compatibility
 
 The task functionality depends on the latest versions of PCF for runtime support. This
-release requires PCF version 1.7.12 or higher to run tasks.  Tasks are an experimental
+release requires PCF version 1.7.12 or higher to run tasks. Tasks are an experimental
 feature in PCF 1.7 and 1.8 and a GA feature in PCF 1.9.
 
-== Task Database Schema
+=== Task Database Schema
 
-The database schema for Task applications was changed slighlty from the 1.0.x to 1.1.x version of
-Spring Cloud Task.  Since Spring Cloud Data Flow automatically creates the database schema if it is
-not present upon server startup, you may need to update the schema if you ran a 1.0.x version of the
-Data Flow server and now are upgrading to the 1.1.x version.  You can find the migration scripts
+The database schema for Task applications was changed slightly from the 1.0.x to 1.1.x version of
+Spring Cloud Task. If the database schema is not present upon server startup, Spring Cloud
+Data Flow automatically creates it. You may need to update the schema if you ran a 1.0.x version of the
+Data Flow server and now are upgrading to the 1.1.x version. You can find the migration scripts
 link:https://github.com/spring-cloud/spring-cloud-task/tree/1.1.0.RELEASE/spring-cloud-task-core/src/main/resources/org/springframework/cloud/task/migration[here]
-in the Spring Cloud Task Github repository.  The documentation for
+in the Spring Cloud Task Github repository. The documentation for
 link:https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html[Accessing Services with Diego SSH]
 and this link:http://pivotaljourney.blogspot.com/2016/05/connecting-gui-tool-to-mysql-service-in.html[blog entry]
-for connecting a GUI tools to the MySQL Service in PCF should help you to update the schema.
+for connecting a GUI tool to the MySQL Service in PCF should help you to update the schema.
 
-== Running Task Applications
+=== Running Task Applications
 
 Running a task application within Spring Cloud Data Flow goes through a slightly different
 lifecycle than running a stream application. Both types of applications need to be registered
-with the appropriate artifact coordinates. Both need a definition created via the SCDF DSL.
-However, that's where the similarities end.
+with the appropriate artifact coordinates. Both need a definition created with the SCDF DSL.
+However, the similarities end there.
 
-With stream based applications, you "deploy" them with the intent that they run until they
+With stream-based applications, you "`deploy`" them with the intent that they run until they
 are undeployed. A stream definition is only deployed once (it can be scaled, but only
-deployed as one instance of the stream as a whole). However, tasks are _launched_. A single
-task definition can be launched many times. With each launch, they will start, execute,
-and shut down with PCF cleaning up the resources once the shutdown has occurred. The
+deployed as one instance of the stream as a whole). However, tasks are "`launched`". A single
+task definition can be launched many times. With each launch, the task starts, runs,
+and shuts down, with PCF cleaning up the resources once the shutdown has occurred. The
 following sections outline the process of creating, launching, destroying, and viewing tasks.
 
-=== Create a Task
+==== Creating a Task
 
-Similar to streams, creating a task application is done via the SCDF DSL or through the
-dashboard. To create a task definition in SCDF, you've to either develop a task
+Similar to streams, creating a task application is done by using the SCDF DSL or through the
+dashboard. To create a task definition in SCDF, you must either develop a task
 application or use one of the out-of-the-box link:http://docs.spring.io/spring-cloud-task-app-starters/docs/{sct-starters-core-version}/reference/htmlsingle[task app-starters].
 The maven coordinates of the task application should be registered in SCDF. For more
-details on how to register task applications, review <<_registering_a_task_application,register task applications>>
-section from the core docs.
+details on how to register task applications, see <<_registering_a_task_application>>
+in the core docs.
 
-Let's see an example that uses the out-of-the-box `timestamp` task application.
+The following example uses the out-of-the-box `timestamp` task application:
 
+====
 [source]
 ----
 dataflow:>task create --name foo --definition "timestamp"
 Created new task 'foo'
 ----
+====
 
-NOTE: Tasks in SCDF do not require explicit deployment. They are required to be launched
-and with that there are different ways to launch them - refer to <<spring-cloud-dataflow-launch-tasks-from-stream,this section>>
-for more details.
+NOTE: Tasks in SCDF do not require explicit deployment. They are required to be launched,
+and there are different ways to launch them - see https://docs.spring.io/spring-cloud-task/docs/current/reference/htmlsingle/#stream-integration-launching-sink[Launching Tasks from a Spring Cloud Stream] for more details.
 
-=== Launch a Task
+==== Launching a Task
 
-Unlike streams, tasks in SCDF requires an explicit launch trigger or it can be manually kicked-off.
+Unlike streams, tasks in SCDF require an explicit launch trigger or can be manually kicked-off. The following example shows how to launch a task called `mytask`
 
+====
 [source]
 ----
-dataflow:>task launch foo
-Launched task 'foo'
+dataflow:>task launch mytask
+Launched task 'mytask'
 ----
+====
 
-=== Launch a Task with arguments and properties
+==== Launching a Task with Arguments and Properties
 
-When a task is launched, any properties that need to be passed as command line arguments to the task application can be set when launching the task, as follows:
+When you launch a task, you can set any properties that need to be passed as command line arguments to the task application when launching the task as follows:
 
-```
+====
+[source,bash]
+----
 dataflow:>task launch mytask --arguments "--key1=value1,--key2=value2"
+----
+====
 
-```
-
-Additional properties meant for a `TaskLauncher` itself can be passed in by using a `--properties` option.
+You can pass in additional properties meant for a `TaskLauncher` itself by using a `--properties` option.
 The format of this option is a comma-separated string of properties prefixed with `app.<task definition name>.<property>`.
 Properties are passed to `TaskLauncher` as application properties.
 It is up to an implementation to choose how those are passed into an actual task application.
-If the property is prefixed with `deployer` instead of `app`, it is passed to `TaskLauncher` as a deployment property and its meaning may be `TaskLauncher` implementation specific.
+If the property is prefixed with `deployer` instead of `app`, it is passed to `TaskLauncher` as a deployment property and its meaning may be specific to the `TaskLauncher` implementation. The following example shows how to pass in application properties:
 
-```
-dataflow:>task launch mytask --properties "deployer.timestamp.custom1=value1,app.timestamp.custom2=value2"
-
-```
-
-One can also pass JAVA_OPTS as the CF deployer property when the task is launched.
-
-```
-task launch --name mytask --properties "deployer.mytask.cloudfoundry.javaOpts=-Duser.timezone=America/New_York"
-```
-
-The JAVA_OPTS can also be set as the global property for all the tasks using
-`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_JAVA_OPTS`
-
-=== View Task Logs
-
-As previously mentioned, the CL CLI is the way to interact with tasks on PCF,
-including viewing the logs. In order to view the logs as a task is executing use the
-following command where `foo` is the name of the task you are executing:
-
+====
 [source,bash]
 ----
-cf v3-logs foo
-Tailing logs for app foo...
+dataflow:>task launch mytask --properties "deployer.timestamp.custom1=value1,app.timestamp.custom2=value2"
+----
+====
+
+You can also pass JAVA_OPTS values as the CF deployer property when the task is launched, as the following example shows
+
+====
+[source,bash]
+----
+task launch --name mytask --properties "deployer.mytask.cloudfoundry.javaOpts=-Duser.timezone=America/New_York"
+----
+====
+
+You can also set the JAVA_OPTS values as the global property for all the tasks by using
+`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_JAVA_OPTS`
+
+==== Viewing Task Logs
+
+The CF CLI is the way to interact with tasks on PCF,
+including viewing the logs. In order to view the logs as a task is executing, you can use the
+following command, where `mytask` is the name of the task you are executing:
+
+====
+[source,bash]
+----
+cf v3-logs mytask
+Tailing logs for app mytask...
 
 ....
 ....
@@ -119,14 +132,16 @@ Tailing logs for app foo...
 2016-08-19T09:44:49.19-0700 [APP/TASK/bar1/0]OUT Destroying container
 2016-08-19T09:44:50.41-0700 [APP/TASK/bar1/0]OUT Successfully destroyed container
 ----
+====
 
-NOTE: Logs are only viewable through the CF CLI as the app is running. Historic
+NOTE: Logs are viewable only through the CF CLI as the app is running. Historic
 logs are not available.
 
-=== List Tasks
+==== Listing Tasks
 
-Listing tasks is as simple as:
+Listing tasks is as simple as the following example (which includes output):
 
+====
 [source]
 ----
 dataflow:>task list
@@ -136,11 +151,13 @@ dataflow:>task list
 ║foo                   │timestamp                │complete   ║
 ╚══════════════════════╧═════════════════════════╧═══════════╝
 ----
+====
 
-=== List Task Executions
+==== Listing Task Executions
 
-If you'd like to view the execution details of the launched task, you could do the following.
+If you want to view the execution details of the launched task, you could run the following:
 
+====
 [source]
 ----
 dataflow:>task execution list
@@ -151,30 +168,32 @@ dataflow:>task execution list
 ║foo:cloud:              │1 │ Fri Aug 19 09:44:49 PDT │Fri Aug 19 09:44:49 PDT  │0       ║
 ╚════════════════════════╧══╧═════════════════════════╧═════════════════════════╧════════╝
 ----
+====
 
-=== Destroy a Task
+==== Destroying a Task
 
-Destroying the task application from SCDF removes the task definition from task repository.
+Destroying the task application from SCDF removes the task definition from the task repository. The following listing (which includes output) shows how to destroy a task named `mytask` and verify that it has been removed from the task list:
 
 [source]
 ----
-dataflow:>task destroy foo
-Destroyed task 'foo'
+dataflow:>task destroy mytask
+Destroyed task 'mytask'
 dataflow:>task list
 ╔═════════╤═══════════════╤═══════════╗
 ║Task Name│Task Definition│Task Status║
 ╚═════════╧═══════════════╧═══════════╝
 ----
 
-=== Deleting Task From Cloud Foundry
-Currently Spring Cloud Data Flow does not delete tasks deployed on a Cloud
-Foundry instance once they have been pushed.  The only way to do this now is via
-CLI on a Cloud Foundry instance version 1.9 or above.
-This is done in 2 steps:
+==== Deleting a Task From Cloud Foundry
 
-. Obtain a list of the apps via the `cf apps` command.
-. Identify the task app to be deleted and execute the `cf delete <task-name>`
+Currently, Spring Cloud Data Flow does not delete tasks deployed on a Cloud
+Foundry instance once they have been pushed. The only way to do this now is through the
+CLI on a Cloud Foundry instance, version 1.9 or above.
+This is done in two steps:
+
+. Obtain a list of the apps by using the `cf apps` command.
+. Identify the task application to be deleted and run the `cf delete <task-name>`
 command.
 
-NOTE: The `task destroy <task-name>` only deletes the definition and not the task
+NOTE: The `task destroy <task-name>` deletes only the definition and not the task
 deployed on Cloud Foundry.
