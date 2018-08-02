@@ -1,8 +1,8 @@
 [[getting-started]]
-== Getting Started
+= Getting Started
 
 [[getting-started-requirements]]
-=== System Requirements
+== System Requirements
 
 The Spring Cloud Data Flow server deploys streams (long-lived applications) and tasks (short-lived applications) to Cloud
 Foundry. The server is a lightweight Spring Boot application. It can run on Cloud Foundry or your laptop, but it is more
@@ -18,7 +18,7 @@ link:http://docs.pivotal.io/scdf/[here].
 * Alternatively, you can provision all the components manually. The following section goes into the specifics of how to
 do so.
 
-==== Provision a Redis Service Instance on Cloud Foundry
+=== Provision a Redis Service Instance on Cloud Foundry
 A Redis instance is required for analytics apps and is typically bound to such apps when you create an analytics
 stream by using the <<getting-started.adoc#getting-started-service-binding-at-application-level,per-app-binding>> feature.
 
@@ -32,7 +32,7 @@ cf create-service rediscloud 30mb redis
 ----
 ====
 
-==== Provision a Rabbit Service Instance on Cloud Foundry
+=== Provision a Rabbit Service Instance on Cloud Foundry
 RabbitMQ is used as a messaging middleware between streaming apps and is bound to each deployed streaming
 app. Apache Kafka is the other option. We can use the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting in Data
 Flow configuration or use the `SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES` setting in
@@ -48,7 +48,7 @@ cf create-service cloudamqp lemur rabbit
 ----
 ====
 
-==== Provision a MySQL Service Instance on Cloud Foundry
+=== Provision a MySQL Service Instance on Cloud Foundry
 An RDBMS is used to persist Data Flow state, such as stream and task definitions, deployments, and executions.
 
 You can use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
@@ -62,7 +62,7 @@ cf create-service cleardb spark my_mysql
 ====
 
 [[getting-started-cloudfoundry]]
-=== Cloud Foundry Installation
+== Cloud Foundry Installation
 Starting with 1.3.x, the Data Flow Server can run in either `skipper` or `classic` (non-skipper) mode. You can specify the mode
 when you start the Data Flow server by setting the `spring.cloud.dataflow.features.skipper-enabled` property.
 By default, the `classic` mode is enabled.
@@ -132,9 +132,9 @@ In later sections, we show how to deploy Data Flow by using <<getting-started-cl
 However, there are some general configuration details you should be aware of in either approach.
 
 [[getting-started-cloudfoundry-general-configuration]]
-==== General Configuration
+=== General Configuration
 
-NOTE: You must use a unique name for your app. An app with the same name in the same organization causes your
+NOTE: You must use a unique name for your app. An application with the same name in the same organization causes your
 deployment to fail.
 
 NOTE: The recommended minimum memory setting for the server is 2G. Also, to push apps to PCF and obtain
@@ -151,7 +151,7 @@ NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree
 NOTE: If you need to configure multiple Maven repositories, a proxy, or authorization for a private repository, see link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#getting-started-maven-configuration[Maven Configuration].
 
 [[getting-started-cloudfoundry-deploying-using-env-vars]]
-==== Deploying by Using Environment Variables
+=== Deploying by Using Environment Variables
 
 The following configuration is for Pivotal Web Services. You need to fill in `\{org}`, `\{space}`,
 `\{email}` and `\{password}` before running these commands.
@@ -214,7 +214,7 @@ cf bind-service dataflow-server my_mysql
 ====
 
 [[getting-started-cloudfoundry-deploying-using-manifest]]
-==== Deploying by Using a Manifest
+=== Deploying by Using a Manifest
 
 As an alternative to setting environment variables with the `cf set-env` command, you can curate all the relevant env-var's
 in a `manifest.yml` file and use the `cf push` command to provision the server.
@@ -251,7 +251,7 @@ services:
 
 [NOTE]
 =====
-If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the URI location where the Skipper server runs and set the feature toggle to use skipper
+If you are going to use `Skipper` to deploy Streams, deploy Skipper first and then configure the URI location where the Skipper server runs and set the feature toggle to use skipper, as the following example shows:
 
 ====
 [source,yml]
@@ -268,7 +268,7 @@ Once you are ready with the relevant properties in this file, you can issue a `c
 this file is stored.
 
 [[getting-started-cloudfoundry-on-local]]
-=== Local Installation
+== Local Installation
 
 To run the server application locally (on your laptop or desktop) and target your Cloud Foundry installation, configure the Data Flow server by setting the following environment variables.
 
@@ -325,7 +325,7 @@ still available. This is particularly true for xref:configuring-defaults[configu
 substitute `cf set-env` syntax with `export`.
 
 [[getting-started-data-flow-shell]]
-=== Data Flow Shell
+== Data Flow Shell
 Launching the Data Flow shell requires that you specify the appropriate data flow server mode.
 The following example shows how to start the Data Flow Shell for the Data Flow server running in `classic` mode:
 
@@ -337,7 +337,7 @@ $ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ====
 
 [[getting-started-deploying-streams]]
-=== Deploying Streams
+== Deploying Streams
 
 By default, the application registry is empty. If you would like to register all out-of-the-box stream applications
 built with the RabbitMQ binder in bulk, run the following command:
@@ -354,7 +354,7 @@ xref:spring-cloud-dataflow-register-apps[register applications].
 
 You have two options for deploying Streams: the "`traditional`" way that Data Flow has always used and a new way that delegates to the Skipper server. Deploying by using Skipper lets you update and rollback the streams, while the traditional way does not.
 
-==== Creating Streams without Skipper
+=== Creating Streams without Skipper
 
 The following example shows how to create a simple stream with an HTTP source and a log sink:
 
@@ -380,7 +380,7 @@ dataflow:> http post --target http://dataflow-AxwwAhK-httptest-http.cfapps.io --
 
 Now you can see whether `hello world` is in the log files for the `log` application.
 
-==== Creating Streams with Skipper
+=== Creating Streams with Skipper
 
 This section assumes you have deployed Skipper and have configured the Data Flow server's `SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI` property to reference the Skipper server.
 
@@ -405,7 +405,7 @@ The https://docs.spring.io/spring-cloud-skipper/docs/current/reference/htmlsingl
 You can read more about the general features of using Skipper to deploy streams in the <<spring-cloud-dataflow-stream-lifecycle-skipper>> section and how to upgrade a streams in the <<spring-cloud-dataflow-stream-lifecycle-skipper-update>> section.
 
 [[streams-using-skipper]]
-=== Deploying Streams by Using Skipper
+== Deploying Streams by Using Skipper
 
 This section proceeds with the assumption that Spring Cloud Data Flow, Spring Cloud Skipper, RDBMS, and your desired messaging
 middleware are all running in PWS. The following listing shows the apps running in a sample org and space:
@@ -763,7 +763,7 @@ dataflow:>stream history --name ticker-314
 
 
 [[getting-started-deploying-tasks]]
-=== Deploying Tasks
+== Deploying Tasks
 
 To run a simple task application, you can register all the out-of-the-box task applications with the following command:
 

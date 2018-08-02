@@ -1,5 +1,5 @@
 = Spring Cloud Data Flow Server for Cloud Foundry
-Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hillert; Mark Pollack; Thomas Risberg; Marius Bogoevici; Josh Long; Michael Minella; David Turanski; Vinicius Carvalho; Jay Bryant
+Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hillert; Mark Pollack; Thomas Risberg; Marius Bogoevici; Josh Long; Michael Minella; David Turanski; Vinicius Carvalho; Jay Bryant; Glenn Renfro
 :doctype: book
 :toc: left
 :toclevels: 4
