@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.springframework.cloud.dataflow.server.cloudfoundry.config.CloudFoundryDataFlowServerConfiguration
+  org.springframework.cloud.dataflow.server.cloudfoundry.config.CloudFoundryDataFlowServerConfiguration,\
+  org.springframework.cloud.dataflow.server.cloudfoundry.config.CloudFoundrySchedulerConfiguration
 org.springframework.boot.env.EnvironmentPostProcessor=\
   org.springframework.cloud.dataflow.server.cloudfoundry.config.TaskFeatureAutoToggleEnvironmentPostProcessor
