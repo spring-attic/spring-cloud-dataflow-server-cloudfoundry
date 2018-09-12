@@ -225,6 +225,11 @@ stream deploy fooz --properties "app.time.spring.cloud.stream.kafka.binder.broke
 ----
 ====
 
+[[configuration-db-connection-pool]]
+== Database Connection Pool
+The Data Flow server uses the Spring Cloud Connector library to create the DataSource with a default connection pool size of 4. 
+To change the connection pool size and maximum wait time, set the following two properties `spring.cloud.skipper.server.cloudfoundry.maxPoolSize` and `spring.cloud.skipper.server.cloudfoundry.maxWaitTime`. The wait time is specified in milliseconds.
+
 [[configuration-maximum-disk-quota-configuration]]
 == Maximum Disk Quota
 By default, every application in Cloud Foundry starts with 1G disk quota and this can be adjusted to a default maximum of
