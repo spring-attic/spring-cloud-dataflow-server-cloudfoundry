@@ -700,19 +700,32 @@ services:
 
 [[getting-started-scheduling-configuration]]
 == Configure Scheduling
-This section discusses how to configure Spring Cloud Data Flow to connect to the https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
+This section discusses how to configure Spring Cloud Data Flow to connect to the
+https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
 
-NOTE: Before following these instructions, be sure to have an instance of the PCF-Scheduler service running in your Cloud Foundry space.  To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following from the CF CLI: `cf create-service scheduler-for-pcf standard <name of service>`
+[NOTE]
+====
+Before following these instructions, be sure to have an instance of the PCF-Scheduler service running in your Cloud
+Foundry space.  To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following
+from the CF CLI: `cf create-service scheduler-for-pcf standard <name of service>`. Name of a service
+is later used to bound running application in _PCF_.
+====
 
 For scheduling, you must add (or update) the following environment variables in your environment:
 
 * Enable scheduling for Spring Cloud Data Flow by setting `spring.cloud.dataflow.features.schedules-enabled` to `true`.
-* Bind the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
-* Establish the URL to the PCF-Scheduler by setting the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment variable.
+* Bind the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the
+  `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
+* Establish the URL to the PCF-Scheduler by setting the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment
+  variable.
 
-NOTE: After creating the preceding configurations, you must create any task definitions that need to be scheduled.
+[NOTE]
+====
+After creating the preceding configurations, you must create any task definitions that need to be scheduled.
+====
 
-The following sample manifest shows both environment properties configured (assuming you have a PCF-Scheduler service available with the name `myscheduler`):
+The following sample manifest shows both environment properties configured (assuming you have a PCF-Scheduler service
+available with the name `myscheduler`):
 
 ====
 [source,yml]
@@ -737,11 +750,13 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,myscheduler
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES_ENABLED: true
-    SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL: <PCF-Scheduler service url>
-    SPRING_APPLICATION_JSON {"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }
+    SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL: https://scheduler.local.pcfdev.io
+    SPRING_APPLICATION_JSON: '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }'
 services:
 - mysql
 ----
+
+Where the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` has the following format: `scheduler.<Domain-Name>` (for
+example, `https://scheduler.local.pcfdev.io`). Check the actual address from your _PCF_ environment.
 ====
 
-NOTE: The `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` has the following format: `scheduler.<Domain-Name>` (for example, `https://scheduler.sys.mycf.cf-app.com`).
