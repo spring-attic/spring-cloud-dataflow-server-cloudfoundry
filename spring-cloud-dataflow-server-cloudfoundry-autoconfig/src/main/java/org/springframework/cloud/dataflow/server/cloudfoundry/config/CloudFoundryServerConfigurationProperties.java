@@ -44,7 +44,7 @@ public class CloudFoundryServerConfigurationProperties {
 	 */
 	private int freeDiskSpacePercentage = 25;
 
-	private int maxPoolSize = 4;
+	private int maxPoolSize = 10;
 
 	int maxWaitTime = 30000;
 
