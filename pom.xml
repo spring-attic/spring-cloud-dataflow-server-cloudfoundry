@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-dataflow-parent</artifactId>
-		<version>1.7.0.RC1</version>
+		<version>1.7.0.RELEASE</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<spring-cloud-dataflow.version>1.7.0.RC1</spring-cloud-dataflow.version>
+		<spring-cloud-dataflow.version>1.7.0.RELEASE</spring-cloud-dataflow.version>
 		<spring-cloud-deployer-cloudfoundry.version>1.4.3.RELEASE</spring-cloud-deployer-cloudfoundry.version>
 		<spring-cloud-deployer-spi.version>1.3.4.RELEASE</spring-cloud-deployer-spi.version>
 		<spring-cloud-common-security-config.version>1.0.2.RELEASE</spring-cloud-common-security-config.version>
