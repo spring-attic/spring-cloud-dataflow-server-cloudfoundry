@@ -339,7 +339,7 @@ The Data Flow server uses the Spring Cloud Connector library to create the DataS
 To change the connection pool size and maximum wait time, set the following two properties `spring.cloud.dataflow.server.cloudfoundry.maxPoolSize` and `spring.cloud.dataflow.server.cloudfoundry.maxWaitTime`.
 The wait time is specified in milliseconds.
 
-[[getting-started-security]]
+[[configuration-security]]
 == Security
 
 By default, the Data Flow server is unsecured and runs on an unencrypted HTTP connection. You can secure your REST endpoints
