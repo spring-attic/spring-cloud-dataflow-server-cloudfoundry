@@ -27,12 +27,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-cloudfoundry-connector</artifactId>
-			<version>${spring-cloud-cloudfoundry-connector}</version>
+			<version>${spring-cloud-cloudfoundry-connector.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-spring-service-connector</artifactId>
-			<version>${spring-cloud-cloudfoundry-connector}</version>
+			<version>${spring-cloud-cloudfoundry-connector.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
