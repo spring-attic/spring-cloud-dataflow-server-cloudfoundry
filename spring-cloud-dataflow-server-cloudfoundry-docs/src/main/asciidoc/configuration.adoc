@@ -635,6 +635,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
+    SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI: https://<skipper-host-name>/api
     SPRING_APPLICATION_JSON: '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }'
 services:
 - mysql
@@ -684,6 +685,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: <DOMAIN>
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: <USER>
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
+    SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI: https://<skipper-host-name>/api
     MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: my-config-server #this is so all stream applications bind to my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server      #this for so all task applications bind to my-config-server
@@ -750,6 +752,7 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,myscheduler
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES_ENABLED: true
+    SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI: https://<skipper-host-name>/api
     SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL: https://scheduler.local.pcfdev.io
     SPRING_APPLICATION_JSON: '{"maven": { "remote-repositories": { "repo1": { "url": "https://repo.spring.io/libs-release"} } } }'
 services:
