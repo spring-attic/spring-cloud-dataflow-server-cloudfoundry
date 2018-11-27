@@ -31,7 +31,7 @@ cf create-service rediscloud 30mb redis
 === Provision a Rabbit Service Instance on Cloud Foundry
 RabbitMQ is used as a messaging middleware between streaming apps and is bound to each deployed streaming app.
 Apache Kafka is the other option.
-We can use the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` setting in Data Flow configuration or use the `SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES` setting in Skipper, which automatically binds RabbitMQ to the deployed streaming applications.
+We can use the `SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES` setting in `Skipper Server` configuration which automatically binds RabbitMQ to the deployed streaming applications.
 
 You can use `cf marketplace` to discover which plans are available to you, depending on the details of your Cloud Foundry setup.
 For example, you can use link:https://run.pivotal.io/[Pivotal Web Services]:
@@ -158,7 +158,6 @@ cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_URL https://api.ru
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_ORG {org}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SPACE {space}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN cfapps.io
-cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES rabbit
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES my_mysql
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME {email}
 cf set-env dataflow-server SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD {password}
@@ -226,7 +225,6 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI: https://<skipper-host-name>/api
@@ -259,7 +257,6 @@ export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME={email}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD={password}
 export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION=false
 
-export SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES=rabbit
 # The following is for letting task apps write to their db.
 # Note however that when the *server* is running locally, it can't access that db
 # task related commands that show executions won't work then
@@ -277,9 +274,6 @@ Do not use self-signed certificates for production.
 =====
 Deploy Skipper first and then configure the URI location of where the Skipper server is running.
 =====
-
-NOTE: Since Skipper is a Spring Boot application, you can also pass the configuration properties as command line options instead of environment variables.
-For example, `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES` becomes `--spring.cloud.deployer.cloudfoundry.stream.services`.
 
 Now we are ready to start the server application, as follows:
 

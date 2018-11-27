@@ -489,12 +489,6 @@ spring.cloud.deployer.cloudfoundry.password=
 # (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION).
 spring.cloud.deployer.cloudfoundry.skipSslValidation=false
 
-# A comma-separated set of service instance names to bind to every deployed stream application.
-# Among other things, this should include a service that is used
-# for Spring Cloud Stream binding, such as Rabbit
-# (to set the environment variable, use SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES).
-spring.cloud.deployer.cloudfoundry.stream.services=
-
 # The health check type to use for stream apps. Accepts 'none' and 'port'.
 spring.cloud.deployer.cloudfoundry.stream.health-check=
 
@@ -609,9 +603,7 @@ Another, more drastic, option is to disable the platform health check by setting
 
 === Sample Manifest Template
 
-The following `manifest.yml` template includes the required environment variables for the Spring Cloud Data Flow server and deployed
-applications and tasks to successfully run on Cloud Foundry and automatically resolve centralized properties from `my-config-server`
-at runtime:
+The following SCDF and Skipper `manifest.yml` templates includes the required environment variables for the Skipper and Spring Cloud Data Flow server and deployed applications and tasks to successfully run on Cloud Foundry and automatically resolve centralized properties from `my-config-server` at runtime:
 
 ====
 [source,yml]
@@ -632,7 +624,6 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit,my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI: https://<skipper-host-name>/api
@@ -640,28 +631,50 @@ applications:
 services:
 - mysql
 - my-config-server
+
+---
+applications:
+- name: skipper-server
+  host: skipper-server
+  memory: 1G
+  disk_quota: 1G
+  instances: 1
+  timeout: 180
+  buildpack: java_buildpack
+  path: <PATH TO THE DOWNLOADED SKIPPER SERVER UBER-JAR>
+  env:
+    SPRING_APPLICATION_NAME: skipper-server
+    SPRING_CLOUD_SKIPPER_SERVER_ENABLE_LOCAL_PLATFORM: false
+    SPRING_CLOUD_SKIPPER_SERVER_STRATEGIES_HEALTHCHECK_TIMEOUTINMILLIS: 300000
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_URL: https://api.local.pcfdev.io
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_ORG: pcfdev-org
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SPACE: pcfdev-space
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_DOMAIN: cfapps.io
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_USERNAME: admin
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_PASSWORD: admin
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SKIP_SSL_VALIDATION: false
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_DELETE_ROUTES: false
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: rabbit, my-config-server
+services:
+- mysql
+  my-config-server
+
 ----
 
 where `my-config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry.
 ====
 
-By binding the
-service to both Spring Cloud Data Flow server and all the Spring Cloud Stream and Spring Cloud Task applications
-respectively, we can now resolve centralized properties backed by this service.
+By binding the service to both Spring Cloud Data Flow server and Spring Cloud Task and via Skipper to all the Spring Cloud Stream applications respectively, we can now resolve centralized properties backed by this service.
 
 === Self-signed SSL Certificate and Spring Cloud Config Server
 
-Often, in a development environment, we may not have a valid certificate to enable SSL communication between clients and
-the backend services. However, the configuration server for Pivotal Cloud Foundry uses HTTPS for all client-to-service communication,
-so we need to add a self-signed SSL certificate in environments with no valid certificates.
+Often, in a development environment, we may not have a valid certificate to enable SSL communication between clients and the backend services.
+However, the configuration server for Pivotal Cloud Foundry uses HTTPS for all client-to-service communication, so we need to add a self-signed SSL certificate in environments with no valid certificates.
 
-By using the same `manifest.yml` template listed in the previous section for the server, we can provide the self-signed
-SSL certificate by setting `TRUST_CERTS: <API_ENDPOINT>`.
+By using the same `manifest.yml` templates listed in the previous section for the server, we can provide the self-signed SSL certificate by setting `TRUST_CERTS: <API_ENDPOINT>`.
 
-However, the deployed applications also require `TRUST_CERTS` as a flat environment variable (as opposed to being wrapped inside
-`SPRING_APPLICATION_JSON`), so we must instruct the server with yet another set of tokens (`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false`
-and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false`) for stream and task applications,
-respectively. With this setup, the applications receive their application properties as regular environment variables.
+However, the deployed applications also require `TRUST_CERTS` as a flat environment variable (as opposed to being wrapped inside `SPRING_APPLICATION_JSON`), so we must instruct the server with yet another set of tokens (`SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false` and `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false`) for stream and task applications, respectively.
+With this setup, the applications receive their application properties as regular environment variables.
 
 The following listing shows the updated `manifest.yml` with the required changes. Both the Data Flow server and deployed applications
 get their configuration from the `my-config-server` Cloud Config server (deployed as a Cloud Foundry service).
@@ -687,7 +700,6 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: <PASSWORD>
     SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI: https://<skipper-host-name>/api
     MAVEN_REMOTE_REPOSITORIES_REPO1_URL: https://repo.spring.io/libs-release
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: my-config-server #this is so all stream applications bind to my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: config-server      #this for so all task applications bind to my-config-server
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_USE_SPRING_APPLICATION_JSON: false #this is for all the stream applications
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_USE_SPRING_APPLICATION_JSON: false #this is for all the task applications
@@ -700,34 +712,62 @@ services:
 ----
 ====
 
+Also add the `my-config-server` service to the Skipper's manifest environment
+
+====
+[source,yml]
+----
+---
+applications:
+- name: skipper-server
+  host: skipper-server
+  memory: 1G
+  disk_quota: 1G
+  instances: 1
+  timeout: 180
+  buildpack: java_buildpack
+  path: <PATH TO THE DOWNLOADED SKIPPER SERVER UBER-JAR>
+  env:
+    SPRING_APPLICATION_NAME: skipper-server
+    SPRING_CLOUD_SKIPPER_SERVER_ENABLE_LOCAL_PLATFORM: false
+    SPRING_CLOUD_SKIPPER_SERVER_STRATEGIES_HEALTHCHECK_TIMEOUTINMILLIS: 300000
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_URL: <URL>
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_ORG: <ORG>
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_SPACE: <SPACE>
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_DOMAIN: <DOMAIN>
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_USERNAME: <USER>
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_CONNECTION_PASSWORD: <PASSWORD>
+    SPRING_CLOUD_SKIPPER_SERVER_PLATFORM_CLOUDFOUNDRY_ACCOUNTS[pws]_DEPLOYMENT_SERVICES: rabbit, my-config-server #this is so all stream applications bind to my-config-server
+services:
+- mysql
+  my-config-server
+
+----
+====
+
 [[getting-started-scheduling-configuration]]
 == Configure Scheduling
-This section discusses how to configure Spring Cloud Data Flow to connect to the
-https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
+This section discusses how to configure Spring Cloud Data Flow to connect to the https://www.cloudfoundry.org/the-foundry/scheduler/[PCF-Scheduler] as its agent to execute tasks.
 
 [NOTE]
 ====
-Before following these instructions, be sure to have an instance of the PCF-Scheduler service running in your Cloud
-Foundry space.  To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following
-from the CF CLI: `cf create-service scheduler-for-pcf standard <name of service>`. Name of a service
-is later used to bound running application in _PCF_.
+Before following these instructions, be sure to have an instance of the PCF-Scheduler service running in your Cloud Foundry space.
+To create a PCF-Scheduler in your space (assuming it is in your Market Place) execute the following from the CF CLI: `cf create-service scheduler-for-pcf standard <name of service>`.
+Name of a service is later used to bound running application in _PCF_.
 ====
 
 For scheduling, you must add (or update) the following environment variables in your environment:
 
 * Enable scheduling for Spring Cloud Data Flow by setting `spring.cloud.dataflow.features.schedules-enabled` to `true`.
-* Bind the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the
-  `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
-* Establish the URL to the PCF-Scheduler by setting the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment
-  variable.
+* Bind the task deployer to your instance of PCF-Scheduler by adding the PCF-Scheduler service name to the `SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES` environment variable.
+* Establish the URL to the PCF-Scheduler by setting the `SPRING_CLOUD_SCHEDULER_CLOUDFOUNDRY_SCHEDULER_URL` environment variable.
 
 [NOTE]
 ====
 After creating the preceding configurations, you must create any task definitions that need to be scheduled.
 ====
 
-The following sample manifest shows both environment properties configured (assuming you have a PCF-Scheduler service
-available with the name `myscheduler`):
+The following sample manifest shows both environment properties configured (assuming you have a PCF-Scheduler service available with the name `myscheduler`):
 
 ====
 [source,yml]
@@ -748,7 +788,6 @@ applications:
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_DOMAIN: local.pcfdev.io
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_USERNAME: admin
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_PASSWORD: admin
-    SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_STREAM_SERVICES: rabbit
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_TASK_SERVICES: mysql,myscheduler
     SPRING_CLOUD_DEPLOYER_CLOUDFOUNDRY_SKIP_SSL_VALIDATION: true
     SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES_ENABLED: true
