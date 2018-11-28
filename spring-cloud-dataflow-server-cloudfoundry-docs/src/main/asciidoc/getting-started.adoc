@@ -4,7 +4,7 @@
 [[getting-started-requirements]]
 == System Requirements
 
-The Spring Cloud Data Flow server deploys streams (long-lived applications) and tasks (short-lived applications) to Cloud Foundry.
+The Spring Cloud Data Flow server deploys task tasks (short-lived applications) and via Skipper deploys streams (long-lived applications) to Cloud Foundry.
 The server is a lightweight Spring Boot application. It can run on Cloud Foundry or your laptop, but it is more common to run the server in Cloud Foundry.
 
 Spring Cloud Data Flow requires a few data services to perform streaming, task/batch processing, and analytics.
@@ -70,7 +70,7 @@ wget http://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/sp
 wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ----
 ====
-. Download http://cloud.spring.io/spring-cloud-skipper/[Skipper] to which Data Flow delegate Streams lifecycle operations such as deployment, upgrading and rolling.
+. Download http://cloud.spring.io/spring-cloud-skipper/[Skipper] to which Data Flow delegate Streams lifecycle operations such as deployment, upgrading and rolling back.
 The following example shows how to do so:
 +
 ====
@@ -369,7 +369,7 @@ dataflow-server              started           1/1         1G       1G     dataf
 ----
 ====
 
-The following example shows how to start the Data Flow Shell for the Data Flow server:
+The following example shows how to start the Data Flow shell for the Data Flow server:
 
 ====
 [source,bash,subs=attributes]

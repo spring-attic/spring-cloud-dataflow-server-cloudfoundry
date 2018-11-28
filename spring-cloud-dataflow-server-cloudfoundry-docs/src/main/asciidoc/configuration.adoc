@@ -664,7 +664,7 @@ services:
 where `my-config-server` is the name of the Spring Cloud Config Service instance running on Cloud Foundry.
 ====
 
-By binding the service to both Spring Cloud Data Flow server and Spring Cloud Task and via Skipper to all the Spring Cloud Stream applications respectively, we can now resolve centralized properties backed by this service.
+By binding the service to Spring Cloud Data Flow server, Spring Cloud Task and via Skipper to all the Spring Cloud Stream applications respectively, we can now resolve centralized properties backed by this service.
 
 === Self-signed SSL Certificate and Spring Cloud Config Server
 
