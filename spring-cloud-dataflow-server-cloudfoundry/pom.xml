@@ -34,6 +34,11 @@
 			<artifactId>spring-cloud-spring-service-connector</artifactId>
 			<version>${spring-cloud-cloudfoundry-connector.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
