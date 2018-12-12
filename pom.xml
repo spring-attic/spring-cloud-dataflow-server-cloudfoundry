@@ -14,8 +14,8 @@
 
 	<properties>
 		<spring-cloud-dataflow.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-dataflow.version>
-		<spring-cloud-deployer-cloudfoundry.version>1.4.4.RELEASE</spring-cloud-deployer-cloudfoundry.version>
-		<spring-cloud-deployer-spi.version>1.3.4.RELEASE</spring-cloud-deployer-spi.version>
+		<spring-cloud-deployer-cloudfoundry.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-deployer-cloudfoundry.version>
+		<spring-cloud-deployer-spi.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-deployer-spi.version>
 		<spring-cloud-common-security-config.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-common-security-config.version>
 		<spring-cloud-cloudfoundry-connector.version>2.0.3.RELEASE</spring-cloud-cloudfoundry-connector.version>
 		<spring-cloud-services-starters.version>2.0.3.RELEASE</spring-cloud-services-starters.version>
