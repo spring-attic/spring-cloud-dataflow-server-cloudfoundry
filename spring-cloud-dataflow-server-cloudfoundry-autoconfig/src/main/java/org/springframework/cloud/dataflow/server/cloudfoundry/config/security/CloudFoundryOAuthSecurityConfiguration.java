@@ -29,10 +29,12 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoT
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.cloud.common.security.OAuthSecurityConfiguration;
 import org.springframework.cloud.common.security.support.DefaultAuthoritiesExtractor;
+import org.springframework.cloud.common.security.support.OnOAuth2SecurityEnabled;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryDataflowAuthoritiesExtractor;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundryPrincipalExtractor;
 import org.springframework.cloud.dataflow.server.cloudfoundry.config.security.support.CloudFoundrySecurityService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
@@ -59,6 +61,7 @@ import org.springframework.security.oauth2.client.OAuth2RestTemplate;
  */
 @Configuration
 @ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
+@Conditional(OnOAuth2SecurityEnabled.class)
 @Import(CloudFoundryOAuthSecurityConfiguration.CloudFoundryUAAConfiguration.class)
 public class CloudFoundryOAuthSecurityConfiguration {
 

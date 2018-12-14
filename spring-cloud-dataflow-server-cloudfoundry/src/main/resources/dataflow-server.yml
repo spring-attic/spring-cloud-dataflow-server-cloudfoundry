@@ -9,17 +9,6 @@ info:
     name: "@project.artifactId@"
     description: "@project.name@"
     version: "@project.version@"
-security:
-  basic:
-    enabled: false
-  oauth2:
-    client:
-      client-id: ${security.oauth2.client.clientId:false} # myclientid
-      client-secret: ${security.oauth2.client.clientSecret:} # mysecret
-      access-token-uri: ${security.oauth2.client.accessTokenUri:} # http://127.0.0.1:9999/oauth/token
-      user-authorization-uri: ${security.oauth2.client.userAuthorizationUri:} # http://127.0.0.1:9999/oauth/authorize
-    resource:
-      user-info-uri: ${security.oauth2.resource.userInfoUri:} # http://127.0.0.1:9999/me
 spring:
   application:
     name: dataflow
