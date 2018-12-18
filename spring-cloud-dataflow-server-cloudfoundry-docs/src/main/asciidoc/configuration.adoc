@@ -364,7 +364,19 @@ https://github.com/pivotal-cf/spring-cloud-sso-connector[Spring Cloud Single Sig
 which provides Cloud Foundry-specific auto-configuration support for OAuth 2.0.
 
 To do so, bind the Pivotal Single Sign-On Service to your Data Flow Server application and
-Single Sign-On (SSO) over OAuth2 will be enabled by default.
+provide the following properties:
+
+[source,yaml]
+----
+SPRING_CLOUD_DATAFLOW_SECURITY_CFUSEUAA: false                                                 # <1>
+SECURITY_OAUTH2_CLIENT_CLIENTID: "${security.oauth2.client.clientId}"
+SECURITY_OAUTH2_CLIENT_CLIENTSECRET: "${security.oauth2.client.clientSecret}"
+SECURITY_OAUTH2_CLIENT_ACCESSTOKENURI: "${security.oauth2.client.accessTokenUri}"
+SECURITY_OAUTH2_CLIENT_USERAUTHORIZATIONURI: "${security.oauth2.client.userAuthorizationUri}"
+SECURITY_OAUTH2_RESOURCE_USERINFOURI: "${security.oauth2.resource.userInfoUri}"
+----
+
+<1> It is important that the property `spring.cloud.dataflow.security.cf-use-uaa` is set to `false`
 
 Authorization is similarly supported for non-Cloud Foundry security scenarios.
 See the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#configuration-security[reference guide].
@@ -416,7 +428,7 @@ public BeanPostProcessor myUserInfoTokenServicesPostProcessor() {
 ==== Cloud Foundry UAA
 
 The availability of Cloud Foundry User Account and Authentication (UAA) depends on the Cloud Foundry environment.
-In order to provide UAA integration, you have to manually provide the necessary
+In order to provide UAA integration, you have to provide the necessary
 OAuth2 configuration properties (for example, by setting the `SPRING_APPLICATION_JSON`
 property).
 
