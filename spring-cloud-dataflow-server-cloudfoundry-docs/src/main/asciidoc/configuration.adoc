@@ -37,7 +37,7 @@ By default, the Data Flow server is unsecured and runs on an unencrypted HTTP co
 as well as the Data Flow Dashboard by enabling HTTPS and requiring clients to authenticate.
 For more details about securing the
 REST endpoints and configuring to authenticate against an OAUTH backend (_i.e: UAA/SSO running on Cloud Foundry_), please
-review the security section from the core http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
+review the security section from the core https://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide]. The security configurations can be configured in `dataflow-server.yml` or passed as environment variables through `cf set-env` commands.
 
 [[getting-started-security-cloud-foundry]]
 === Authentication and Cloud Foundry
@@ -58,12 +58,12 @@ Simply bind the _Pivotal Single Sign-On Service_ to your Data Flow Server app an
 Single Sign-On (SSO) via OAuth2 will be enabled by default.
 
 Authorization is similarly support as for non-Cloud Foundry security scenarios.
-Please refer to the security section from the core Data Flow http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide].
+Please refer to the security section from the core Data Flow https://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/html/getting-started-security.html[reference guide].
 
 As the provisioning of roles can vary widely across environments, we assign by
 default all Spring Cloud Data Flow roles to users.
 
-This can be customized by providing your own http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor].
+This can be customized by providing your own https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor].
 
 One possible approach to set the custom `AuthoritiesExtractor` on the `UserInfoTokenServices` could be this:
 
@@ -120,7 +120,7 @@ property.
 
 By default, the property `spring.cloud.dataflow.security.cf-use-uaa` is set to `true`. This property will activate a special
 
-http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor] **CloudFoundryDataflowAuthoritiesExtractor**.
+https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/security/oauth2/resource/AuthoritiesExtractor.html[AuthoritiesExtractor] **CloudFoundryDataflowAuthoritiesExtractor**.
 
 If CloudFoundry UAA is not used, then make sure to set `spring.cloud.dataflow.security.cf-use-uaa` to `false`.
 
@@ -243,7 +243,7 @@ See the link:https://cloud.spring.io/spring-cloud-config/spring-cloud-config.htm
 Since this property is likely to be used across all applications deployed by the Data Flow server, the Data Flow Server's property `spring.cloud.dataflow.applicationProperties.stream` for stream apps and `spring.cloud.dataflow.applicationProperties.task` for task apps can be used to pass the `uri` of the Config Server to each deployed stream or task application.  Refer to the section on Common application properties for more information.
 
 
-If you're using applications from the link:http://cloud.spring.io/spring-cloud-stream-app-starters/[App Starters project], note that these applications already embed the `spring-cloud-services-starter-config-client` dependency.
+If you're using applications from the link:https://cloud.spring.io/spring-cloud-stream-app-starters/[App Starters project], note that these applications already embed the `spring-cloud-services-starter-config-client` dependency.
 If you're building your application from scratch and want to add the client side support for config server, simply add a reference dependency reference to the config server client library.  A maven example snippet follows:
 
 [source,xml]
