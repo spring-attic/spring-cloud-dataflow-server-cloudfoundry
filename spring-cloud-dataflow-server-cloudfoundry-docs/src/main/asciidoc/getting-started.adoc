@@ -52,15 +52,15 @@ By default, the `classic` mode is enabled.
 +
 [subs=attributes]
 ```
-wget http://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/{project-version}/spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
+wget https://repo.spring.io/{version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-server-cloudfoundry/{project-version}/spring-cloud-dataflow-server-cloudfoundry-{project-version}.jar
 
-wget http://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
+wget https://repo.spring.io/{dataflow-version-type-lowercase}/org/springframework/cloud/spring-cloud-dataflow-shell/{dataflow-project-version}/spring-cloud-dataflow-shell-{dataflow-project-version}.jar
 ```
-. Optionally, download http://cloud.spring.io/spring-cloud-skipper/[Skipper] if you want the added features of upgrading and rolling back Streams since Data Flow delegates to Skipper for those features.
+. Optionally, download https://cloud.spring.io/spring-cloud-skipper/[Skipper] if you want the added features of upgrading and rolling back Streams since Data Flow delegates to Skipper for those features.
 +
 [source,yaml,options=nowrap,subs=attributes]
 ----
-wget http://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
+wget https://repo.spring.io/{skipper-version-type-lowercase}/org/springframework/cloud/spring-cloud-skipper-server/{skipper-version}/spring-cloud-skipper-server-{skipper-version}.jar
 ----
 +
 Push Skipper to Cloud Foundry only if you want to run Spring Cloud Data Flow server in `skipper` mode.  Here is a sample manifest for Skipper.
@@ -122,9 +122,9 @@ free disk space when it falls below a low water mark value.
 NOTE: If you are pushing to a space with multiple users, for example on PWS, there may already be a route taken for the
 applicaiton name you have chosen. You can use the options `--random-route` to avoid this when pushing the server application.
 
-NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-registry[application registry] in Spring Cloud Data Flow's Cloud Foundry server is empty. It is intentionally designed to allow users to have the flexibility of http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[choosing and registering] applications, as they find appropriate for the given use-case requirement. Depending on the message-binder of choice, users can register between http://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[RabbitMQ or Apache Kafka] based maven artifacts.
+NOTE: By default, the https://github.com/spring-cloud/spring-cloud-dataflow/tree/master/spring-cloud-dataflow-registry[application registry] in Spring Cloud Data Flow's Cloud Foundry server is empty. It is intentionally designed to allow users to have the flexibility of https://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[choosing and registering] applications, as they find appropriate for the given use-case requirement. Depending on the message-binder of choice, users can register between https://repo.spring.io/libs-snapshot/org/springframework/cloud/stream/app/[RabbitMQ or Apache Kafka] based maven artifacts.
 
-NOTE: If you need to configure multiple Maven repositories, a proxy, or authorization for a private repository, see link:http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#getting-started-maven-configuration[Maven Configuration].
+NOTE: If you need to configure multiple Maven repositories, a proxy, or authorization for a private repository, see link:https://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#getting-started-maven-configuration[Maven Configuration].
 
 [[getting-started-cloudfoundry-deploying-using-env-vars]]
 === Deploying using environment variables
@@ -288,7 +288,7 @@ built with the RabbitMQ binder in bulk, you can with the following command. For 
 xref:spring-cloud-dataflow-register-apps[register applications].
 +
 ```
-dataflow:>app import --uri http://bit.ly/Celsius-SR1-stream-applications-rabbit-maven
+dataflow:>app import --uri https://bit.ly/Celsius-SR1-stream-applications-rabbit-maven
 ```
 +
 There are two options for deploying Streams. The "traditional" way that Data Flow has always used and a new way that delegates to the Skipper server. Deploying using Skipper will enable you to update and rollback the streams while the traditional way will not.
@@ -310,7 +310,7 @@ Now post some data. The URL will be unique to your deployment, the following is 
 +
 [source]
 ----
-dataflow:> http post --target http://dataflow-AxwwAhK-httptest-http.cfapps.io --data "hello world"
+dataflow:> http post --target https://dataflow-AxwwAhK-httptest-http.cfapps.io --data "hello world"
 ----
 Look to see if `hello world` ended up in log files for the `log` application.
 +
@@ -361,8 +361,8 @@ $ java -jar spring-cloud-dataflow-shell-{dataflow-project-version}.jar --dataflo
 ----
 If the Data Flow Server and shell are not running on the same host, point the shell to the Data Flow server URL:
 ```
-server-unknown:>dataflow config server http://dataflow-server.cfapps.io
-Successfully targeted http://dataflow-server.cfapps.io
+server-unknown:>dataflow config server https://dataflow-server.cfapps.io
+Successfully targeted https://dataflow-server.cfapps.io
 dataflow:>
 ```
 Alternatively, pass in the command line option `--dataflow.uri`.  The shell's command line option `--help` shows what options are available.
@@ -690,7 +690,7 @@ dataflow:>stream history --name ticker-314
 To run a simple task application, you can register all the out-of-the-box task applications with the following command.
 
 ```
-dataflow:>app import --uri http://bit.ly/Clark-GA-task-applications-maven
+dataflow:>app import --uri https://bit.ly/Clark-GA-task-applications-maven
 
 ```
 
@@ -711,6 +711,6 @@ in the database and you can retrieve information about the task execution using 
 `task execution list` and `task execution status --id <ID_OF_TASK>` or though the Data Flow UI.
 
 NOTE: The current underlying PCF task capabilities are considered experimental for PCF version
-versions less than 1.9.  See http://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#enable-disable-specific-features[Feature Togglers]
+versions less than 1.9.  See https://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#enable-disable-specific-features[Feature Togglers]
 for how to disable task support in Data Flow.
 
