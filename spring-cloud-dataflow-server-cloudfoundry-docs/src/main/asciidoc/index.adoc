@@ -8,7 +8,7 @@ Sabby Anandan; Eric Bottard; Mark Fisher; Ilayaperumal Gopinathan; Gunnar Hiller
 :icons: font
 :hide-uri-scheme:
 
-:spring-cloud-stream-docs: http://docs.spring.io/spring-cloud-stream/docs/{scst-core-version}/reference/htmlsingle/index.html
+:spring-cloud-stream-docs: https://docs.spring.io/spring-cloud-stream/docs/{scst-core-version}/reference/htmlsingle/index.html
 :github-code: https://github.com/spring-cloud/spring-cloud-dataflow-server-cloudfoundry
 // ======================================================================================
 
