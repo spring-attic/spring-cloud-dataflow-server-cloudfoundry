@@ -28,7 +28,7 @@ following sections outline the process of creating, launching, destroying, and v
 
 Similar to streams, creating a task application is done by using the SCDF DSL or through the
 dashboard. To create a task definition in SCDF, you must either develop a task
-application or use one of the out-of-the-box link:http://docs.spring.io/spring-cloud-task-app-starters/docs/{sct-starters-core-version}/reference/htmlsingle[task app-starters].
+application or use one of the out-of-the-box link:https://docs.spring.io/spring-cloud-task-app-starters/docs/{sct-starters-core-version}/reference/htmlsingle[task app-starters].
 The maven coordinates of the task application should be registered in SCDF. For more
 details on how to register task applications, see link:https://docs.spring.io/spring-cloud-dataflow/docs/{scdf-core-version}/reference/htmlsingle/#spring-cloud-dataflow-register-task-apps[Registering a Task Application]
 in the core docs.
